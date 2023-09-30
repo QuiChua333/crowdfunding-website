@@ -7,6 +7,7 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <button className='btn btn-primary'>Ngọc Quí</button>
         <Routes>
           {publicRoutes.map((route, index) => {
             let Layout = DefaultLayout;
