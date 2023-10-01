@@ -1,6 +1,9 @@
 function Folllowing() {
     return ( 
-        <h1>Folllowing Page</h1>
+        <div>
+            <h1>Folllowing Page</h1>
+            <p>Ngọc Quí</p>
+        </div>
     )
 }
 
