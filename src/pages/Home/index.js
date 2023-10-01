@@ -1,6 +1,10 @@
 function Home() {
     return ( 
-        <h1>Home Page</h1>
+        <div style={{
+            height: '100vh'
+        }}>
+            <h1>Home Page</h1>
+        </div>
         
     )
 }
