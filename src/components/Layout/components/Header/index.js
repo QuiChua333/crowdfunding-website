@@ -14,14 +14,22 @@ function Header() {
         setSearchBox(!searchBox);
     }
 
-    const changeBackgroundHeader = () => {
-        if (window.scrollY >=460) {
-            setHeader(true)
-        } else {
-            setHeader(false)
+   
+    useEffect(() => {
+        const changeBackgroundHeader = () => {
+            if (window.scrollY >=460) {
+                setHeader(true)
+            } else {
+                setHeader(false)
+            }
         }
-    }
-    window.addEventListener('scroll', changeBackgroundHeader);
+        window.addEventListener('scroll', changeBackgroundHeader);
+
+        return () => {
+            window.removeEventListener('scroll', changeBackgroundHeader);
+        }
+    }, []);
+    
     return ( 
         <header className={cx('wrapper', {
             'active': header

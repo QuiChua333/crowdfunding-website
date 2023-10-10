@@ -1,0 +1,35 @@
+.wrapper {
+    background-color: #00a671;
+    border-radius: 20px;
+    transition: border-radius .4s,width .4s;
+    width: calc(100% - 240px);
+    &.active {
+        width: 100vw;
+        border-radius: 0;
+    }
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content {
+    
+    color: var(--white);
+    font-size: 3.4rem;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+    max-width: 81.125rem;
+    margin-left: 0;
+    font-weight: 700;
+    padding: 10% 0;
+
+    h2 {
+        font-weight: 700;
+        font-size: 2rem;
+    }
+    .body {
+        font-weight: 400;
+    }
+   
+}
