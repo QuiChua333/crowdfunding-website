@@ -4,7 +4,7 @@ import Upload from '~/pages/Upload'
 import { HeaderOnlyLayout } from '~/components/Layout'
 import { HomeLayout } from '~/components/Layout'
 import Explore from '~/pages/user/Explore'
-import { BasicCampaign, ContentCampaign } from '~/pages/user/Campgains'
+import { BasicCampaign, ContentCampaign } from '~/pages/user/Campaign'
 
 // Public routes
 const publicRoutes = [
