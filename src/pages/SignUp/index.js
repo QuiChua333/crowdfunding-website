@@ -1,8 +1,7 @@
 import React from 'react';
 import classNames from 'classnames/bind';
 import styles from './SignUp.module.scss';
-import icons from '~/assets/icons';
-
+import {FaEye, FaEyeSlash} from "react-icons/fa6"
 const cx = classNames.bind(styles);
 
 function SignUp() {
@@ -40,7 +39,7 @@ function SignUp() {
                             placeholder="Nhập mật khẩu"
                             className={cx('form-control')}
                         />
-                        <img className={cx('eye-icon')} src={icons.eye} alt="eye"/>
+                        <FaEye className={cx('eye-icon')}/>
                     </div>
                     <span className={cx('form-message')}></span>
                 </div>
@@ -57,7 +56,7 @@ function SignUp() {
                             placeholder="Nhập lại mật khẩu"
                             className={cx('form-control')}
                         />
-                        <img className={cx('eye-icon')} src={icons.not_eye} alt="eye"/>
+                        <FaEyeSlash className={cx('eye-icon')}/>
                     </div>
                     
                     <span className={cx('form-message')}></span>

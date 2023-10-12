@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import Sidebar from "../DefaultLayout/Sidebar";
 import Section from "./Section";
-
+import Footer from '../components/Footer'
 function HomeLayout({ children }) {
     return (
         <div>
@@ -13,6 +13,7 @@ function HomeLayout({ children }) {
                     {children}
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }
