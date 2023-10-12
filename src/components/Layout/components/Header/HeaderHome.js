@@ -3,7 +3,7 @@ import { AiOutlineSearch, AiOutlineClose } from "react-icons/ai";
 import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-import styles from './Header2.module.scss'
+import styles from './HeaderHome.module.scss'
 const cx = classNames.bind(styles);
 // Component dùng chung
 function Header2() {
@@ -31,7 +31,7 @@ function Header2() {
 
                 <div className={cx('group')}>
                     <div  className={cx('button-search')}>
-                        <AiOutlineSearch className={cx('icon-search')} />
+                        <a href='/explore/all'><AiOutlineSearch className={cx('icon-search')} /></a>
                     </div>
 
                

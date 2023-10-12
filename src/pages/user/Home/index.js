@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa";
 import { FaAngleLeft } from "react-icons/fa";
 import { AiOutlineRight } from "react-icons/ai";
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
 
 import images from "~/assets/images/category_interest";
 
@@ -13,6 +15,48 @@ import SectionTrust from "./SectionTrust";
 const cx = classNames.bind(styles);
 
 function Home() {
+    const responsive = {
+        superLargeDesktop: {
+          // the naming can be any, depends on you.
+          breakpoint: { max: 4000, min: 3000 },
+          items: 5
+        },
+        desktop: {
+          breakpoint: { max: 3000, min: 1024 },
+          items: 4
+        },
+        tablet: {
+          breakpoint: { max: 1024, min: 464 },
+          items: 3
+        },
+        mobile: {
+          breakpoint: { max: 464, min: 0 },
+          items: 2
+        }
+      };
+      const ButtonGroup = ({ next, previous, goToSlide, ...rest }) => {
+        const { carouselState: { currentSlide } } = rest;
+        return (
+        //     <div className="carousel-button-group mb-4  gap-4 flex justify-end 
+        //     items-center w-full">
+        //       <button className='block p-3 bg-slate-300' onClick={() => 
+        //       previous()}> <FiChevronLeft /></button>
+        //       <button onClick={() => next()}><span className='block p-3 bg-slate-300' ><BiChevronRight /></span></button>
+        //    </div>
+
+           <div className={cx('d-flex','justify-content-between','button-group')} style={{ width: '100px' }} >
+                            <div onClick={() => 
+              previous()} className={cx('icon-switch', 'icon-back')} >
+                                <FaAngleLeft className={cx('icon')} />
+                            </div>
+                            <div onClick={() => next()} className={cx('icon-switch', 'icon-next')}>
+                                <FaAngleRight className={cx('icon')} />
+                            </div>
+                        </div>
+        
+         );
+       };
+     
     return (
         <div className={cx('wrapper')}>
             <div className={cx('inner')}>
@@ -22,20 +66,31 @@ function Home() {
                             DỰ ÁN PHỔ BIẾN
                         </h3>
 
-                        <div className="d-flex justify-content-between" style={{ width: '100px' }}>
+                        {/* <div className={cx('d-flex','justify-content-between','button-group')} style={{ width: '100px' }}>
                             <div className={cx('icon-switch', 'icon-back')}>
                                 <FaAngleLeft className={cx('icon')} />
                             </div>
                             <div className={cx('icon-switch', 'icon-next')}>
                                 <FaAngleRight className={cx('icon')} />
                             </div>
-                        </div>
+                        </div> */}
                     </div>
-                    <div className={cx('d-flex justify-content-between')} style={{ marginTop: '12px' }}>
+                    {/* <div className={cx('d-flex justify-content-between')} style={{ marginTop: '28px' }}>
+                    
                         <ProjectCardItem />
                         <ProjectCardItem />
                         <ProjectCardItem />
                         <ProjectCardItem />
+                    </div> */}
+                    <div  className={cx('carsousel-wrapper')} style={{ marginTop: '28px' }} >
+                    <Carousel  responsive={responsive} arrows={false} renderButtonGroupOutside={true}  customButtonGroup={<ButtonGroup />}>
+                        <ProjectCardItem />
+                        <ProjectCardItem />
+                        <ProjectCardItem />
+                        <ProjectCardItem />
+                        <ProjectCardItem />
+                        <ProjectCardItem />
+                    </Carousel>
                     </div>
                 </div>
                 <div className={cx('category-interest')} style={{ marginTop: '100px' }}>

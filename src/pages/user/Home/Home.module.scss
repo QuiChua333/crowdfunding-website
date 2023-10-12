@@ -129,3 +129,14 @@
     }
 
 }
+
+
+.carsousel-wrapper {
+    position:relative;
+
+    .button-group {
+        position: absolute;
+        top: -60px;
+        right: 0px;
+    }
+}

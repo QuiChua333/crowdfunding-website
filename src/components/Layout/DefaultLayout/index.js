@@ -1,10 +1,10 @@
-import Header from '../components/Header'
+import { HeaderPage } from '../components/Header'
 import Sidebar from './Sidebar'
 
 function DefaultLayout({ children }) {
     return (
         <div>
-            <Header />
+            <HeaderPage />
             <div className='Container'>
                 <Sidebar />
                 <div className='content'>

@@ -1,10 +1,12 @@
-import Header from '../components/Header'
+import {HeaderPage } from "../components/Header";
+
+
 
 function HeaderOnlyLayout({ children }) {
     return (
-        <div>
-            <Header />
-            <div className='Container'>
+        <div >
+            <HeaderPage isFixed={false}/>
+            <div className='Container'> 
                 {children}
             </div>
         </div>
