@@ -3,7 +3,7 @@
     min-width: 230px;
     background-color: #2a2a2a;
     color: #fff;
-    font-size: 14px;
+    font-size: 13px;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -30,7 +30,7 @@
             padding: 1px 5px;
 
             text-transform: uppercase;
-            letter-spacing: 1.2px;
+            letter-spacing: 0.8.2px;
             font-weight: 500;
         }
     
@@ -51,11 +51,12 @@
 
 .navItems  {
     margin-top: 48px;
+   
 }
 
 .navItem  {
     margin-top: 12px;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     text-decoration: none;
     text-transform: uppercase;
     min-height: 50px;
@@ -76,6 +77,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 16px 24px;
+    font-size: 13px;
 }
 
 .navSection  {
@@ -90,7 +92,7 @@
     align-items: center;
     justify-content: space-between;
     color: #c8c8c8;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     text-decoration: none;
     text-transform: uppercase;
     min-height: 50px;
@@ -100,7 +102,7 @@
         background-color: #7a69b3;
     }
     .icon {
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
