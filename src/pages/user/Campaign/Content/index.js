@@ -1,4 +1,5 @@
 import classNames from "classnames/bind";
+import JoditEditor from 'jodit-react';
 import { useState, useEffect, useRef } from "react";
 import { HiCamera } from "react-icons/hi";
 import { MdEdit } from "react-icons/md";
@@ -24,6 +25,8 @@ function ContentCampaign() {
     const [typeIPitch, setTypeIPitch] = useState(1);
     const inputImage = useRef();
     const inputWrapper = useRef();
+    const editor = useRef();
+    const [contentEditor,setContentEditor] = useState('');
     const handleInputVideoUrl = (e) => {
         let value = e.target.value;
         if (value.length > 0) {
@@ -202,10 +205,34 @@ function ContentCampaign() {
 
 
 
-                            <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                <a href="#" className={cx('button-save')} >SAVE & CONTINUE</a>
+
+
+                        </div>
+
+                        <div className={cx('entreSection')}>
+                            <div className={cx('entreField-header')}>
+                                Story <span className={cx('entreField-required')}>*</span>
+                            </div>
+                            <div className={cx('entreField-subHeader')}>
+                                Tell potential contributors more about your campaign. Provide details that will motivate people to contribute. A good pitch is compelling, informative, and easy to digest. Learn more.
                             </div>
 
+                            <div className={cx('entreField-subLabel')}>
+                                Images that are intended to span the width of the story section should have a minimum width of 695 pixels. Images wider than 695 pixels will be resized proportionally.
+                            </div>
+
+                            <div className={cx('jodit-editor')}>
+                                <JoditEditor
+                                    ref={editor}
+                                    value={contentEditor}
+                                    onChange={newContent => setContentEditor(newContent)}
+                                    
+                                />
+                            </div>
+                        </div>
+
+                        <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
+                            <a href="#" className={cx('button-save')} >SAVE & CONTINUE</a>
                         </div>
 
 

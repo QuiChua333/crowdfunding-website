@@ -115,7 +115,7 @@ function BasicCampaign() {
                                                 <img style={{ position: 'relative' }} width="400" height="400" crop="fill" src={selectedImage.preview} />
                                                 <div className={cx('editFile')}>
                                                     <span className={cx('editFile-icon')}><MdEdit style={{ color: '#7a69b3', fontSize: '18px' }} /></span>
-                                                    <span onClick={ (e) => {e.stopPropagation(); inputImage.current.value=null; setSelectedImage(null)} } className={cx('editFile-icon')}><IoCloseSharp style={{ color: '#7a69b3', fontSize: '22px' }} /></span>
+                                                    <span onClick={(e) => { e.stopPropagation(); inputImage.current.value = null; setSelectedImage(null) }} className={cx('editFile-icon')}><IoCloseSharp style={{ color: '#7a69b3', fontSize: '22px' }} /></span>
                                                 </div>
                                             </div>
                                         }
@@ -239,10 +239,12 @@ function BasicCampaign() {
 
                             </div>
 
-                            <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                <a href="#" className={cx('button-save')} >SAVE & CONTINUE</a>
-                            </div>
 
+
+                        </div>
+
+                        <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
+                            <a href="#" className={cx('button-save')} >SAVE & CONTINUE</a>
                         </div>
 
 
