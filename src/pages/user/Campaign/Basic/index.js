@@ -2,6 +2,8 @@ import classNames from "classnames/bind";
 import SidebarCampaign from "../Sidebar";
 import { HeaderPage } from "~/components/Layout/components/Header";
 import { HiCamera } from "react-icons/hi";
+import { MdEdit } from "react-icons/md";
+import { IoCloseSharp } from "react-icons/io5";
 import { useRef, useEffect } from "react";
 import { FaAngleDown } from "react-icons/fa";
 import { AiFillQuestionCircle } from "react-icons/ai";
@@ -18,17 +20,26 @@ function BasicCampaign() {
 
     const inputImage = useRef();
     const inputWrapper = useRef();
+    const [selectedImage, setSelectedImage] = useState(null)
     const [showCategory, setshowCategory] = useState(false);
 
     const handleClickCategorySelector = function () {
         setshowCategory(!showCategory)
     }
 
-    useEffect(() => {
-        inputWrapper.current.onclick = function () {
-            inputImage.current.click();
+    const handlePreviewImage = (event) => {
+        if (event.target.files[0]) {
+            const file = event.target.files[0]
+            file.preview = URL.createObjectURL(file)
+            setSelectedImage(file)
         }
-    }, []);
+    }
+
+    useEffect(() => {
+        return () => {
+            selectedImage && URL.revokeObjectURL(selectedImage.preview)
+        }
+    }, [selectedImage])
     return (
         <div className={cx('wrapper')}>
             <SidebarCampaign current={1} />
@@ -83,19 +94,36 @@ function BasicCampaign() {
                                     640 x 640 recommended resolution, 220 x 220 minimum resolution.
                                 </div>
                                 <div>
-                                    <div className={cx('entreField-input-image')} ref={inputWrapper}>
+                                    <div onClick={() => { inputImage.current.click(); }} className={cx('entreField-input-image')} ref={inputWrapper} >
 
-                                        <div className={cx('tertiaryAction')}>
-                                            <span className={cx('tertiaryAction-icon')}>
-                                                <HiCamera style={{ color: '#7A69B3', fontSize: '18px' }} />
-                                            </span>
+                                        {
+                                            !selectedImage &&
+                                            <div className={cx('tertiaryAction')}>
+                                                <span className={cx('tertiaryAction-icon')}>
+                                                    <HiCamera style={{ color: '#7A69B3', fontSize: '18px' }} />
+                                                </span>
 
-                                            <span className={cx('tertiaryAction-text')}>
-                                                Upload image
-                                            </span>
-                                        </div>
+                                                <span className={cx('tertiaryAction-text')}>
+                                                    Upload image
+                                                </span>
+                                            </div>
+                                        }
+
+                                        {
+                                            selectedImage &&
+                                            <div>
+                                                <img style={{ position: 'relative' }} width="400" height="400" crop="fill" src={selectedImage.preview} />
+                                                <div className={cx('editFile')}>
+                                                    <span className={cx('editFile-icon')}><MdEdit style={{ color: '#7a69b3', fontSize: '18px' }} /></span>
+                                                    <span onClick={ (e) => {e.stopPropagation(); inputImage.current.value=null; setSelectedImage(null)} } className={cx('editFile-icon')}><IoCloseSharp style={{ color: '#7a69b3', fontSize: '22px' }} /></span>
+                                                </div>
+                                            </div>
+                                        }
+
+
                                     </div>
-                                    <input className={cx('entreImage-file')} ref={inputImage} name="file" type="file" accept="image/jpg, image/jpeg, image/png" />
+
+                                    <input onChange={handlePreviewImage} className={cx('entreImage-file')} ref={inputImage} name="file" type="file" accept="image/jpg, image/jpeg, image/png" />
                                 </div>
                             </div>
 
@@ -127,91 +155,91 @@ function BasicCampaign() {
 
                                         <FaAngleDown className={cx('icon', 'icon-down')} />
                                         {
-                                        showCategory &&
-                                        <div className={cx('category-menu')}>
-                                            <div className={cx('categoryMenu-sub')}>
-                                                <div className={cx('categoryMenu-sub-header')}>
-                                                    Tech & Innovation
+                                            showCategory &&
+                                            <div className={cx('category-menu')}>
+                                                <div className={cx('categoryMenu-sub')}>
+                                                    <div className={cx('categoryMenu-sub-header')}>
+                                                        Tech & Innovation
+                                                    </div>
+
+                                                    <div className={cx('categoryMenu-sub-item')}>
+                                                        Audio
+                                                    </div>
+                                                    <div className={cx('categoryMenu-sub-item')}>
+                                                        Camera Gear
+                                                    </div>
+                                                    <div className={cx('categoryMenu-sub-item')}>
+                                                        Education
+                                                    </div>
                                                 </div>
 
-                                                <div className={cx('categoryMenu-sub-item')}>
-                                                    Audio
+                                                <div className={cx('categoryMenu-sub')}>
+                                                    <div className={cx('categoryMenu-sub-header')}>
+                                                        Tech & Innovation
+                                                    </div>
+
+                                                    <div className={cx('categoryMenu-sub-item')}>
+                                                        Audio
+                                                    </div>
+                                                    <div className={cx('categoryMenu-sub-item')}>
+                                                        Camera Gear
+                                                    </div>
+                                                    <div className={cx('categoryMenu-sub-item')}>
+                                                        Education
+                                                    </div>
+                                                    <div className={cx('categoryMenu-sub-item')}>
+                                                        Education
+                                                    </div>
+                                                    <div className={cx('categoryMenu-sub-item')}>
+                                                        Education
+                                                    </div>
+                                                    <div className={cx('categoryMenu-sub-item')}>
+                                                        Education
+                                                    </div>
+                                                    <div className={cx('categoryMenu-sub-item')}>
+                                                        Education
+                                                    </div>
                                                 </div>
-                                                <div className={cx('categoryMenu-sub-item')}>
-                                                    Camera Gear
-                                                </div>
-                                                <div className={cx('categoryMenu-sub-item')}>
-                                                    Education
+
+                                                <div className={cx('categoryMenu-sub')}>
+                                                    <div className={cx('categoryMenu-sub-header')}>
+                                                        Tech & Innovation
+                                                    </div>
+
+                                                    <div className={cx('categoryMenu-sub-item')}>
+                                                        Audio
+                                                    </div>
+                                                    <div className={cx('categoryMenu-sub-item')}>
+                                                        Camera Gear
+                                                    </div>
+                                                    <div className={cx('categoryMenu-sub-item')}>
+                                                        Education
+                                                    </div>
                                                 </div>
                                             </div>
-
-                                            <div className={cx('categoryMenu-sub')}>
-                                                <div className={cx('categoryMenu-sub-header')}>
-                                                    Tech & Innovation
-                                                </div>
-
-                                                <div className={cx('categoryMenu-sub-item')}>
-                                                    Audio
-                                                </div>
-                                                <div className={cx('categoryMenu-sub-item')}>
-                                                    Camera Gear
-                                                </div>
-                                                <div className={cx('categoryMenu-sub-item')}>
-                                                    Education
-                                                </div>
-                                                <div className={cx('categoryMenu-sub-item')}>
-                                                    Education
-                                                </div>
-                                                <div className={cx('categoryMenu-sub-item')}>
-                                                    Education
-                                                </div>
-                                                <div className={cx('categoryMenu-sub-item')}>
-                                                    Education
-                                                </div>
-                                                <div className={cx('categoryMenu-sub-item')}>
-                                                    Education
-                                                </div>
-                                            </div>
-
-                                            <div className={cx('categoryMenu-sub')}>
-                                                <div className={cx('categoryMenu-sub-header')}>
-                                                    Tech & Innovation
-                                                </div>
-
-                                                <div className={cx('categoryMenu-sub-item')}>
-                                                    Audio
-                                                </div>
-                                                <div className={cx('categoryMenu-sub-item')}>
-                                                    Camera Gear
-                                                </div>
-                                                <div className={cx('categoryMenu-sub-item')}>
-                                                    Education
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
+                                        }
 
                                     </a>
-                                   
+
                                 </div>
                             </div>
 
                             <div className={cx('entreField')}>
-                                <label className={cx('entreField-label')}>Campaign Duration <span className={cx('entreField-required')}>*</span>   <AiFillQuestionCircle style={{fontSize: '20px'}}/>
-                                   
-                              </label>
+                                <label className={cx('entreField-label')}>Campaign Duration <span className={cx('entreField-required')}>*</span>   <AiFillQuestionCircle style={{ fontSize: '20px' }} />
+
+                                </label>
                                 <div className={cx('entreField-subLabel')}>
                                     Campaign is scheduled to end on December 2, 2023 at 2:59 PM GMT+7
                                     You are eligible for unlimited extensions up to the 60 day maximum.
                                 </div>
-                             
-                                    <input type="text" className={cx('itext-field')} style={{width: '55px', padding: '5px 10px', textAlign: 'center'}} />
-                                 
-                             
+
+                                <input type="text" className={cx('itext-field')} style={{ width: '55px', padding: '5px 10px', textAlign: 'center' }} />
+
+
 
                             </div>
 
-                            <div style={{marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right'}}>
+                            <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
                                 <a href="#" className={cx('button-save')} >SAVE & CONTINUE</a>
                             </div>
 

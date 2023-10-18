@@ -143,6 +143,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+
 }
 
 .entreImage-file {
@@ -164,7 +166,25 @@
     align-items: center;
     justify-content: center;
 }
+.editFile {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    display: flex;
+}
+.editFile-icon {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eee5f2;
+    border-radius: 50%;
 
+    & + & {
+        margin-left: 8px;
+    }
+}
 .tertiaryAction-text {
     color: #7A69B3;
     margin-left: 10px;

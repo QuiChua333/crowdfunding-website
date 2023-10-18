@@ -1,6 +1,8 @@
 import classNames from "classnames/bind";
 import { useState, useEffect, useRef } from "react";
 import { HiCamera } from "react-icons/hi";
+import { MdEdit } from "react-icons/md";
+import { IoCloseSharp } from "react-icons/io5";
 
 import styles from './Content.module.scss'
 import { HeaderPage } from "~/components/Layout/components/Header";
@@ -17,6 +19,7 @@ function ContentCampaign() {
     const [isAddImage, setAddImage] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null)
     const [urlVideo, setUrlVideo] = useState();
+    const [urlEmbedVideo, setUrlEmbedVideo] = useState();
     const [showErrorUrl, setShowErrorUrl] = useState(false);
     const [typeIPitch, setTypeIPitch] = useState(1);
     const inputImage = useRef();
@@ -29,32 +32,48 @@ function ContentCampaign() {
         else setDisableAddVideo(true)
         setUrlVideo(value);
     }
-    const handleAddVideo = () => {
+    const handleAddVideo = (e) => {
+        e.preventDefault();
         if (!checkLink(urlVideo)) {
             setShowErrorUrl(true)
+            setAddVideo(false)
+
         }
         else {
             setShowErrorUrl(false);
+            const urlEmbedVideo = '//www.youtube.com/embed/' + getId(urlVideo);
+            setUrlEmbedVideo(urlEmbedVideo);
             setAddVideo(true)
         }
     }
 
-    const handleUploadImage = function (event) {
-        if (event.target.files[0])
-        setSelectedImage(event.target.files[0]);
+    const handlePreviewImage = (event) => {
+        if (event.target.files[0]) {
+            const file = event.target.files[0]
+            file.preview = URL.createObjectURL(file)
+            setSelectedImage(file)
+        }
     }
+    const getId = (url) => {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        const match = url.match(regExp);
+
+        return (match && match[2].length === 11)
+            ? match[2]
+            : null;
+    }
+
+    useEffect(() => {
+        return () => {
+            selectedImage && URL.revokeObjectURL(selectedImage.preview)
+        }
+    }, [selectedImage])
 
     const checkLink = (link) => {
         var regex = /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/;
         return regex.test(link)
     }
 
-    useEffect(() => {
-
-        inputWrapper.current.onclick = function () {
-            inputImage.current.click();
-        }
-    }, [typeIPitch]);
     return (
         <div className={cx('wrapper')}>
             <SidebarCampaign current={2} />
@@ -104,7 +123,7 @@ function ContentCampaign() {
 
 
                                 <div className={cx('i-pitchvideo-url', {
-                                    hide: typeIPitch===2
+                                    hide: typeIPitch === 2
                                 })}>
                                     <div className={cx('entreField')} style={{ position: 'relative' }}>
                                         <label className={cx('entreField-label')}>Video URL <span className={cx('entreField-required')}>*</span></label>
@@ -129,7 +148,7 @@ function ContentCampaign() {
                                         <div style={{ marginTop: '10px' }}>
                                             {
                                                 isAddVideo &&
-                                                <iframe src="//cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fwww.youtube.com%2Fembed%2FzAHXsl6fZ1Q%3Ffeature%3Doembed&amp;display_name=YouTube&amp;url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DzAHXsl6fZ1Q&amp;image=https%3A%2F%2Fi.ytimg.com%2Fvi%2FzAHXsl6fZ1Q%2Fhqdefault.jpg&amp;key=a2b78eb2d12f45f9a400a7341cc8e511&amp;type=text%2Fhtml&amp;schema=youtube" width="695" height="460" scrolling="no" title="YouTube embed" frameborder="0" allow="autoplay; fullscreen; encrypted-media; picture-in-picture;" allowfullscreen="true">
+                                                <iframe src={urlEmbedVideo} width="695" height="460" scrolling="no" title="YouTube embed" frameborder="0" allow="autoplay; fullscreen; encrypted-media; picture-in-picture;" allowfullscreen="true">
 
                                                 </iframe>
                                             }
@@ -138,8 +157,8 @@ function ContentCampaign() {
                                     </div>
                                 </div>
 
-                                <div className={cx('i-pitchimage-uploader',{
-                                    hide: typeIPitch===1
+                                <div className={cx('i-pitchimage-uploader', {
+                                    hide: typeIPitch === 1
                                 })}>
                                     <div className={cx('entreField')}>
                                         <label className={cx('entreField-label')}>Pitch Image <span className={cx('entreField-required')}>*</span></label>
@@ -148,7 +167,7 @@ function ContentCampaign() {
                                             695 x 460 recommended resolution.
                                         </div>
                                         <div>
-                                            <div className={cx('entreField-input-image', 'entreField-input-image-content')} ref={inputWrapper}>
+                                            <div onClick={() => { inputImage.current.click() }} className={cx('entreField-input-image', 'entreField-input-image-content')} ref={inputWrapper}>
 
                                                 {
                                                     !selectedImage &&
@@ -166,12 +185,16 @@ function ContentCampaign() {
                                                 {
                                                     selectedImage &&
                                                     <div className={cx('image-upload')}>
-                                                        <img style={{ objectFit: 'cover' }} width="695" height="460" crop="fill" src={URL.createObjectURL(selectedImage)}></img>
+                                                        <img style={{ position: 'relative' }} width="695" height="460" crop="fill" src={selectedImage.preview} />
+                                                        <div className={cx('editFile')}>
+                                                            <span className={cx('editFile-icon')}><MdEdit style={{ color: '#7a69b3', fontSize: '18px' }} /></span>
+                                                            <span onClick={(e) => { e.stopPropagation(); inputImage.current.value = null; setSelectedImage(null) }} className={cx('editFile-icon')}><IoCloseSharp style={{ color: '#7a69b3', fontSize: '22px' }} /></span>
+                                                        </div>
 
                                                     </div>
                                                 }
                                             </div>
-                                            <input onChange={handleUploadImage} className={cx('entreImage-file')} ref={inputImage} name="file" type="file" accept="image/jpg, image/jpeg, image/png" />
+                                            <input onChange={handlePreviewImage} className={cx('entreImage-file')} ref={inputImage} name="file" type="file" accept="image/jpg, image/jpeg, image/png" />
                                         </div>
                                     </div>
                                 </div>
