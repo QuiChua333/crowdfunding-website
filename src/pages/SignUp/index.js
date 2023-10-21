@@ -69,8 +69,8 @@ function SignUp() {
 
             <div className={cx('container-img')}>
                 <p className={cx('title-bg')}>Đăng Ký</p>
-                <span>Hãy tạo tài khoản với GiveFund</span>
-                <span>Nếu đã có tài khoản hãy đi đến đăng nhập</span>
+                <span className={cx('text-italic')}>Hãy tạo tài khoản với GiveFund</span>
+                <span className={cx('text-italic')}>Nếu đã có tài khoản hãy đi đến đăng nhập</span>
                 <button className={cx('button-login')}>Đăng Nhập</button>
             </div>
         </div>

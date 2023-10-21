@@ -56,8 +56,8 @@ function Login() {
 
             <div className={cx('container-img')}>
                 <p className={cx('title-bg')}>Đăng Nhập</p>
-                <span>GiveFund một nền tảng gây quỹ cộng đồng</span>
-                <span>Nếu bạn chưa có tài khoản hãy đăng ký để trải nghiệm</span>
+                <span className={cx('text-italic')}>GiveFund một nền tảng gây quỹ cộng đồng</span>
+                <span className={cx('text-italic')}>Nếu bạn chưa có tài khoản hãy đăng ký để trải nghiệm</span>
                 <button className={cx('button-login')}>Đăng Ký</button>
             </div>
         </div>

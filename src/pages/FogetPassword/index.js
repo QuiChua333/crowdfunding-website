@@ -40,7 +40,7 @@ function ForgetPassword() {
 
             <div className={cx('container-img')}>
                 <p className={cx('title-bg')}>Quên mật khẩu</p>
-                <span>Đừng lo chúng tôi đang giúp bạn lấy lại mật khẩu</span>
+                <span className={cx('text-italic')}>Đừng lo chúng tôi đang giúp bạn lấy lại mật khẩu</span>
                 <button className={cx('button-login')}>Đăng Nhập</button>
             </div>
         </div>
