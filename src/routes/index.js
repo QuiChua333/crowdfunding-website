@@ -8,6 +8,7 @@ import SignUp from '~/pages/SignUp'
 import Login from '~/pages/Login'
 import ForgetPassword from '~/pages/FogetPassword'
 import { BasicCampaign, ContentCampaign } from '~/pages/user/Campaign'
+import DetailProject from '~/pages/DetailProject'
 
 // Public routes
 const publicRoutes = [
@@ -20,6 +21,7 @@ const publicRoutes = [
     { path: '/sign-up', component: SignUp, layout: null},
     { path: '/login', component: Login, layout: null},
     { path: '/forgot', component: ForgetPassword, layout: null},
+    { path: '/project/:id/detail', component: DetailProject, layout: DefaultLayout},
 ]
 
 const privateRoutes = [
