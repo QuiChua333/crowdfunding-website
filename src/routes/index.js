@@ -4,6 +4,9 @@ import Upload from '~/pages/Upload'
 import { DefaultLayout, HeaderOnlyLayout } from '~/components/Layout'
 import { HomeLayout } from '~/components/Layout'
 import Explore from '~/pages/user/Explore'
+import SignUp from '~/pages/SignUp'
+import Login from '~/pages/Login'
+import ForgetPassword from '~/pages/FogetPassword'
 import { BasicCampaign, ContentCampaign } from '~/pages/user/Campaign'
 
 // Public routes
