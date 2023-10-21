@@ -48,17 +48,19 @@ function BasicCampaign() {
                 <HeaderPage isFixed={false} />
 
                 <div className={cx('content')}>
-                    <div className={cx('controlBar')}>
-                        <div className={cx('controlBar-content')}>
-                            Campaign / Basics
+                <div className={cx('controlBar')}>
+                        <div className={cx('controlBar-container')}>
+                            <div className={cx('controlBar-content')}>
+                                Campaign / Basic
+                            </div>
+                            <div className={cx('controlBar-controls')}>
+                                <a href="#" className={cx('controls-save')}>Save Campaign</a>
+                                <a href="#" className={cx('controls-launch')}>Review & Launch</a>
+                            </div>
                         </div>
-                        <div className={cx('controlBar-controls')}>
-                            <a href="#" className={cx('controls-save')}>Save Campaign</a>
-                            <a href="#" className={cx('controls-launch')}>Review & Launch</a>
-                        </div>
-                    </div>
-                    <div className={cx('controlBar-loadingBar')}>
+                        <div className={cx('controlBar-loadingBar')}>
 
+                        </div>
                     </div>
                     <div className={cx('body')}>
                         <div className={cx('entreSection')}>
@@ -239,13 +241,13 @@ function BasicCampaign() {
 
                             </div>
 
-
-
-                        </div>
-
-                        <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
+                            <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
                             <a href="#" className={cx('button-save')} >SAVE & CONTINUE</a>
                         </div>
+
+                        </div>
+
+                        
 
 
                     </div>
