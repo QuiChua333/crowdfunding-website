@@ -46,7 +46,8 @@ function ProjectCardItem() {
                     </div>
 
                     <div className={cx('days-left')}>
-                        <span><AiFillClockCircle /></span> 2 days left
+                         <AiFillClockCircle style={{color: 'rgb(173 172 172)'}}/>
+                        <span>2 days left</span> 
                         
                     </div>
 
