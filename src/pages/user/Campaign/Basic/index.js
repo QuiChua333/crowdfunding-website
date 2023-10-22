@@ -11,7 +11,7 @@ import { useState } from "react";
 
 
 
-import styles from './Basic.module.scss'
+import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
 
 
 const cx = classNames.bind(styles);

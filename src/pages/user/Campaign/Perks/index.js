@@ -15,7 +15,7 @@ import images from "~/assets/images";
 
 
 
-import styles from './Perks.module.scss'
+import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
 
 
 const cx = classNames.bind(styles);
@@ -58,7 +58,7 @@ function PerksCampaign() {
                                 <div style={{ marginTop: '40px' }}>Let's get started</div>
 
                                 <div style={{ marginTop: '40px' }}>
-                                    <a href="#" className={cx('button-create')} >CREATE NEW PERK</a>
+                                    <a href="/campaigns/:id/edit/perks/new" className={cx('button-save')} style={{fontSize: '16px'}} >CREATE NEW PERK</a>
                                 </div>
 
                                 

@@ -11,7 +11,7 @@ import { FaPlus } from "react-icons/fa";
 
 
 
-import styles from './Content.module.scss'
+import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
 import { HeaderPage } from "~/components/Layout/components/Header";
 import SidebarCampaign from "../Sidebar";
 import FAQ from "./FAQ";

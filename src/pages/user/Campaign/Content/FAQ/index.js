@@ -1,10 +1,10 @@
 import classNames from "classnames/bind";
 import { IoCloseSharp } from "react-icons/io5";
 
-
-import styles from './FAQ.module.scss'
 import { useEffect, useState } from "react";
-const cx = classNames.bind(styles)
+import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
+
+const cx =classNames.bind(styles)
 
 function FAQ({ isShowClose, index, removeFAQ, updateValueFAQ, value}) {
 
