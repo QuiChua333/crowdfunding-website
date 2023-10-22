@@ -1,6 +1,7 @@
 import classNames from "classnames/bind";
 import { useState } from "react";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 
 import styles from './Sidebar.module.scss'
@@ -10,7 +11,7 @@ const cx = classNames.bind(styles);
 
 function SidebarCampaign({current}) {
 
-    const [downEditor,setDownEditor] = useState(false);
+    const [downEditor,setDownEditor] = useState(true);
 
     const handleClickSection = function (event) {
         event.preventDefault();
@@ -54,29 +55,29 @@ function SidebarCampaign({current}) {
                             <div className={cx('navItem--child', 'navItem', {
                                 'navItem--current': current ===1
                             })}>
-                                <a href="#" className={cx('navItem-link')}>
+                                <Link to="/campaigns/:id/edit/basic" className={cx('navItem-link')}>
                                     <div>
                                         1. Basics
                                     </div>
-                                </a>
+                                </Link>
                             </div>
                             <div className={cx('navItem--child','navItem', {
                                 'navItem--current': current ===2
                             })}>
-                                <a href="#" className={cx('navItem-link')}>
+                                <Link to="/campaigns/:id/edit/story" className={cx('navItem-link')}>
                                     <div>
                                         2. Content
                                     </div>
-                                </a>
+                                </Link>
                             </div>
                             <div className={cx('navItem--child','navItem', {
                                 'navItem--current': current ===3
                             })}>
-                                <a href="#" className={cx('navItem-link')}>
+                                <Link to="/campaigns/:id/edit/perks/table" className={cx('navItem-link')}>
                                     <div>
                                         3. Perks
                                     </div>
-                                </a>
+                                </Link>
                             </div>
                         </div>
                         }

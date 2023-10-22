@@ -48,7 +48,7 @@ function BasicCampaign() {
                 <HeaderPage isFixed={false} />
 
                 <div className={cx('content')}>
-                <div className={cx('controlBar')}>
+                    <div className={cx('controlBar')}>
                         <div className={cx('controlBar-container')}>
                             <div className={cx('controlBar-content')}>
                                 Campaign / Basic
@@ -242,12 +242,12 @@ function BasicCampaign() {
                             </div>
 
                             <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                            <a href="#" className={cx('button-save')} >SAVE & CONTINUE</a>
-                        </div>
+                                <a href="#" className={cx('button-save')} >SAVE & CONTINUE</a>
+                            </div>
 
                         </div>
 
-                        
+
 
 
                     </div>
