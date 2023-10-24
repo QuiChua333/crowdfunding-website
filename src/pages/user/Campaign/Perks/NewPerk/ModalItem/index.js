@@ -46,9 +46,15 @@ function ModalItem({ setShowModal, addNewItem }) {
         setListOption(prev => {
             const nextState = prev.map((item, index) => {
                 if (index === indexA) {
-                    item.value.splice(indexB,1);
+                    // item.value.splice(indexB,1);
+                    return {
+                        ...item,
+                        value: item.value.filter((item,index2) => {
+                            return index2!==indexB
+                        })
+                    }
                 } 
-                return item;
+                else return item;
             })
             return nextState;
         })

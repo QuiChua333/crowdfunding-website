@@ -90,7 +90,6 @@ function ContentCampaign() {
         setValFAQ(prev => {
             const nextState = [...prev]
             nextState.splice(index, 1)
-            console.log(nextState)
             return nextState;
         })
     }
@@ -100,7 +99,6 @@ function ContentCampaign() {
 
             const nexState = [...prev];
             nexState[index] = { ...value };
-            console.log(nexState);
             return nexState;
         })
     }
