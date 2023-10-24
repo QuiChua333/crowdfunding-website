@@ -1,0 +1,54 @@
+.btn-close {
+    font-size: 42px;
+    width: 50px;
+    text-align: center;
+    align-self: flex-end;
+    margin-right: 10px;
+    color: #747474;
+    &:hover{
+        color: #000;
+        cursor: pointer;
+    }
+}
+
+.input-price{
+    width: 50%; 
+    border: 1px solid #ccc;
+    height: 46px;
+    padding: 0 10px;
+    font-size: 18px;
+    font-weight: 200;
+    border-radius: 2px;
+    &:focus {
+        border: 1px solid #858585;
+    }
+}
+
+.input-price::-webkit-outer-spin-button,
+.input-price::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance: textfield; /* Firefox */
+}
+
+
+.btn-continue {
+    width: 30%;
+    height: 46px;
+    background-color: #000;
+    color: #fff;
+    border-radius: 2px;
+    font-weight: 400;
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+.modal::-webkit-scrollbar {
+    display: none;
+}
+

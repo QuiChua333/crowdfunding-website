@@ -8,6 +8,8 @@
 .container-1 {
     display: flex;
     margin: 20px 130px;
+    border-bottom: 1px solid #c8c8c8;
+    padding-bottom: 40px;
 }
 
 .container-left {
@@ -83,4 +85,29 @@
           -ms-user-select: none; /* Internet Explorer/Edge */
               user-select: none; /* Non-prefixed version, currently
                                     supported by Chrome, Edge, Opera and Firefox */
+  }
+
+  .item-tab-header {
+    margin: 0 30px;
+    cursor: pointer;
+    color: #2a2a2a;
+    font-size: 18px;
+    font-weight: 100;
+    border-bottom: 3px solid transparent;
+    display: flex;
+    align-items: center;
+    &:hover {
+        border-bottom: 3px solid #c8c8c8;
+    }
+  }
+
+  .item-tab-header-clicked {
+    margin: 0 30px;
+    cursor: pointer;
+    color: #2a2a2a;
+    font-size: 20px;
+    font-weight: 500;
+    border-bottom: 3px solid #000;
+    display: flex;
+    align-items: center;
   }
