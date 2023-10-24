@@ -54,8 +54,8 @@ function BasicCampaign() {
                                 Campaign / Basic
                             </div>
                             <div className={cx('controlBar-controls')}>
-                                <a href="#" className={cx('controls-save')}>Save Campaign</a>
-                                <a href="#" className={cx('controls-launch')}>Review & Launch</a>
+                                <a href="#" className={cx('btn','btn-cancel')}>Save Campaign</a>
+                                <a href="#" className={cx('btn','btn-ok')}>Review & Launch</a>
                             </div>
                         </div>
                         <div className={cx('controlBar-loadingBar')}>
@@ -96,7 +96,7 @@ function BasicCampaign() {
                                     640 x 640 recommended resolution, 220 x 220 minimum resolution.
                                 </div>
                                 <div>
-                                    <div onClick={() => { inputImage.current.click(); }} className={cx('entreField-input-image')} ref={inputWrapper} >
+                                    <div onClick={() => { inputImage.current.click(); }} className={cx('entreField-input-image')} style={{width: '400px', height: '400px'}} ref={inputWrapper} >
 
                                         {
                                             !selectedImage &&
@@ -242,7 +242,7 @@ function BasicCampaign() {
                             </div>
 
                             <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                <a href="#" className={cx('button-save')} >SAVE & CONTINUE</a>
+                                <a href="#" className={cx('btn','btn-ok')} >SAVE & CONTINUE</a>
                             </div>
 
                         </div>

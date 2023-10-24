@@ -129,8 +129,8 @@ function ContentCampaign() {
                                 Campaign / Content
                             </div>
                             <div className={cx('controlBar-controls')}>
-                                <a href="#" className={cx('controls-save')}>Save Campaign</a>
-                                <a href="#" className={cx('controls-launch')}>Review & Launch</a>
+                                <a href="#" className={cx('btn','btn-cancel')}>Save Campaign</a>
+                                <a href="#" className={cx('btn','btn-ok')}>Review & Launch</a>
                             </div>
                         </div>
                         <div className={cx('controlBar-loadingBar')}>
@@ -176,7 +176,7 @@ function ContentCampaign() {
                                         </div>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <input onChange={handleInputVideoUrl} type="text" placeholder="http://" className={cx('itext-field')} style={{ flex: '1' }} />
-                                            <a onClick={handleAddVideo} href="#" className={cx('button-add-video', {
+                                            <a onClick={handleAddVideo} href="#" className={cx('btn-add-video', {
                                                 disabled: disableAddVideo
                                             })} >ADD VIDEO</a>
                                         </div>
@@ -211,7 +211,7 @@ function ContentCampaign() {
                                             695 x 460 recommended resolution.
                                         </div>
                                         <div>
-                                            <div onClick={() => { inputImage.current.click() }} className={cx('entreField-input-image', 'entreField-input-image-content')} ref={inputWrapper}>
+                                            <div onClick={() => { inputImage.current.click() }} className={cx('entreField-input-image')} style={{width: '695px', height: '460px'}} ref={inputWrapper}>
 
                                                 {
                                                     !selectedImage &&

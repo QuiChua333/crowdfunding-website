@@ -12,20 +12,22 @@ import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scs
 const cx = classNames.bind(styles);
 
 
-function ModalItem({ setShowModal }) {
+function ModalItem({ setShowModal, addNewItem }) {
 
+    const [itemName,setItemName] = useState('');
     const [chooseOption, setChooseOption] = useState(false);
-    const [listOption, setListOption] = useState([{ name: '', value: [] }])
+    const [listOption, setListOption] = useState(null)
     const [showBtnAddOption, setShowBtnAddOption] = useState(true)
     const noCheckOptionElement = useRef(null)   
     const handleClickOption = () => {
         setChooseOption(true)
+        setListOption([{ name: '', value: [] }]);
 
     }
 
     const handleClickNoOption = () => {
         setChooseOption(false)
-        setListOption([{ name: '', value: [] }])
+        setListOption(null)
     }
     const handleClickAddOption = () => {
         setListOption(prev => [...prev, { name: '', value: [] }])
@@ -39,36 +41,67 @@ function ModalItem({ setShowModal }) {
         })
     }
 
+    const handleClickRemoveMiniValue = (indexA,indexB) => {
+
+        setListOption(prev => {
+            const nextState = prev.map((item, index) => {
+                if (index === indexA) {
+                    item.value.splice(indexB,1);
+                } 
+                return item;
+            })
+            return nextState;
+        })
+    }
+
     const handleKeyUpInputTag = (e, indexChange) => {
         if (e.key === 'Enter' || e.keyCode === 13) {
                 if (e.target.value.trim() !== "") {
+                    const newValue = e.target.value;
                     setListOption(prev => {
                         const nextState = prev.map((item, index) => {
                             if (index === indexChange) {
-    
-                                return { ...item, value: [...item.value, e.target.value] }
-                            }
+                                return { ...item, value: [...item.value, newValue] }
+                            } else return item;
                         })
-                        e.target.value = '';
+                        e.target.value='';
                         return nextState;
                     })
                 }
+         
             
       
             
 
         }
     }
+
+    const handleChangeInputTagName = (e,indexChange) => {
+        const name = e.target.value;
+        setListOption(prev => {
+            const nextState = prev.map((item, index) => {
+                if (index === indexChange) {
+                    return { ...item, name: name}
+                } else return item;
+            })
+            return nextState;
+        })
+    }
+
+    const handleClickSaveItem = () => {
+        const newItem = {itemName, listOption, quantity: 1};
+        addNewItem(newItem);
+        setShowModal(false)
+    }
     useEffect(() => {
         noCheckOptionElement.current.checked = true;
     }, []);
     useEffect(() => {
-        if (listOption.length === 3) {
+        if (listOption?.length === 3) {
             setShowBtnAddOption(false);
-        } else if (listOption.length < 3) {
+        } else if (listOption?.length < 3) {
             setShowBtnAddOption(true);
         }
-        console.log(listOption)
     }, [listOption]);
     return (
         <div className={cx('modal-wrapper')}>
@@ -82,7 +115,7 @@ function ModalItem({ setShowModal }) {
                             <div className={cx('entreField-subLabel')}>
                                 Use a concise and obvious name for the item.
                             </div>
-                            <input type="text" className={cx('itext-field')} />
+                            <input onChange={(e) => setItemName(e.target.value)} type="text" className={cx('itext-field')} value={itemName}/>
                             <div className={cx('entreField-validationLabel')}>30</div>
                         </div>
 
@@ -122,22 +155,22 @@ function ModalItem({ setShowModal }) {
                                         return (
                                             <div key={indexA} style={{ display: 'flex', marginTop: '8px' }}>
                                                 <div class='col-4' style={{ padding: '6px' }}>
-                                                    <input type="text" className={cx('itext-field')} placeholder="Size" />
+                                                    <input onChange={(e) => handleChangeInputTagName(e,indexA)} type="text" className={cx('itext-field')} placeholder="Size" />
                                                 </div>
                                                 <div class='col-7' style={{ padding: '6px' }} >
 
                                                     <div className={cx('inputTags')}>
                                                         {listOption[indexA].value.map((itemB, indexB) => {
                                                             return (
-                                                                <span key={indexB} className={cx('inputTags-tag')}>{itemB}<span style={{ color: '#7a69b3', marginLeft: '8px', cursor: 'pointer', fontSize: '16px', marginTop: '-2px' }}><IoCloseSharp /></span></span>
+                                                                <span key={indexB} className={cx('inputTags-tag')}>{itemB}<span onClick={() => handleClickRemoveMiniValue(indexA,indexB)} style={{ color: '#7a69b3', marginLeft: '8px', cursor: 'pointer', fontSize: '16px', marginTop: '-2px' }}><IoCloseSharp /></span></span>
                                                             )
                                                         })}
 
-                                                        <input onKeyUp={(e) => handleKeyUpInputTag(e, indexA)} id={'vld' + indexA} placeholder={itemA.value.length === 0 && "Small, Medium, Large"} maxlength="30" className={cx('itext-field')}  />
+                                                        <input  onKeyUp={(e) => handleKeyUpInputTag(e, indexA)}  placeholder={itemA.value.length === 0 && "Small, Medium, Large"} maxlength="30" className={cx('itext-field')}  />
                                                     </div>
                                                 </div>
                                                 {
-                                                    listOption.length > 1 &&
+                                                    listOption?.length > 1 &&
                                                     <div class='col'>
                                                         <div onClick={() => handleClickClose(indexA)} style={{ cursor: 'pointer', marginTop: '16px' }}>
                                                             <span style={{ padding: '5px 8px', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginLeft: '12px' }}><IoCloseSharp /></span>
@@ -164,8 +197,9 @@ function ModalItem({ setShowModal }) {
                     </div>
                     <div className={cx('modalContent-footer')}>
                         <div className={cx('controlBar-controls')}>
-                            <a href="#" className={cx('controls-save')}>CANCEL</a>
-                            <a href="#" className={cx('controls-launch')}>SAVE ITEM</a>
+                            <span onClick={() => setShowModal(false)} className={cx('btn','btn-cancel')}>CANCEL</span>
+                            <span onClick={handleClickSaveItem} className={cx('btn','btn-ok')}>SAVE ITEM</span>
+                            {/* <a href="#" className={cx('btn','btn-ok')}>SAVE ITEM</a> */}
                         </div>
                     </div>
 

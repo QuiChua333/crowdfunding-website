@@ -36,8 +36,8 @@ function PerksCampaign() {
                                 Campaign / Perks
                             </div>
                             <div className={cx('controlBar-controls')}>
-                                <a href="#" className={cx('controls-save')}>Save Campaign</a>
-                                <a href="#" className={cx('controls-launch')}>Review & Launch</a>
+                                <a href="#" className={cx('btn','btn-cancel')}>Save Campaign</a>
+                                <a href="#" className={cx('btn','btn-ok')}>Review & Launch</a>
                             </div>
                         </div>
                         <div className={cx('controlBar-loadingBar')}>
@@ -58,7 +58,7 @@ function PerksCampaign() {
                                 <div style={{ marginTop: '40px' }}>Let's get started</div>
 
                                 <div style={{ marginTop: '40px' }}>
-                                    <a href="/campaigns/:id/edit/perks/new" className={cx('button-save')} style={{fontSize: '16px'}} >CREATE NEW PERK</a>
+                                    <a href="/campaigns/:id/edit/perks/new" className={cx('btn','btn-ok')} style={{fontSize: '16px'}} >CREATE NEW PERK</a>
                                 </div>
 
                                 
@@ -67,7 +67,7 @@ function PerksCampaign() {
                           
                         </div>
                         <div style={{ marginTop: '60px',  marginBottom: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                <a href="#" className={cx('button-save')} >CONTINUE</a>
+                                <a href="#" className={cx('btn','btn-ok')} >CONTINUE</a>
                             </div>
                     </div>
                 </div>

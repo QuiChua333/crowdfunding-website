@@ -33,10 +33,10 @@
 
 }
 
-.controlBar-controls {
-    a {
-   
-        font-weight: 600;
+
+
+.btn {
+    font-weight: 600;
         font-size: 13px;
         line-height: 12px;
         text-transform: uppercase;
@@ -44,21 +44,17 @@
         padding: 14px 15px;
         min-height: 40px;
         min-width: 86px;
-    }
+        cursor: pointer;
 
-    .controls-save {
-        background-color: transparent;
-        color: #7A69B3;
-
-        &:hover {
-            background-color: #EEE5F2;
-            border-color: #EEE5F2;
-            color: #7A69B3;
+        &.disabled {
+            pointer-events: none;
+            cursor: default;
+            background-color: #C8C8C8;
         }
-    }
+}
 
-    .controls-launch {
-        background-color: #7A69B3;
+.btn-ok {
+    background-color: #7A69B3;
         border: none;
         color: #ffffff;
         margin-left: 16px;
@@ -67,6 +63,17 @@
             background-color: #6653a5;
             color: #ffffff;
         }
+}
+
+.btn-cancel {
+
+    background-color: transparent;
+    color: #7A69B3;
+
+    &:hover {
+        background-color: #EEE5F2;
+        border-color: #EEE5F2;
+        color: #7A69B3;
     }
 }
 
@@ -157,8 +164,6 @@
 }
 
 .entreField-input-image {
-    width: 400px;
-    height: 400px;
     border: 1px solid #C8C8C8;
     background: #ffffff;
     cursor: pointer;
@@ -284,24 +289,7 @@
 
 }
 
-.button-save {
-    font-weight: 600;
-    font-size: 13px;
-    line-height: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 14px 15px;
-    min-height: 40px;
-    min-width: 86px;
-    background-color: #7A69B3;
-    border: none;
-    color: #ffffff;
 
-        &:hover {
-            background-color: #6653a5;
-            color: #ffffff;
-        }
-}
 
 // Content
 .editFile {
@@ -324,12 +312,9 @@
     }
 }
 
-.entreField-input-image.entreField-input-image-content {
-    width: 695px;
-    height: 460px;
-}
 
-.button-add-video {
+
+.btn-add-video {
     font-weight: 600;
     font-size: 13px;
     line-height: 12px;
@@ -522,7 +507,13 @@
         background-color: #fff;
         box-shadow: 0 2px 6px -4px rgba(0,0,0,.2), 0 8px 10px -4px rgba(0,0,0,.14), 0 8px 12px 4px rgba(0,0,0,.05);
         border-radius: 2px;
+        left: 50px;
         animation: modalIn linear 0.2s;
+ 
+    }
+
+    .modal-wrapper.out .modal-container {
+        animation: modalOut linear 0.2s;
     }
 
     
@@ -536,41 +527,14 @@
         padding: 32px 16px;
         border-top: 1px solid #c8c8c8;
 
-        .controls-save {
-            border: 1px solid #c8c8c8;
-            transition: all .1s cubic-bezier(.16,.8,.45,1);
-            &:hover {
-                border-color: #949494;
-                background-color: #fafafa;
-            }
-        }
     }
-
-    .button-close {
-        position: absolute;
-        right: 8px;
-        top: 8px;
-        display: flex;
-        cursor: pointer;
-        &:hover .icon-close {
-            opacity: 0.7;
-        }
-    
-        .icon-close {
-            font-size: 36px;
-            margin: auto;
-            opacity: 0.5;
-    
-        }
-    }
-
 
     .inputDoubleField-headers {
         margin-bottom: 4px;
         font-weight: 600;
         font-size: 16px;
     }
-
+    
     .inputTags {
         background-color: #fff;
         border: 1px solid #ddd;
@@ -581,7 +545,7 @@
         flex-wrap: wrap;
         padding: 8px 12px 0 12px;
         min-height: 50px;
-
+    
         .inputTags-tag {
             align-items: center;
             background-color: #eee5f2;
@@ -593,7 +557,7 @@
             padding: 0 8px;
             height: 30px;
         }
-
+    
         input {
             border: none;
             padding: 1px 2px;
@@ -603,12 +567,36 @@
             max-width: 100%;
         }
     }
+
+    
+
+
+    
     
 }
 
 
+.button-close {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    display: flex;
+    cursor: pointer;
+    &:hover .icon-close {
+        opacity: 0.7;
+    }
+
+    .icon-close {
+        font-size: 36px;
+        margin: auto;
+        opacity: 0.5;
+
+    }
+}
+
+
 @keyframes modalIn {
-       0% {
+    0% {
         transform: translateY(5%) ;
         opacity: 0;
     }
@@ -621,5 +609,13 @@
 
 
 @keyframes modalOut {
+    0% {
+        transform: translateY(0%) ;
+        opacity: 1;
+    }
     
+    100% {  
+        transform: translateY(5%) ;
+        opacity: 0;
+    }
 }
