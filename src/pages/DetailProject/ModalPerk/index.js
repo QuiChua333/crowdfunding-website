@@ -8,7 +8,7 @@ const cx = classNames.bind(styles);
 function ModalPerk(props) {
   return (
     <div style={{width: '100%', height: '100%', position: 'fixed', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)', top: '0', zIndex: '1000'}} onClick={props.close}>
-        <div className={cx('modal')} style={{overflowY: 'scroll', width: '450px', backgroundColor: '#fff', height: '90%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '50px', borderRadius: '4px'}}>
+        <div onClick={(e) => e.stopPropagation()} className={cx('modal')} style={{overflowY: 'scroll', width: '450px', backgroundColor: '#fff', height: '90%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '50px', borderRadius: '4px'}}>
             <span className={cx('btn-close')} role='button' onClick={props.close}>&times;</span>
             <p style={{fontSize: '22px', marginTop: '-40px', fontWeight: '500'}}>Back this project</p>
             <div style={{marginTop: '30px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '90%'}}>
@@ -25,7 +25,7 @@ function ModalPerk(props) {
 
                 <div style={{height: 'auto'}}>
                             {[1, 2, 3, 4, 5].map((item, index) => {
-                                return <PerlItem key={index} setIsOpenModalOption = {props.setIsOpenModalOption}/>;
+                                return <PerlItem key={index} setIsOpenModalOption = {props.setIsOpenModalOption} closePerkModal={props.close}/>;
                             })}
                 </div>
             </div>

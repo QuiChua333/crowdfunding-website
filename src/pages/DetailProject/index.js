@@ -275,7 +275,7 @@ function DetailProject() {
                 </div>
             </div>
             <Footer />
-            {isOpenModalOption && <ModalOptionPerk close={() => setIsOpenModalOption(false)}/>}
+            {isOpenModalOption && <ModalOptionPerk close={() => setIsOpenModalOption(false)} setIsOpenModal={setIsOpenModal}/>}
             {isOpenModal && <ModalPerk close={() => setIsOpenModal(false)}  setIsOpenModalOption = {setIsOpenModalOption} />}
         </div>
     );

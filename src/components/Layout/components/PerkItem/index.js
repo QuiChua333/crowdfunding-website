@@ -5,7 +5,7 @@ import styles from './PerkItem.module.scss';
 
 const cx = classNames.bind(styles);
 
-function PerkItem({ isPage, isShowButton = true , setIsOpenModalOption}) {
+function PerkItem({ isPage, isShowButton = true , setIsOpenModalOption, closePerkModal}) {
     const [showMore, setShowMore] = useState(!isPage);
     const handleClickItem = () => {
         if (isPage) {
@@ -46,7 +46,7 @@ function PerkItem({ isPage, isShowButton = true , setIsOpenModalOption}) {
                         <p style={{ fontSize: '16px', fontWeight: '200' }}>Ships worldwide.</p>
 
                         {isShowButton && (
-                            <button type="button" className={cx('btn-getPerk')} onClick={() => setIsOpenModalOption(true)}>
+                            <button type="button" className={cx('btn-getPerk')} onClick={() => { closePerkModal(); setIsOpenModalOption(true)}}>
                                 GET THIS PERK
                             </button>
                         )}

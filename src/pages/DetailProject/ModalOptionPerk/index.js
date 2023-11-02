@@ -5,7 +5,7 @@ import PerlItem from '~/components/Layout/components/PerkItem';
 
 const cx = classNames.bind(styles);
 
-function ModalOptionPerk({close}) {
+function ModalOptionPerk({close, setIsOpenModal}) {
     const gifts = [
         {
             name: 'Neakasa M1',
@@ -53,9 +53,10 @@ function ModalOptionPerk({close}) {
                 alignItems: 'center',
                 justifyContent: 'center',
             }}
-            onClick={close}
+            onClick={() => {setIsOpenModal(true);close()}}
         >
             <div
+              onClick={(e) => e.stopPropagation()}  
                 style={{
                     width: '50%',
                     height: '600px',
@@ -64,10 +65,11 @@ function ModalOptionPerk({close}) {
                     display: 'flex',
                     flexDirection: 'column',
                 }}
+               
             >
                 <div style={{ display: 'flex', margin: '10px 30px 0px', justifyContent: 'space-between' }}>
                     <span style={{ fontSize: '26px', fontWeight: '500', margin: '10px 0 0 10px' }}>Your Perk</span>
-                    <span role="button" className={cx('btn-close')} onClick={close}>
+                    <span role="button" className={cx('btn-close')} onClick={() => {setIsOpenModal(true);close()}}>
                         &times;
                     </span>
                 </div>
