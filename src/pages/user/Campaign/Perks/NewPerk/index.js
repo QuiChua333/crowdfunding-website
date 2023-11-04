@@ -160,9 +160,6 @@ function NewPerk() {
     useEffect(() => {
         noCheckShipElement.current.checked = true;
     }, [])
-    useEffect(() => {
-        console.log(listShip)
-    },[listShip])
    
 
     return (
@@ -205,7 +202,7 @@ function NewPerk() {
                                 </div>
                                 <div style={{ marginTop: '16px' }}>
                                     <label className={cx('inputRadioGroup-radio')}>
-                                        <input type="radio" value={'VSBL'} name="perkVisibility" checked />
+                                        <input type="radio" value={'VSBL'} name="perkVisibility" defaultChecked />
                                         <span className={cx('inputRadioGroup-radio-button')}></span>
                                         <span className={cx('inputRadioGroup-radio-label')}>
                                             <strong>Visible. </strong> <span>Perk is available to claim</span>
@@ -229,7 +226,7 @@ function NewPerk() {
                                 </div>
                                 <div className={cx('inputCurrencyField')}>
                                     <span className={cx('inputCurrencyField-symbol')}>$</span>
-                                    <input type="text" maxlength="50" className={cx('itext-field', 'inputCurrencyField-input')} />
+                                    <input type="text" maxLength="50" className={cx('itext-field', 'inputCurrencyField-input')} />
                                     <span className={cx('inputCurrencyField-isoCode')}>USD</span>
                                 </div>
                             </div>
