@@ -322,7 +322,7 @@ function ContentCampaign() {
 
 
                             <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                <a href="#" className={cx('button-save')} >SAVE & CONTINUE</a>
+                                <a href="#" className={cx('btn','btn-ok')} >SAVE & CONTINUE</a>
                             </div>
                         </div>
 

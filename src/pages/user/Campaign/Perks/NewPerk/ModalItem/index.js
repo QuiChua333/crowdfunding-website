@@ -95,7 +95,7 @@ function ModalItem({ setShowModal, addNewItem }) {
     }
 
     const handleClickSaveItem = () => {
-        const newItem = {itemName, listOption, quantity: 1};
+        const newItem = {itemName, listOption};
         addNewItem(newItem);
         setShowModal(false)
     }

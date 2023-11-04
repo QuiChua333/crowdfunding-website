@@ -12,12 +12,26 @@ import { useState } from "react";
 
 
 import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
+import MenuDropDown from "../MenuDropDown";
 
 
 const cx = classNames.bind(styles);
 
 function BasicCampaign() {
-
+    const menu = [
+        {
+            category: 'TECH & INNOVATION',
+            listItem: ['Audio','Audio','Education','Energy & Green Tech','Fashion & Wearables','Food & Beverages','Health & Fitness','Home','Phones & Accessories','Fashion & Wearables','Food & Beverages','Health & Fitness','Home','Phones & Accessories']
+        },
+        {
+            category: 'CREATIVE WORKS',
+            listItem: ['Audio','Audio','Education','Energy & Green Tech','Fashion & Wearables','Food & Beverages','Health & Fitness']
+        },
+        {
+            category: 'COMMUNITY PROJECTS',
+            listItem: ['Audio','Audio','Education','Energy & Green Tech','Fashion & Wearables']
+        }
+    ]
     const inputImage = useRef();
     const inputWrapper = useRef();
     const [selectedImage, setSelectedImage] = useState(null)
@@ -150,7 +164,7 @@ function BasicCampaign() {
                                 <div className={cx('entreField-categorySelect')}>
                                     <a className={cx('entreDropdown-select', 'itext-field', {
                                         borderInput: showCategory
-                                    })} onClick={handleClickCategorySelector}>
+                                    })} onClick={handleClickCategorySelector} >
                                         <span>
                                             Audio
                                         </span>
@@ -158,67 +172,7 @@ function BasicCampaign() {
                                         <FaAngleDown className={cx('icon', 'icon-down')} />
                                         {
                                             showCategory &&
-                                            <div className={cx('category-menu')}>
-                                                <div className={cx('categoryMenu-sub')}>
-                                                    <div className={cx('categoryMenu-sub-header')}>
-                                                        Tech & Innovation
-                                                    </div>
-
-                                                    <div className={cx('categoryMenu-sub-item')}>
-                                                        Audio
-                                                    </div>
-                                                    <div className={cx('categoryMenu-sub-item')}>
-                                                        Camera Gear
-                                                    </div>
-                                                    <div className={cx('categoryMenu-sub-item')}>
-                                                        Education
-                                                    </div>
-                                                </div>
-
-                                                <div className={cx('categoryMenu-sub')}>
-                                                    <div className={cx('categoryMenu-sub-header')}>
-                                                        Tech & Innovation
-                                                    </div>
-
-                                                    <div className={cx('categoryMenu-sub-item')}>
-                                                        Audio
-                                                    </div>
-                                                    <div className={cx('categoryMenu-sub-item')}>
-                                                        Camera Gear
-                                                    </div>
-                                                    <div className={cx('categoryMenu-sub-item')}>
-                                                        Education
-                                                    </div>
-                                                    <div className={cx('categoryMenu-sub-item')}>
-                                                        Education
-                                                    </div>
-                                                    <div className={cx('categoryMenu-sub-item')}>
-                                                        Education
-                                                    </div>
-                                                    <div className={cx('categoryMenu-sub-item')}>
-                                                        Education
-                                                    </div>
-                                                    <div className={cx('categoryMenu-sub-item')}>
-                                                        Education
-                                                    </div>
-                                                </div>
-
-                                                <div className={cx('categoryMenu-sub')}>
-                                                    <div className={cx('categoryMenu-sub-header')}>
-                                                        Tech & Innovation
-                                                    </div>
-
-                                                    <div className={cx('categoryMenu-sub-item')}>
-                                                        Audio
-                                                    </div>
-                                                    <div className={cx('categoryMenu-sub-item')}>
-                                                        Camera Gear
-                                                    </div>
-                                                    <div className={cx('categoryMenu-sub-item')}>
-                                                        Education
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <MenuDropDown menu={menu}/>
                                         }
 
                                     </a>

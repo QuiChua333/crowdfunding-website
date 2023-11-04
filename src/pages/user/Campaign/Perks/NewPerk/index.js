@@ -4,7 +4,9 @@ import { HeaderPage } from "~/components/Layout/components/Header";
 
 import Footer from "~/components/Layout/components/Footer";
 import ModalItem from "./ModalItem";
+import MenuDropDown from "../../MenuDropDown";
 import { AiOutlinePlus } from "react-icons/ai";
+import { FaAngleDown } from "react-icons/fa";
 import { HiCamera } from "react-icons/hi";
 import { MdEdit } from "react-icons/md";
 import { IoCloseSharp } from "react-icons/io5";
@@ -18,6 +20,9 @@ import { useRef, useEffect, useState } from "react";
 
 
 import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
+import ItemShipping from "./ItemShipping";
+import { Link } from "react-router-dom";
+import ItemInclude from "./ItemInclude";
 
 
 
@@ -25,22 +30,72 @@ const cx = classNames.bind(styles);
 
 
 function NewPerk() {
+    const listLocation = ['Hà Nội', 'Đà Nẵng', 'Quảng Ngãi'];
+    const listItemAvailableTMP = [
+        {
+            itemName: 'Áo',
+            listOption: [
+                {
+                    name: 'Size',
+                    value: ['S','M','L']
+                },
+                {
+                    name: 'Color',
+                    value: ['Red','Blue','Yellow']
+                }
+            ]
+        },
+        {
+            itemName: 'Quần',
+            listOption: [
+                {
+                    name: 'Size',
+                    value: ['XL','M','L']
+                },
+                {
+                    name: 'Color',
+                    value: ['Red','Blue','Yellow']
+                }
+            ]
+        }
+    ]
+    const [listItemAvailable,setListItemAvailable] = useState([...listItemAvailableTMP]);
     const [showModal, setShowModal] = useState(false);
     const [listItem, setListItem] = useState([]);
     const inputPerkImageWrapperElement = useRef();
     const perkImageElement = useRef();
     const [selectedImage, setSelectedImage] = useState(null)
+    const [isShip, setShip] = useState(false);
+    const [listShip, setListShip] = useState(null);
+    const [showBtnAddShip, setShowBtnAddShip] = useState(true)
+    const noCheckShipElement = useRef(null);
+    // const elementLocation = useRef([]);
+
+
+
 
     const addNewItem = (item) => {
-        setListItem(prev => [...prev, item])
+        // Lưu item + thuộc tính lên csdl {itemName, listOption}
+        setListItem(prev => [...prev, { ...item, quantity: 1 }])
+        setListItemAvailable(prev => [...prev, {...item}]);
+    }
+    const handleClickAddItem = () => {
+        if (listItem.length === 0) {
+            setShowModal(true)
+        }
+        else {
+            setListItem(prev => [...prev, { quantity: 1 }])
+        }
     }
 
     const handleClickRemoveItem = (index) => {
+
         setListItem(prev => {
             const nextState = [...prev];
             nextState.splice(index, 1);
             return nextState;
         })
+
     }
 
     const handlePreviewImage = (event) => {
@@ -50,10 +105,66 @@ function NewPerk() {
             setSelectedImage(file)
         }
     }
+    const handleClickShip = () => {
+        setShip(true)
+        setListShip([{ location: '', value: '' }]);
+    }
+    const handleClickNoShip = () => {
+        setShip(false)
+        setListShip(null);
+    }
+    const handleClickAddShip = () => {
+        setListShip(prev => [...prev, { location: '', value: '' }])
+    }
+
+    const handleChangeItemShipping = (itemChange,indexChange) => {
+        setListShip(prev => {
+            const nextState = prev.map((item, index) => {
+                if (index === indexChange) {
+                    return { ...itemChange }
+                } else return item;
+            })
+            return nextState;
+        })
+    }
+    const handleRemoveItemShipping = (index) => {
+        setListShip(prev => {
+            const nextState = [...prev];
+            nextState.splice(index, 1);
+            return nextState;
+        })
+    }
+
+    const handleChangeItemInclude = (itemChange,indexChange) => {
+        setListItem(prev => {
+            const nextState = prev.map((item, index) => {
+                if (index === indexChange) {
+                    return { ...itemChange }
+                } else return item;
+            })
+            return nextState;
+        })
+    }
+    const handleRemoveItemInclude = (index) => {
+        setListItem(prev => {
+            const nextState = [...prev];
+            nextState.splice(index, 1);
+            return nextState;
+        })
+    }
+
+
+
+
 
     useEffect(() => {
-        console.log(listItem)
-    }, [listItem])
+        noCheckShipElement.current.checked = true;
+    }, [])
+    useEffect(() => {
+        console.log(listShip)
+    },[listShip])
+   
+
     return (
         <div className={cx('wrapper')}>
             <SidebarCampaign current={3} />
@@ -68,7 +179,7 @@ function NewPerk() {
                                 Perks / Create Perk
                             </div>
                             <div className={cx('controlBar-controls')}>
-                                <a href="#" className={cx('btn', 'btn-cancel')}>Cancel</a>
+                                <Link to="/campaigns/:id/edit/perks/table" className={cx('btn', 'btn-cancel')}>Cancel</Link>
                                 <a href="#" className={cx('btn', 'btn-ok')}>Save</a>
                             </div>
                         </div>
@@ -144,38 +255,21 @@ function NewPerk() {
                                     <div style={{ width: '90%' }}>
 
                                         <div className={cx('inputDoubleField-headers')} style={{ display: 'flex' }}>
-                                            <div style={{ padding: '6px' }} class='col-9'><label className={cx('entreField-label')} style={{ marginBottom: '0px' }}>Item Selection</label></div>
+                                            <div style={{ padding: '6px' }} class='col-8'><label className={cx('entreField-label')} style={{ marginBottom: '0px' }}>Item Selection</label></div>
                                             <div style={{ padding: '6px' }} class='col-3'><label className={cx('entreField-label')} style={{ marginBottom: '0px' }}>Quantity</label></div>
                                         </div>
 
                                         {
                                             listItem.map((item, index) => {
-                                                return (
-                                                    <div key={index} style={{ display: 'flex', marginTop: '8px' }}>
-                                                        <div class='col-9' style={{ padding: '6px' }}>
-                                                            <input type="text" className={cx('itext-field')} value={item.itemName} disabled style={{ background: 'transparent' }} />
-                                                        </div>
-                                                        <div class={listItem.length === 1 ? 'col-3' : 'col-2'} style={{ padding: '6px' }} >
+                                                        return (
+                                                            <ItemInclude key={index} index={index} onChangeItem={handleChangeItemInclude} removeItem={handleRemoveItemInclude} listItemInclude={listItemAvailable} itemData={item} lengthListItem ={listItem.length} />
+                                                        )
 
-                                                            <input maxlength="30" className={cx('itext-field')} value={item.quantity} />
-
-                                                        </div>
-
-                                                        {
-                                                            listItem.length > 1 &&
-                                                            <div class='col'>
-                                                                <div style={{ cursor: 'pointer', marginTop: '16px' }}>
-                                                                    <span onClick={() => handleClickRemoveItem(index)} style={{ padding: '5px 8px', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginLeft: '12px' }}><IoCloseSharp /></span>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                )
-                                            })
+                                                    })
                                         }
                                     </div>
                                 }
-                                <div onClick={() => setShowModal(true)} style={{ padding: '16px 0', cursor: 'pointer' }}>
+                                <div onClick={handleClickAddItem} style={{ padding: '16px 0', cursor: 'pointer', display: 'inline-block' }}>
                                     <span style={{ padding: '5px 8px', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginRight: '12px' }}>
                                         {
                                             listItem.length === 0 ? <MdEdit /> : <AiOutlinePlus />
@@ -265,30 +359,56 @@ function NewPerk() {
 
                         <div className={cx('entreSection')}>
                             <div className={cx('entreField-header')}>
-                            Shipping
+                                Shipping
                             </div>
                             <div className={cx('entreField-subHeader')}>
-                            Does this perk contain items that you need to ship?
+                                Does this perk contain items that you need to ship?
                             </div>
                             <div style={{ marginTop: '32px' }}>
-                                    <label className={cx('inputRadioGroup-radio')}>
-                                        <input type="radio" value={'VSBL'} name="shippingAddressRequired" checked />
-                                        <span className={cx('inputRadioGroup-radio-button')}></span>
-                                        <span className={cx('inputRadioGroup-radio-label')}>
+                                <label onClick={handleClickNoShip} className={cx('inputRadioGroup-radio')} >
+                                    <input type="radio" value={'VSBL'} name="shippingAddressRequired" ref={noCheckShipElement} />
+                                    <span className={cx('inputRadioGroup-radio-button')}></span>
+                                    <span className={cx('inputRadioGroup-radio-label')}>
                                         No. This perk does not contain items that need to be shipped.
-                                        </span>
-                                    </label>
+                                    </span>
+                                </label>
 
-                                    <label className={cx('inputRadioGroup-radio')}>
-                                        <input type="radio" value={'INVS'} name="shippingAddressRequired"/>
-                                        <span className={cx('inputRadioGroup-radio-button')}></span>
-                                        <span className={cx('inputRadioGroup-radio-label')}>
+                                <label onClick={handleClickShip} className={cx('inputRadioGroup-radio')}>
+                                    <input type="radio" value={'INVS'} name="shippingAddressRequired" />
+                                    <span className={cx('inputRadioGroup-radio-button')}></span>
+                                    <span className={cx('inputRadioGroup-radio-label')}>
                                         Yes. This perk contains items that need to be shipped.
-                                        </span>
-                                    </label>
-                                </div>
+                                    </span>
+                                </label>
+                            </div>
+                            {
+                                isShip &&
+                                <>
+                                    <div className={cx('entreField')}>
+                                        <div className={cx('inputDoubleField-headers')} style={{ display: 'flex' }}>
+                                            <div style={{ padding: '6px' }} class='col-8'><label className={cx('entreField-label')} style={{ marginBottom: '0px' }}>Shipping locations</label></div>
+                                            <div style={{ padding: '6px' }} class='col-4'><label className={cx('entreField-label')} style={{ marginBottom: '0px' }}>Shipping fee</label></div>
+                                        </div>
+                                        {listShip.map((item, index) => {
+                                            return (
+                                                <ItemShipping key={index} index={index} onChangeItem={handleChangeItemShipping} removeItem={handleRemoveItemShipping} listLocation={listLocation} lengthListShip={listShip.length} itemData={item}/>
+                                            )
 
-                            
+                                        })}
+
+                                    </div>
+                                    {
+                                        showBtnAddShip &&
+                                        <div onClick={handleClickAddShip} style={{ padding: '16px 0', cursor: 'pointer' }}>
+                                            <span style={{ padding: '5px 8px', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginRight: '12px', fontSize: '16px' }}><AiOutlinePlus /></span>
+                                            <span style={{ color: '#7a69b3', fontWeight: '600' }}>ADD LOCATION</span>
+                                        </div>
+                                    }
+
+                                </>
+
+                            }
+
                         </div>
                     </div>
                 </div>
