@@ -12,7 +12,7 @@ import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scs
 const cx = classNames.bind(styles);
 
 
-function ModalItem({ setShowModal, addNewItem }) {
+function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
 
     const [itemName,setItemName] = useState('');
     const [chooseOption, setChooseOption] = useState(false);
@@ -74,11 +74,6 @@ function ModalItem({ setShowModal, addNewItem }) {
                         return nextState;
                     })
                 }
-         
-            
-      
-            
-
         }
     }
 
@@ -96,7 +91,12 @@ function ModalItem({ setShowModal, addNewItem }) {
 
     const handleClickSaveItem = () => {
         const newItem = {itemName, listOption};
-        addNewItem(newItem);
+        if (optionEdit.type==='add') {
+            addNewItem(newItem);
+        }
+        else if (optionEdit.type==='update') {
+            updateItem(newItem,optionEdit.index)
+        }
         setShowModal(false)
     }
     useEffect(() => {
@@ -172,7 +172,7 @@ function ModalItem({ setShowModal, addNewItem }) {
                                                             )
                                                         })}
 
-                                                        <input  onKeyUp={(e) => handleKeyUpInputTag(e, indexA)}  placeholder={itemA.value.length === 0 && "Small, Medium, Large"} maxlength="30" className={cx('itext-field')}  />
+                                                        <input onKeyUp={(e) => handleKeyUpInputTag(e, indexA)} onFocus={(e) => e.target.parentElement.style.border = '1px solid #000'} onBlur={(e) => e.target.parentElement.style.border = '1px solid #ddd'} placeholder={itemA.value.length === 0 && "Small, Medium, Large"} maxlength="30" className={cx('input-value-option')} />
                                                     </div>
                                                 </div>
                                                 {

@@ -7,7 +7,7 @@ import Explore from '~/pages/user/Explore'
 import SignUp from '~/pages/SignUp'
 import Login from '~/pages/Login'
 import ForgetPassword from '~/pages/FogetPassword'
-import { BasicCampaign, ContentCampaign, PerksCampaign, NewPerk } from '~/pages/user/Campaign'
+import { BasicCampaign, ContentCampaign, PerksCampaign, NewPerk, ItemsCampaign, NewItem } from '~/pages/user/Campaign'
 
 // Public routes
 const publicRoutes = [
@@ -19,6 +19,8 @@ const publicRoutes = [
     { path: '/campaigns/:id/edit/story', component : ContentCampaign, layout: null},
     { path: '/campaigns/:id/edit/perks/table', component : PerksCampaign, layout: null},
     { path: '/campaigns/:id/edit/perks/new', component : NewPerk, layout: null},
+    { path: '/campaigns/:id/edit/items/table', component : ItemsCampaign, layout: null},
+    { path: '/campaigns/:id/edit/items/new', component : NewItem, layout: null},
     { path: '/sign-up', component: SignUp, layout: null},
     { path: '/login', component: Login, layout: null},
     { path: '/forgot', component: ForgetPassword, layout: null},

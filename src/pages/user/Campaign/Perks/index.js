@@ -3,15 +3,8 @@ import SidebarCampaign from "../Sidebar";
 import { HeaderPage } from "~/components/Layout/components/Header";
 
 import Footer from "~/components/Layout/components/Footer";
-import { FaAngleDown, FaAngleUp } from "react-icons/fa";
+import { FaAngleDown } from "react-icons/fa";
 import PerkTable from "./PerkTable";
-// import { HiCamera } from "react-icons/hi";
-// import { MdEdit } from "react-icons/md";
-// import { IoCloseSharp } from "react-icons/io5";
-// import { useRef, useEffect } from "react";
-// import { FaAngleDown } from "react-icons/fa";
-// import { AiFillQuestionCircle } from "react-icons/ai";
-// import { useState } from "react";
 
 import images from "~/assets/images";
 
@@ -128,6 +121,8 @@ function PerksCampaign() {
                                     <img src={images.no_perk} style={{ width: '600', height: '270px', objectFit: 'cover', marginTop: '32px' }} />
 
                                     <div style={{ marginTop: '40px' }}>Let's get started</div>
+                                    <div style={{ fontSize: '14px', color: '#a8a8a8' }}>Create your perks here.</div>
+                                    <img src={images.arrow} style={{ width: '40px', height: '60px', objectFit: 'cover', marginTop: '32px' }} />
 
                                     <div style={{ marginTop: '40px' }}>
                                         <a href="/campaigns/:id/edit/perks/new" className={cx('btn', 'btn-ok')} style={{ fontSize: '16px' }} >CREATE NEW PERK </a>

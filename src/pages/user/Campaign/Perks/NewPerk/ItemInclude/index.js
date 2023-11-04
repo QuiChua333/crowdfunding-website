@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import DropDown from "./DropDown";
 const cx = classNames.bind(styles)
 
-function ItemInclude({ index, onChangeItem, removeItem, listItemInclude, itemData, lengthListItem }) {
+function ItemInclude({ index, onChangeItem, removeItem, listItemInclude, itemData, lengthListItem, setOpenModalItem, setOptionEdit}) {
     
     const [showListItemInclude, setShowListItemInclude] = useState(false);
     const element = useRef(null)
@@ -47,7 +47,7 @@ function ItemInclude({ index, onChangeItem, removeItem, listItemInclude, itemDat
                         {
                             showListItemInclude &&
                             <div className={cx('dropdown-outer')}>
-                                <DropDown listItemInclude={listItemInclude} onClickItem={handleClickItemInclude} />
+                                <DropDown listItemInclude={listItemInclude} onClickItem={handleClickItemInclude} index={index} setOpenModalItem={setOpenModalItem} setOptionEdit={setOptionEdit}/>
                             </div>
                         }
 

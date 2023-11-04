@@ -79,6 +79,15 @@ function SidebarCampaign({current}) {
                                     </div>
                                 </Link>
                             </div>
+                            <div className={cx('navItem--child','navItem', {
+                                'navItem--current': current ===4
+                            })}>
+                                <Link to="/campaigns/:id/edit/items/table" className={cx('navItem-link')}>
+                                    <div>
+                                        4. Items
+                                    </div>
+                                </Link>
+                            </div>
                         </div>
                         }
                     </div>

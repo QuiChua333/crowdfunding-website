@@ -62,6 +62,7 @@ function NewPerk() {
     const [listItemAvailable,setListItemAvailable] = useState([...listItemAvailableTMP]);
     const [showModal, setShowModal] = useState(false);
     const [listItem, setListItem] = useState([]);
+    const [optionEdit,setOptionEdit] = useState({});
     const inputPerkImageWrapperElement = useRef();
     const perkImageElement = useRef();
     const [selectedImage, setSelectedImage] = useState(null)
@@ -79,8 +80,15 @@ function NewPerk() {
         setListItem(prev => [...prev, { ...item, quantity: 1 }])
         setListItemAvailable(prev => [...prev, {...item}]);
     }
+    const updateItem = (item,index) => {
+        console.log('udpate nè')
+         // Lưu item + thuộc tính lên csdl {itemName, listOption}
+        handleChangeItemInclude(item,index)
+        setListItemAvailable(prev => [...prev, {...item, quantity: null}]);
+    }
     const handleClickAddItem = () => {
         if (listItem.length === 0) {
+            setOptionEdit({type: 'add'})
             setShowModal(true)
         }
         else {
@@ -160,6 +168,9 @@ function NewPerk() {
     useEffect(() => {
         noCheckShipElement.current.checked = true;
     }, [])
+    useEffect(() => {
+        console.log(listItem)
+    },[listItem])
    
 
     return (
@@ -259,7 +270,7 @@ function NewPerk() {
                                         {
                                             listItem.map((item, index) => {
                                                         return (
-                                                            <ItemInclude key={index} index={index} onChangeItem={handleChangeItemInclude} removeItem={handleRemoveItemInclude} listItemInclude={listItemAvailable} itemData={item} lengthListItem ={listItem.length} />
+                                                            <ItemInclude key={index} index={index} onChangeItem={handleChangeItemInclude} removeItem={handleRemoveItemInclude} listItemInclude={listItemAvailable} itemData={item} lengthListItem ={listItem.length} setOpenModalItem={setShowModal} setOptionEdit={setOptionEdit}/>
                                                         )
 
                                                     })
@@ -415,7 +426,7 @@ function NewPerk() {
 
             </div>
             {
-                showModal && <ModalItem setShowModal={setShowModal} addNewItem={addNewItem} />
+                showModal && <ModalItem setShowModal={setShowModal} addNewItem={addNewItem} updateItem={updateItem} optionEdit={optionEdit} />
             }
 
 
