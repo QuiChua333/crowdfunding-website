@@ -88,6 +88,33 @@ function SidebarCampaign({current}) {
                                     </div>
                                 </Link>
                             </div>
+                            <div className={cx('navItem--child','navItem', {
+                                'navItem--current': current ===5
+                            })}>
+                                <Link to="/campaigns/:id/edit/team" className={cx('navItem-link')}>
+                                    <div>
+                                        5. Team
+                                    </div>
+                                </Link>
+                            </div>
+                            <div className={cx('navItem--child','navItem', {
+                                'navItem--current': current === 6
+                            })}>
+                                <Link to="/campaigns/:id/edit/funding" className={cx('navItem-link')}>
+                                    <div>
+                                        6. Funding
+                                    </div>
+                                </Link>
+                            </div>
+                            <div className={cx('navItem--child','navItem', {
+                                'navItem--current': current === 7
+                            })}>
+                                <Link to="/campaigns/:id/edit/settings" className={cx('navItem-link')}>
+                                    <div>
+                                        7. SETTINGS
+                                    </div>
+                                </Link>
+                            </div>
                         </div>
                         }
                     </div>

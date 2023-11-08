@@ -118,7 +118,7 @@ function NewItem() {
 
     return (
         <div className={cx('wrapper')}>
-            <SidebarCampaign current={3} />
+            <SidebarCampaign  />
             <div style={{ flex: '1' }}>
 
                 <HeaderPage isFixed={false} />
