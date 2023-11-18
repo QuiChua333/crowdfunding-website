@@ -1,5 +1,5 @@
 import {HeaderPage } from "../components/Header";
-
+import Footer from "../components/Footer";
 
 
 function HeaderOnlyLayout({ children }) {
@@ -9,6 +9,7 @@ function HeaderOnlyLayout({ children }) {
             <div className='Container'> 
                 {children}
             </div>
+            <Footer />
         </div>
     );
 }
