@@ -97,7 +97,7 @@
     .btn {
         padding: 8px 20px;
         font-weight: 500;
-        letter-spacing: 0.7px;
+        letter-spacing: 0.4px;
         background-color: #E51075;
         border-radius: 2px;
         text-transform: uppercase;
@@ -107,6 +107,64 @@
         color: #fff;
         &:hover {
             background-color: #CF0C67;
+        }
+    }
+    .btn.facebook {
+        background-color: #405d9d;
+
+        &:hover {
+            background-color: #5675ba;
+        }
+    }
+    .btn.disabled {
+        background-color: #dddddd;
+        pointer-events: none;
+    }
+
+    .img-wrapper {
+        position: relative;
+        box-shadow: 2px 1px 4px #575757;
+        width: 300px;
+        height: 300px;
+        border-radius: 4px;
+
+        img {
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            border-radius: 4px;
+        }
+        input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+    }
+    .edit {
+        color: #E51075;
+        margin-left: 48px;
+        font-weight: 500;
+        cursor: pointer;
+        position: relative;
+        display: inline-block;
+
+        &:hover::after {
+            display: block;
+        }
+     
+        &::after {
+            content: '';
+            display: none;
+            background-color: #E51075;
+            position: absolute;
+            height: 1px;
+            width: 100%;
+            top: calc(100% - 4px);
         }
     }
 }
