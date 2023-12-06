@@ -10,6 +10,7 @@ import ForgetPassword from '~/pages/FogetPassword'
 import { BasicCampaign, ContentCampaign, PerksCampaign, NewPerk, ItemsCampaign, NewItem, TeamCampaign, FundingCampaign, SettingCampaign } from '~/pages/user/Campaign'
 import Payment from '~/pages/Payment'
 import { EditProfile, EditSetting } from '~/pages/user/Profile/EditProfile'
+import { ViewCampaigns } from '~/pages/user/Profile/ViewProfile'
 
 // Public routes
 const publicRoutes = [
@@ -29,6 +30,7 @@ const publicRoutes = [
     { path: '/projects/:id/payments/new/checkout', component :Payment , layout: null},
     { path: '/individuals/:id/edit/profile', component :EditProfile , layout: HeaderOnlyLayout},
     { path: '/individuals/:id/edit/settings', component :EditSetting , layout: HeaderOnlyLayout},
+    { path: '/individuals/:id/campaigns', component :ViewCampaigns , layout: HeaderOnlyLayout},
     { path: '/sign-up', component: SignUp, layout: null},
     { path: '/login', component: Login, layout: null},
     { path: '/forgot', component: ForgetPassword, layout: null},
