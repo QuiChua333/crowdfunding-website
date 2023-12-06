@@ -31,7 +31,7 @@ function EditSetting() {
                         </Link>
                         <Link to='/individuals/:id/edit/settings' className={cx('tab', 'active')}>
                             Settings
-                        </Link>
+                        </Link> 
                     </div>
                     <div className={cx('section-info')} style={{ marginTop: '32px' }}>
                         <h1 className={cx('section-title')}>

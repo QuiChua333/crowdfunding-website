@@ -85,7 +85,7 @@ function EditProfile() {
 
                     <div className={cx('section-info')} style={{ marginTop: '32px' }}>
                         <h1 className={cx('section-title')}>
-                            Your Story
+                            Your Story 
                         </h1>
 
                         <div style={{ marginTop: '24px' }}>
