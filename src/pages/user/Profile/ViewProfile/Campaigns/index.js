@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import ItemCampaign from "./ItemCampaign";
 const cx = classNames.bind(styles);
 function ViewCampaigns() {
-   
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('navbar')}>
@@ -32,17 +32,32 @@ function ViewCampaigns() {
                             Campaigns
                         </Link>
                         <Link to='/individuals/:id/contributions' className={cx('tab')}>
-                        Contributions
+                            Contributions
                         </Link>
                     </div>
 
-                   <div style={{marginTop: '32px'}}>
+                    <div style={{ marginTop: '32px' }}>
+                        <div style={{ fontSize: '24px', fontWeight: '500', lineHeight: '35px', marginBottom: '16px' }}>Dự án của tôi</div>
                         {
-                            [1,2,3].map((item,index) => {
+                            [1, 2, 3].map((item, index) => {
                                 return <ItemCampaign />
                             })
                         }
-                   </div>
+                        <div className={cx('show-more')}>
+                            <span>Show more</span>
+                        </div>
+                    </div>
+                    <div style={{ marginTop: '32px' }}>
+                        <div style={{ fontSize: '24px', fontWeight: '500', lineHeight: '35px', marginBottom: '16px' }}>Dự án tôi là thành viên</div>
+                        {
+                            [1, 2, 3].map((item, index) => {
+                                return <ItemCampaign />
+                            })
+                        }
+                        <div className={cx('show-more')}>
+                            <span>Show more</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

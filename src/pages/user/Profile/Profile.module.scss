@@ -167,4 +167,17 @@
             top: calc(100% - 4px);
         }
     }
+
+    .show-more {
+        span {
+            text-decoration: underline;
+            color: #e51075;
+            cursor: pointer;
+
+            &:hover {
+                color: #a5205e;
+            }
+        }
+   
+    }
 }
