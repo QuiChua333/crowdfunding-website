@@ -41,6 +41,8 @@ function ItemCampaign() {
                         <a href="/campaigns/:id/edit/basic">Edit Campaign</a>
                         <div style={{height: '1px', background: '#ccc'}}></div>
                         <a>Delete Campaign</a>
+                        <div style={{height: '1px', background: '#ccc'}}></div>
+                        <a>View contributions</a>
                     </div>
                 </div>
             </div>

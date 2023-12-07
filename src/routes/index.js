@@ -1,7 +1,7 @@
 import Home from '~/pages/user/Home'
 import Following from '~/pages/Following'
 import Upload from '~/pages/Upload'
-import { DefaultLayout, HeaderOnlyLayout } from '~/components/Layout'
+import { DefaultLayout, HeaderOnlyLayout, AdminLayout } from '~/components/Layout'
 import { HomeLayout } from '~/components/Layout'
 import Explore from '~/pages/user/Explore'
 import SignUp from '~/pages/SignUp'
@@ -11,6 +11,8 @@ import { BasicCampaign, ContentCampaign, PerksCampaign, NewPerk, ItemsCampaign, 
 import Payment from '~/pages/Payment'
 import { EditProfile, EditSetting } from '~/pages/user/Profile/EditProfile'
 import { ViewCampaigns } from '~/pages/user/Profile/ViewProfile'
+
+import { CampaignManagement, UserManagement, VerifyCampaignManagement, ProgressAndContributeManagement, ComplaintManagement } from '~/pages/admin'
 
 // Public routes
 const publicRoutes = [
@@ -34,6 +36,20 @@ const publicRoutes = [
     { path: '/sign-up', component: SignUp, layout: null},
     { path: '/login', component: Login, layout: null},
     { path: '/forgot', component: ForgetPassword, layout: null},
+
+
+
+
+    // admin
+
+    { path: '/admin/campaigns', component :CampaignManagement , layout: AdminLayout},
+    { path: '/admin/users', component :UserManagement , layout: AdminLayout},
+    { path: '/admin/verify-campaign', component :VerifyCampaignManagement , layout: AdminLayout},
+    { path: '/admin/progress-contribute', component :ProgressAndContributeManagement , layout: AdminLayout},
+    { path: '/admin/complaint', component :ComplaintManagement , layout: AdminLayout},
+    { path: '/admin', component :CampaignManagement , layout: AdminLayout},
+
+
 ]
 
 const privateRoutes = [
