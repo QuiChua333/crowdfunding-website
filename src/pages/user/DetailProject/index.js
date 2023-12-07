@@ -106,13 +106,7 @@ function DetailProject() {
                 des: 'Save $25 by ordering today on Indiegogo. SHIPPING, VAT & DUTIES: Please note that the shipping fee covers ALL applicable shipping, VAT, and duties. You will not need pay any fees upon arrival. WANT TO ADD MORE ITEMS? If youd like to add other bags to your order you can do so on the following page after selecting this perk.',
                 includeItems: [
                     {
-                        name: 'Camera Sling 12L',
-                        options: [
-                            {
-                                name: 'Color',
-                                itemsOption: ['Black', 'Stone', 'Sage', 'Rust'],
-                            }
-                        ]
+                        name: 'Camera Sling 12L',                  
                     }
                 ],
                 claimed: 8,

@@ -53,12 +53,6 @@ function DetailPerk() {
         includeItems: [
             {
                 name: 'Camera Sling 12L',
-                options: [
-                    {
-                        name: 'Color',
-                        itemsOption: ['Black', 'Stone', 'Sage', 'Rust'],
-                    }
-                ]
             }
         ],
         claimed: 8,
@@ -74,13 +68,7 @@ function DetailPerk() {
         des: 'Save $35 by ordering today on Indiegogo. SHIPPING, VAT & DUTIES: Please note that the shipping fee covers ALL applicable shipping, VAT, and duties. You will not need pay any fees upon arrival. WANT TO ADD MORE ITEMS? If youd like to add other bags to your order you can do so on the following page after selecting this perk.',
         includeItems: [
             {
-                name: 'Camera Sling 18L',
-                options: [
-                    {
-                        name: 'Color',
-                        itemsOption: ['Black', 'Stone', 'Sage', 'Rust'],
-                    }
-                ]
+                name: 'Camera Sling 18L', 
             }
         ],
         claimed: 8,
@@ -240,8 +228,9 @@ function DetailPerk() {
     })
   }
 
+
   return (
-    <div style={{width: '100%'}}>
+    <div style={{width: '100%'}} className={cx('disableSelect')}>
       <p style={{width: '100%', textAlign: 'center', margin: '6px 0 20px', fontSize: '28px', fontWeight: 'bold', color: '#207d5d', borderBottom: '1px solid #ccc'}}>GIVEFUND</p>
       <div style={{display: 'flex', height: '100%', padding: '10px 140px', margin: '10px 0'}}>
         <div style={{width: '52%', marginRight: '30px'}}>
@@ -265,7 +254,7 @@ function DetailPerk() {
 
         <div style={{width: '48%', marginLeft: '30px'}}>
           <div style={{display: 'flex', flexDirection: 'column'}}>
-            <span style={{fontSize: '20px', fontWeight: '600', marginLeft: '20px', marginBottom: '20px'}}>Your Contribution<span style={{fontSize: '14px', fontWeight: '500', marginLeft: '10px', color: '#616161'}}>(<span>1</span> item)</span></span>
+            <span style={{fontSize: '20px', fontWeight: '600', marginLeft: '20px', marginBottom: '20px'}}>Your Contribution<span style={{fontSize: '14px', fontWeight: '500', marginLeft: '10px', color: '#616161'}}>(<span>{listSelected.length}</span> item)</span></span>
             <div style={{display: 'flex', flexDirection: 'column', height: '360px', overflowY: 'scroll'}}>
               {
               listSelected.map((item, index) => {
