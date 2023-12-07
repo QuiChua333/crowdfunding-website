@@ -13,6 +13,11 @@ import { EditProfile, EditSetting } from '~/pages/user/Profile/EditProfile'
 import { ViewCampaigns } from '~/pages/user/Profile/ViewProfile'
 
 import { CampaignManagement, UserManagement, VerifyCampaignManagement, ProgressAndContributeManagement, ComplaintManagement } from '~/pages/admin'
+import DetailProject from '~/pages/DetailProject'
+import ModalOptionPerk from '~/pages/DetailProject/ModalOptionPerk'
+import DetailPerk from '~/pages/DetailPerk'
+import ModalDetailPerk from '~/pages/DetailPerk/ModalDetailPerk'
+
 
 // Public routes
 const publicRoutes = [
@@ -50,6 +55,8 @@ const publicRoutes = [
     { path: '/admin', component :CampaignManagement , layout: AdminLayout},
 
 
+    { path: '/project/:id/detail', component: DetailProject, layout: DefaultLayout},
+    { path: '/project/perk/detail', component: DetailPerk, layout: null},
 ]
 
 const privateRoutes = [
