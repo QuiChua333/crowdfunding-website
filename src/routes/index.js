@@ -11,6 +11,7 @@ import { BasicCampaign, ContentCampaign } from '~/pages/user/Campaign'
 import DetailProject from '~/pages/DetailProject'
 import ModalOptionPerk from '~/pages/DetailProject/ModalOptionPerk'
 import DetailPerk from '~/pages/DetailPerk'
+import ModalDetailPerk from '~/pages/DetailPerk/ModalDetailPerk'
 
 
 // Public routes
@@ -25,8 +26,7 @@ const publicRoutes = [
     { path: '/login', component: Login, layout: null},
     { path: '/forgot', component: ForgetPassword, layout: null},
     { path: '/project/:id/detail', component: DetailProject, layout: DefaultLayout},
-    { path: '/project/perk', component: ModalOptionPerk, layout: null},
-    { path: '/project/perk/itemDetailPerkSelect', component: DetailPerk, layout: null},
+    { path: '/project/perk/detail', component: DetailPerk, layout: null},
 ]
 
 const privateRoutes = [

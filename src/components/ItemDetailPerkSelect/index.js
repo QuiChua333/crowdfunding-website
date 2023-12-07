@@ -6,7 +6,30 @@ import styles from './ItemDetailPerkSelect.module.scss';
 
 const cx = classNames.bind(styles);
 
-function ItemDetailPerkSelect() {
+function ItemDetailPerkSelect({setIsOpenModalUpdate, setIsOpenModal, item, setPerkSelected, index}) {
+
+    const [options,setOptions] = useState(() => {{
+        console.log(item)
+        const res = item.includeItems.reduce((acc,cur) => {
+            if (cur.optionsSelected) {
+                console.log('da vao')
+                return acc + cur.optionsSelected.reduce((acc2,cur2) => {
+                    return acc2 + cur2.value + ' '
+                }, "")
+            }
+            else {
+                return acc + "";
+            }
+            
+        },"")
+        return res
+    }})
+    const handleClickEdit = () => {
+        setPerkSelected({...item, index});
+        setIsOpenModalUpdate(true);
+        setIsOpenModal(true);
+    }
+
     return (
         <div
             style={{
@@ -20,12 +43,12 @@ function ItemDetailPerkSelect() {
             <div style={{ display: 'flex', width: '80%' }}>
                 <img
                     style={{ width: '100px', height: '80px', borderRadius: '4px', border: '1px solid #949494' }}
-                    src="https://c2.iggcdn.com/indiegogo-media-prod-cld/image/upload/c_fit,w_auto,g_center,q_auto:best,dpr_1.3,f_auto/md2ed2dbvdct6qnnfz1v"
+                    src={item.image}
                     alt="img"
                 />
                 <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '20px', position: 'relative' }}>
-                    <span style={{ fontSize: '16px', fontWeight: '400' }}>48 Hour Exclusive Offer!</span>
-                    <span style={{ fontSize: '14px', fontWeight: '300', color: '#949494' }}>Don't Redeem Voucher</span>
+                    <span style={{ fontSize: '16px', fontWeight: '400' }}>{item.name}</span>
+                    <span style={{ fontSize: '14px', fontWeight: '300', color: '#949494' }}>{options}</span>
                     <div
                         style={{
                             width: '100px',
@@ -56,11 +79,11 @@ function ItemDetailPerkSelect() {
                 }}
             >
                 <div>
-                    <span className={cx('disableSelect', 'btn-edit')}>Edit</span>
+                    <span className={cx('disableSelect', 'btn-edit')} onClick={handleClickEdit}>Edit</span>
                     <span
                         className={cx('disableSelect', 'btn-remove')}>Remove</span>
                 </div>
-                <span style={{ fontSize: '18px', fontWeight: 'bold' }}>$60 USD</span>
+                <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{item.price} USD</span>
             </div>
         </div>
     );

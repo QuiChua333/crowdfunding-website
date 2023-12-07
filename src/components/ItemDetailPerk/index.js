@@ -4,9 +4,17 @@ import styles from './ItemDetailPerk.module.scss';
 
 const cx = classNames.bind(styles);
 
-function ItemDetailPerk() {
+function ItemDetailPerk({item, setPerkSelected, setIsOpenModal, index, setIsOpenModalUpdate}) {
+    const handleClickItem = () => {
+        setPerkSelected({...item, index})
+        setIsOpenModalUpdate(false);
+        setIsOpenModal(true);
+        
+    }
     return (
         <div
+            onClick={handleClickItem}
+            className={cx('itemPerk',{disabled: item.isSelected})} 
             style={{
                 height: 'auto',
                 width: '262px',
@@ -19,16 +27,16 @@ function ItemDetailPerk() {
         >
             <img
                 style={{ width: '260px', height: '180px', borderTopLeftRadius: '4px', borderTopRightRadius: '4px'}}
-                src="https://c2.iggcdn.com/indiegogo-media-prod-cld/image/upload/c_fit,w_254,g_center,q_auto:best,dpr_1.3,f_auto,h_192/eqf167ahyf2omqzvsqti"
+                src={item.image}
                 alt="img"
             />
-            <span style={{ margin: '20px 0 0 30px', fontSize: '18px', fontWeight: '500' }}>'Salad Zone' T-Shirt</span>
-            <span style={{ margin: '2px 0 0 30px', fontSize: '22px', fontWeight: '700' }}>$45 USD</span>
-            <span style={{ margin: '10px 0 40px 30px', fontWeight: '600' }}>
-                1 <span style={{ fontWeight: '350' }}>claimed</span>
+            <span style={{ margin: '20px 0 0 30px', fontSize: '17px', fontWeight: '500' }}>{item.name}</span>
+            <span style={{ margin: '2px 0 0 30px', fontSize: '22px', fontWeight: '600' }}>${item.price} USD</span>
+            <span style={{ margin: '10px 0 40px 30px', fontWeight: '500', fontSize: '14px'}}>
+                {item.claimed}/{item.quantity} <span style={{ fontWeight: '350' }}>claimed</span>
             </span>
-            <button type="button" className={cx('btn-get')}>
-                GET THIS ADD-ON
+            <button type="button" className={cx('btn-get')} onClick={handleClickItem}>
+                THÊM
             </button>
         </div>
     );

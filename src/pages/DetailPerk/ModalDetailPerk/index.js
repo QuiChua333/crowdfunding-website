@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import classNames from 'classnames/bind';
-import styles from './ModalOptionPerk.module.scss';
+import styles from './ModalDetailPerk.module.scss';
 import PerkItem from '~/components/Layout/components/PerkItem';
-import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
-function ModalOptionPerk({ close, setIsOpenModal, perkInModal, itemPerk }) {
-    const navigate = useNavigate();
+function ModalDetailPerk({ itemPerk, setIsOpenModal, handleSelectedItem, isOpenModalUpdate, handleEditListSelected }) {
     const [optionsSelectedItems, setOptionsSelectedItems] = useState(() => {
         let arrItemHasOption = itemPerk.includeItems.filter((item) => {
             return item.options && item.options.length > 0;
@@ -27,31 +25,11 @@ function ModalOptionPerk({ close, setIsOpenModal, perkInModal, itemPerk }) {
 
         return result;
     });
-    // {name: '', optionsSelected: [{name: '', value:''}]}
-    const handleClickPayment = () => {
-        navigate('/project/perk/detail', {
-            state: {
-                ...itemPerk,
-                includeItems: [...itemPerk.includeItems].map((item) => {
-                    if (item.options && item.options.length > 0) {
-                        return {
-                            ...item,
-                            optionsSelected: optionsSelectedItems.find((i) => {
-                                return i.name === item.name;
-                            }),
-                        };
-                    } else {
-                        return item;
-                    }
-                }),
-            },
-        });
-    };
-
     const handleChangeSelectOption = (e, nameItem) => {
         let nameOption = e.target.name;
         let value = e.target.value;
         // prev là mảng result
+
         setOptionsSelectedItems((prev) => {
             return [...prev].map((item) => {
                 if (item.name === nameItem) {
@@ -74,6 +52,30 @@ function ModalOptionPerk({ close, setIsOpenModal, perkInModal, itemPerk }) {
             });
         });
     };
+    const handleOnclickAccept = () => {
+        const newItem = {
+            ...itemPerk,
+            includeItems: [...itemPerk.includeItems].map((item) => {
+                if (item.options && item.options.length > 0) {
+                    return {
+                        ...item,
+                        optionsSelected: optionsSelectedItems.find((i) => {
+                            return i.name === item.name;
+                        }).optionsSelected,
+                    };
+                } else {
+                    return item;
+                }
+            }),
+        };
+        if (!isOpenModalUpdate) {
+            handleSelectedItem(itemPerk.index, newItem);
+            setIsOpenModal(false);
+        } else {
+            handleEditListSelected(itemPerk.index, newItem);
+            setIsOpenModal(false);
+        }
+    };
 
     return (
         <div
@@ -89,8 +91,7 @@ function ModalOptionPerk({ close, setIsOpenModal, perkInModal, itemPerk }) {
                 justifyContent: 'center',
             }}
             onClick={() => {
-                perkInModal && setIsOpenModal(true);
-                close();
+                setIsOpenModal(true);
             }}
         >
             <div
@@ -110,8 +111,7 @@ function ModalOptionPerk({ close, setIsOpenModal, perkInModal, itemPerk }) {
                         role="button"
                         className={cx('btn-close')}
                         onClick={() => {
-                            perkInModal && setIsOpenModal(true);
-                            close();
+                            setIsOpenModal(false);
                         }}
                     >
                         &times;
@@ -163,7 +163,7 @@ function ModalOptionPerk({ close, setIsOpenModal, perkInModal, itemPerk }) {
                                                     >
                                                         {itemB.itemsOption.map((itemC, indexC) => {
                                                             return (
-                                                                <option value={itemC} key={indexC}>
+                                                                <option value={itemC} key={indexC} selected={itemA.optionsSelected.map(x=> x.value).includes(itemC)}>
                                                                     {itemC}
                                                                 </option>
                                                             );
@@ -178,12 +178,12 @@ function ModalOptionPerk({ close, setIsOpenModal, perkInModal, itemPerk }) {
                     </div>
                 </div>
 
-                <button type="button" className={cx('btn-continue')} onClick={handleClickPayment}>
-                    CONTINUE TO PAYMENT
+                <button type="button" className={cx('btn-continue')} onClick={handleOnclickAccept}>
+                    Xác nhận
                 </button>
             </div>
         </div>
     );
 }
 
-export default ModalOptionPerk;
+export default ModalDetailPerk;
