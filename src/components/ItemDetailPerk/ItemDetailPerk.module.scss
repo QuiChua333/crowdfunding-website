@@ -1,0 +1,31 @@
+
+
+.btn-get {
+    width: 80%;
+    align-self: center;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #000;
+    &:hover {
+        opacity: 0.7;
+        background-color: #000;
+        color: #fff;
+    }
+}
+.itemPerk {
+    &:hover {
+        box-shadow: 0 4px 4px #ccc;
+        cursor: pointer;
+    }
+   
+    &.disabled {
+        pointer-events: none;
+        opacity: 0.6;
+    }
+}
+.selected {
+    opacity: 0.7;
+}

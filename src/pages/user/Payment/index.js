@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { IoSquareOutline, IoCheckboxSharp } from "react-icons/io5";
 
 
-import DropDown from "../user/Campaign/Perks/NewPerk/ItemShipping/DropDown";
+import DropDown from "../Campaign/Perks/NewPerk/ItemShipping/DropDown";
 import ItemPayment from "./ItemPayment";
 import Footer from "~/components/Layout/components/Footer";
 

@@ -8,11 +8,14 @@ import SignUp from '~/pages/SignUp'
 import Login from '~/pages/Login'
 import ForgetPassword from '~/pages/FogetPassword'
 import { BasicCampaign, ContentCampaign, PerksCampaign, NewPerk, ItemsCampaign, NewItem, TeamCampaign, FundingCampaign, SettingCampaign } from '~/pages/user/Campaign'
-import Payment from '~/pages/Payment'
+import Payment from '~/pages/user/Payment'
 import { EditProfile, EditSetting } from '~/pages/user/Profile/EditProfile'
 import { ViewCampaigns } from '~/pages/user/Profile/ViewProfile'
 
 import { CampaignManagement, UserManagement, VerifyCampaignManagement, ProgressAndContributeManagement, ComplaintManagement } from '~/pages/admin'
+import DetailProject from '~/pages/user/DetailProject'
+import DetailPerk from '~/pages/user/DetailPerk'
+
 
 // Public routes
 const publicRoutes = [
@@ -50,6 +53,8 @@ const publicRoutes = [
     { path: '/admin', component :CampaignManagement , layout: AdminLayout},
 
 
+    { path: '/project/:id/detail', component: DetailProject, layout: DefaultLayout},
+    { path: '/project/perk/detail', component: DetailPerk, layout: null},
 ]
 
 const privateRoutes = [

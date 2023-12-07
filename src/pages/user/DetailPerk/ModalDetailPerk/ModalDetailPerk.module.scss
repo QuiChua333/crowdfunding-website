@@ -1,0 +1,26 @@
+
+
+
+.btn-close {
+    width: 40px;
+    text-align: center;
+    font-size: 40px;
+    color: #606060;
+
+    &:hover {
+        color: #000;
+    }
+}
+
+.btn-continue {
+    background-color: #000;
+    color: #fff;
+    width: 240px;
+    padding: 12px 0;
+    align-self: center;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    &:hover {
+        opacity: 0.8;
+    }
+}
