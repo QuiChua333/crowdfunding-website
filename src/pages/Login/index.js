@@ -1,64 +1,137 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
-import {FaEyeSlash} from "react-icons/fa6"
+import { FaEye, FaEyeSlash } from 'react-icons/fa6';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
-
 function Login() {
+    const [email, setEmail] = useState('');
+    const [textValidateEmail, setTextValidateEmail] = useState('');
+    const [pass, setPass] = useState('');
+    const [textValidatePass, setTextValidatePass] = useState('');
+    const [showPass, setShowPass] = useState(false);
+    const handleShowAndHidePass = () => {
+        setShowPass(!showPass);
+    };
+
+    const [error, setError] = useState('');
+
+    const validateEmail = (value) => {
+        if (value.trim().length === 0 || value.trim() === '') {
+            setTextValidateEmail('Vui lòng nhập email');
+            return false;
+        } else {
+            let flag = String(value)
+                .toLowerCase()
+                .match(
+                    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                );
+            if (!flag) {
+                setTextValidateEmail('Email không hợp lệ. Vui lòng nhập lại');
+                return false;
+            } else {
+                setTextValidateEmail('');
+                return true;
+            }
+        }
+    };
+    const validatePass = (value) => {
+        if (value.trim().length === 0 || value.trim() === '') {
+            setTextValidatePass('Vui lòng nhập mật khẩu');
+            return false;
+        } else {
+            if (value.trim().length < 8) {
+                setTextValidatePass('Mật khẩu ít nhất phải có 8 ký tự');
+                return false;
+            } else {
+                setTextValidatePass('');
+                return true;
+            }
+        }
+    };
+    // const handleSubmit = async (e) => {
+    // 	e.preventDefault();
+    // 	try {
+    // 		const url = "http://localhost:8080/api/auth";
+    // 		const { data: res } = await axios.post(url, data);
+    // 		localStorage.setItem("token", res.data);
+    // 		window.location = "/";
+    // 	} catch (error) {
+    // 		if (
+    // 			error.response &&
+    // 			error.response.status >= 400 &&
+    // 			error.response.status <= 500
+    // 		) {
+    // 			setError(error.response.data.message);
+    // 		}
+    // 	}
+    // };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        let flagEmail = validateEmail(email);
+        let flagPassword = validatePass(pass);
+        if (flagEmail && flagPassword) {
+            // Xử lý submit ở đây
+        }
+    };
+
     return (
-        <div className={cx('container_main')}>
-            <form className={cx('form')} id="form-2">
-                <h3 className={cx('heading')}>Đăng Nhập</h3>
-                <p className={cx('desc')}>
-                    Đăng nhập để sử dụng <b className={cx('fw-bold')}>GiveFund</b> ❤️
-                </p>
+        <div className={cx('login_container')}>
+            <div className={cx('login_form_container')}>
+                <div className={cx('left')}>
+                    <form className={cx('form_container')} onSubmit={handleSubmit}>
+                        <h2>Đăng nhập</h2>
+                        <div style={{ display: 'flex', flexDirection: 'column', height: '70px' }}>
+                            <input
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                type="email"
+                                placeholder="Địa chỉ email"
+                                name="email"
+                                className={cx('inputInfo')}
+                            />
+                            <span className={cx('text-validate')}>{textValidateEmail}</span>
+                        </div>
 
-                <div className={cx('spacer')}></div>
+                        <div style={{ display: 'flex', flexDirection: 'column', height: '70px', marginTop: '10px' }}>
+                            <div className={cx('container-pass')}>
+                                <input
+                                    type={showPass ? 'text' : 'password'}
+                                    placeholder="Mật khẩu"
+                                    name="password"
+                                    value={pass}
+                                    onChange={(e) => setPass(e.target.value)}
+                                    className={cx('inputInfo')}
+                                />
+                                {showPass ? (
+                                    <FaEye className={cx('eye-icon')} onClick={handleShowAndHidePass} />
+                                ) : (
+                                    <FaEyeSlash className={cx('eye-icon')} onClick={handleShowAndHidePass} />
+                                )}
+                            </div>
+                            <span className={cx('text-validate')}>{textValidatePass}</span>
+                        </div>
 
-                <div className={cx('form-group')}>
-                    <label for="email" className={cx('form-label')}>
-                        Email
-                    </label>
-                    <input
-                        id="email"
-                        name="email"
-                        type="text"
-                        placeholder="VD: email@domain.com"
-                        className={cx('form-control')}
-                    />
-                    <span className={cx('form-message')}></span>
+                        {error && <div className={cx('error_msg')}>{error}</div>}
+                        <button type="submit" className={cx('green_btn')}>
+                            Đăng nhập
+                        </button>
+                        <Link to="/forgot">
+                            <span className={cx('text-forgot')}>Quên mật khẩu ?</span>
+                        </Link>
+                    </form>
                 </div>
-
-                <div className={cx('form-group')}>
-                    <label for="password" className={cx('form-label')}>
-                        Mật khẩu
-                    </label>
-                    <div className={cx('container-pass')}>
-                        <input
-                            id="password"
-                            name="password"
-                            type="password"
-                            placeholder="Nhập mật khẩu"
-                            className={cx('form-control')}
-                        />
-                        <FaEyeSlash className={cx('eye-icon')}/>
-                    </div>
-                    <span className={cx('form-message')}></span>
+                <div className={cx('right')}>
+                    <h2>Bạn chưa có tài khoản ?</h2>
+                    <Link to="/sign-up">
+                        <button type="button" className={cx('white_btn')}>
+                            Đăng ký
+                        </button>
+                    </Link>
                 </div>
-
-
-                <button className={cx('form-submit')}>Đăng Nhập</button>
-                <div className={cx('spacer')}></div>
-                <a href="/" className={cx('forgetPass')}>Quên mật khẩu ?</a>
-            </form>
-
-            <div className={cx('container-img')}>
-                <p className={cx('title-bg')}>Đăng Nhập</p>
-                <span className={cx('text-italic')}>GiveFund một nền tảng gây quỹ cộng đồng</span>
-                <span className={cx('text-italic')}>Nếu bạn chưa có tài khoản hãy đăng ký để trải nghiệm</span>
-                <button className={cx('button-login')}>Đăng Ký</button>
             </div>
         </div>
     );

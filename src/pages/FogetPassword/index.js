@@ -1,50 +1,84 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './FogetPassword.module.scss';
 
 const cx = classNames.bind(styles);
 
 function ForgetPassword() {
-  return (
-    <div className={cx('container_main')}>
-            <form className={cx('form')} id="form-2">
-                <h3 className={cx('heading')}>Quên mật khẩu</h3>
-                <p className={cx('desc')}>
-                  Hãy nhập địa chỉ email bạn dùng để đăng ký tài khoản
-                </p>
+    const [email, setEmail] = useState('');
+    const [textValidateEmail, setTextValidateEmail] = useState('');
+    const validateEmail = (value) => {
+      if (value.trim().length === 0 || value.trim() === '') {
+          setTextValidateEmail('Vui lòng nhập email');
+          return false;
+      } else {
+          let flag = String(value)
+              .toLowerCase()
+              .match(
+                  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+              );
+          if (!flag) {
+              setTextValidateEmail('Email không hợp lệ. Vui lòng nhập lại');
+              return false;
+          } else {
+              setTextValidateEmail('');
+              return true;
+          }
+      }
+  };
+    const [msg, setMsg] = useState('');
+    const [error, setError] = useState('');
 
-                <p className={cx('desc')}>
-                  Chúng tôi sẽ gửi link cấp lại mật khẩu đến địa chỉ đó
-                </p>
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        let flagEmail = validateEmail(email);
+        if (flagEmail) {
+          // try {
+        // 	const url = `http://localhost:8080/api/password-reset`;
+        // 	const { data } = await axios.post(url, { email });
+        // 	setMsg(data.message);
+        // 	setError("");
+        // } catch (error) {
+        // 	if (
+        // 		error.response &&
+        // 		error.response.status >= 400 &&
+        // 		error.response.status <= 500
+        // 	) {
+        // 		setError(error.response.data.message);
+        // 		setMsg("");
+        // 	}
+        // }
+        }
+        
+    };
 
-                <div className={cx('spacer')}></div>
-
-                <div className={cx('form-group')}>
-                    <label for="email" className={cx('form-label')}>
-                        Email
-                    </label>
+    return (
+        <div className={cx('container')}>
+            <form className={cx('form_container')} onSubmit={handleSubmit}>
+                <h1>Quên mật khẩu</h1>
+                <span className={cx('title')}>
+                    Chúng tôi sẽ gửi thông tin đổi mật khẩu đến địa chỉ email của bạn. Vui lòng kiểm tra email để cập
+                    nhật lại mật khẩu.
+                </span>
+                <div style={{ display: 'flex', flexDirection: 'column', height: '70px' }}>
                     <input
-                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        type="email"
+                        placeholder="Địa chỉ email"
                         name="email"
-                        type="text"
-                        placeholder="VD: email@domain.com"
-                        className={cx('form-control')}
+                        className={cx('inputInfo')}
                     />
-                    <span className={cx('form-message')}></span>
+                    <span className={cx('text-validate')}>{textValidateEmail}</span>
                 </div>
-
-                <button className={cx('form-submit')}>Tiếp tục</button>
-                <div className={cx('spacer')}></div>
-                <a href="/" className={cx('forgetPass')}>Quay lại đăng nhập</a>
+                {error && <div className={cx('error_msg')}>{error}</div>}
+                {msg && <div className={cx('success_msg')}>{msg}</div>}
+                <button type="submit" className={cx('green_btn')}>
+                    Xác nhận
+                </button>
             </form>
-
-            <div className={cx('container-img')}>
-                <p className={cx('title-bg')}>Quên mật khẩu</p>
-                <span className={cx('text-italic')}>Đừng lo chúng tôi đang giúp bạn lấy lại mật khẩu</span>
-                <button className={cx('button-login')}>Đăng Nhập</button>
-            </div>
         </div>
-  )
+    );
 }
 
-export default ForgetPassword
+export default ForgetPassword;

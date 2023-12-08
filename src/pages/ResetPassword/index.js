@@ -1,18 +1,14 @@
-import React, { useState } from 'react';
-import classNames from 'classnames/bind';
-import styles from './SignUp.module.scss';
-import { FaEye, FaEyeSlash } from 'react-icons/fa6';
+import React, { useEffect, useState, Fragment } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import classNames from 'classnames/bind';
+import styles from './ResetPassword.module.scss';
+import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 
 const cx = classNames.bind(styles);
 
-function SignUp() {
-
-    const [name, setName] = useState('');
-    const [textValidateName, setTextValidateName] = useState('');
-    const [email, setEmail] = useState('');
-    const [textValidateEmail, setTextValidateEmail] = useState('');
+function ResetPassword() {
+    const [validUrl, setValidUrl] = useState(false);
     const [pass, setPass] = useState('');
     const [textValidatePass, setTextValidatePass] = useState('');
     const [confirmPass, setConfirmPass] = useState('');
@@ -27,38 +23,6 @@ function SignUp() {
         setShowConfirmPass(!showConfirmPass);
     };
 
-    const [error, setError] = useState('');
-    const [msg, setMsg] = useState('');
-
-    const validateName = (value) => {
-        if (value.trim().length === 0 || value.trim() === '') {
-            setTextValidateName('Vui lòng nhập họ tên');
-            return false;
-        } else {
-            setTextValidateName("")
-            return true;
-        }
-    };
-    const validateEmail = (value) => {
-        if (value.trim().length === 0 || value.trim() === '') {
-            setTextValidateEmail('Vui lòng nhập email');
-            return false;
-        } else {
-            let flag = String(value)
-                .toLowerCase()
-                .match(
-                    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-                );
-            if (!flag) {
-                setTextValidateEmail('Email không hợp lệ. Vui lòng nhập lại');
-                return false;
-            }
-            else {
-                setTextValidateEmail("")
-                return true;
-            }
-        }
-    };
     const validatePass = (value) => {
         if (value.trim().length === 0 || value.trim() === '') {
             setTextValidatePass('Vui lòng nhập mật khẩu');
@@ -67,9 +31,8 @@ function SignUp() {
             if (value.trim().length < 8) {
                 setTextValidatePass('Mật khẩu ít nhất phải có 8 ký tự');
                 return false;
-            }
-            else {
-                setTextValidatePass("");
+            } else {
+                setTextValidatePass('');
                 return true;
             }
         }
@@ -82,77 +45,60 @@ function SignUp() {
             if (value.trim() !== pass) {
                 setTextValidateConfirmPass('Mật khẩu không khớp. Vui lòng nhập lại');
                 return false;
-            }
-            else {
-                setTextValidateConfirmPass("");
+            } else {
+                setTextValidateConfirmPass('');
                 return true;
             }
         }
-    }
-
-    // const handleSubmit = async (e) => {
-    // 	e.preventDefault();
-    // 	try {
-    // 		const url = "http://localhost:8080/api/users";
-    // 		const { data: res } = await axios.post(url, data);
-    // 		setMsg(res.message);
-    // 	} catch (error) {
-    // 		if (
-    // 			error.response &&
-    // 			error.response.status >= 400 &&
-    // 			error.response.status <= 500
-    // 		) {
-    // 			setError(error.response.data.message);
-    // 		}
-    // 	}
-    // };
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        let flagName = validateName(name);
-        let flagEmail = validateEmail(email);
-        let flagPassword = validatePass(pass);
-        let flagConfirmPass = validateConfirmPass(confirmPass);
-        if (flagName && flagEmail && flagPassword && flagConfirmPass) {
-            // Xử lý submit ở đây..
-        } 
     };
 
+    const [msg, setMsg] = useState('');
+    const [error, setError] = useState('');
+    // const param = useParams();
+    // const url = `http://localhost:8080/api/password-reset/${param.id}/${param.token}`;
+
+    // useEffect(() => {
+    // 	const verifyUrl = async () => {
+    // 		try {
+    // 			await axios.get(url);
+    // 			setValidUrl(true);
+    // 		} catch (error) {
+    // 			setValidUrl(false);
+    // 		}
+    // 	};
+    // 	verifyUrl();
+    // }, [param, url]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        let flagPassword = validatePass(pass);
+        let flagConfirmPass = validateConfirmPass(confirmPass);
+        if (flagPassword && flagConfirmPass) {
+            // Xử lý submit ở đây..
+            // try {
+            // 	const { data } = await axios.post(url, { password });
+            // 	setMsg(data.message);
+            // 	setError("");
+            // 	window.location = "/login";
+            // } catch (error) {
+            // 	if (
+            // 		error.response &&
+            // 		error.response.status >= 400 &&
+            // 		error.response.status <= 500
+            // 	) {
+            // 		setError(error.response.data.message);
+            // 		setMsg("");
+            // 	}
+            // }
+        }
+    };
     return (
-        <div className={cx('signup_container')}>
-            <div className={cx('signup_form_container')}>
-                <div className={cx('left')}>
-                    <h2>Chào mừng bạn quay lại</h2>
-                    <Link to="/login">
-                        <button type="button" className={cx('white_btn')}>
-                            Đăng nhập
-                        </button>
-                    </Link>
-                </div>
-                <div className={cx('right')}>
+        <Fragment>
+            {validUrl ? (
+                <div className={cx('container')}>
                     <form className={cx('form_container')} onSubmit={handleSubmit}>
-                        <h1>Đăng ký tài khoản</h1>
-                        <div style={{ display: 'flex', flexDirection: 'column', height: '70px' }}>
-                            <input
-                                type="text"
-                                placeholder="Họ và tên"
-                                name="fullName"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className={cx('inputInfo')}
-                            />
-                            <span className={cx('text-validate')}>{textValidateName}</span>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', height: '70px' }}>
-                            <input
-                                type="email"
-                                placeholder="Địa chỉ email"
-                                name="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className={cx('inputInfo')}
-                            />
-                            <span className={cx('text-validate')}>{textValidateEmail}</span>
-                        </div>
+                        <h2>Cập nhật mật khẩu</h2>
+                        <span className={cx('title')}>Hãy nhập mật khẩu mới cho tài khoản của bạn</span>
                         <div style={{ display: 'flex', flexDirection: 'column', height: '70px' }}>
                             <div className={cx('container-pass')}>
                                 <input
@@ -171,7 +117,7 @@ function SignUp() {
                             </div>
                             <span className={cx('text-validate')}>{textValidatePass}</span>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', height: '70px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', height: '70px', marginTop: '10px'}}>
                             <div className={cx('container-pass')}>
                                 <input
                                     type={showConfirmPass ? 'text' : 'password'}
@@ -190,16 +136,19 @@ function SignUp() {
 
                             <span className={cx('text-validate')}>{textValidateConfirmPass}</span>
                         </div>
+
                         {error && <div className={cx('error_msg')}>{error}</div>}
                         {msg && <div className={cx('success_msg')}>{msg}</div>}
                         <button type="submit" className={cx('green_btn')}>
-                            Đăng ký
+                            Xác nhận
                         </button>
                     </form>
                 </div>
-            </div>
-        </div>
+            ) : (
+                <h1 className={cx('not-found')}>404 Not Found</h1>
+            )}
+        </Fragment>
     );
 }
 
-export default SignUp;
+export default ResetPassword;

@@ -15,6 +15,8 @@ import { CampaignManagement, UserManagement, VerifyCampaignManagement, ProgressA
 import DetailProject from '~/pages/user/DetailProject'
 import DetailPerk from '~/pages/user/DetailPerk'
 import ProfilePersonal from '~/pages/user/Profile/ViewProfile/ProfilePersonal'
+import TemplateEmailVerify from '~/pages/TemplateEmailVerify'
+import ResetPassword from '~/pages/ResetPassword'
 
 
 // Public routes
@@ -40,6 +42,8 @@ const publicRoutes = [
     { path: '/sign-up', component: SignUp, layout: null},
     { path: '/login', component: Login, layout: null},
     { path: '/forgot', component: ForgetPassword, layout: null},
+    { path: '/users/:id/verify/:token', component: TemplateEmailVerify, layout: null},
+    { path: '/password-reset/:id/:token', component: ResetPassword, layout: null},
     { path: '/campaigns/:id/detail', component: DetailProject, layout: DefaultLayout},
     { path: '/campaigns/perk/detail', component: DetailPerk, layout: null},
 
