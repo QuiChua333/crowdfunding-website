@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BiPlus } from 'react-icons/bi';
 import { HiOutlineMinusSm } from 'react-icons/hi';
 import classNames from 'classnames/bind';
@@ -6,10 +6,33 @@ import styles from './ItemDetailPerkSelect.module.scss';
 
 const cx = classNames.bind(styles);
 
-function ItemDetailPerkSelect({ setIsOpenModalUpdate, setIsOpenModal, item, setPerkSelected, index, handleClickRemoveItem}) {
-    const [options, setOptions] = useState(() => {
-        {
-            console.log(item);
+function ItemDetailPerkSelect({
+    setIsOpenModalUpdate,
+    setIsOpenModal,
+    item,
+    setPerkSelected,
+    index,
+    handleClickRemoveItem,
+    handleChangeQuantityOrder,
+}) {
+    const [options, setOptions] = useState('');
+    const handleClickEdit = () => {
+        setPerkSelected({ ...item, index });
+        setIsOpenModalUpdate(true);
+        setIsOpenModal(true);
+    };
+    const handleClickSub = () => {
+        if (item.quantityOrder > 1) {
+            handleChangeQuantityOrder('sub', index);
+        }
+    };
+    const handleClickAdd = () => {
+        if (item.quantityOrder < item.quantity - item.claimed) {
+            handleChangeQuantityOrder('add', index);
+        }
+    };
+    useEffect(() => {
+        setOptions((prev) => {
             const res = item.includeItems.reduce((acc, cur) => {
                 if (cur.optionsSelected) {
                     return (
@@ -23,24 +46,8 @@ function ItemDetailPerkSelect({ setIsOpenModalUpdate, setIsOpenModal, item, setP
                 }
             }, '');
             return res;
-        }
-    });
-    const handleClickEdit = () => {
-        setPerkSelected({ ...item, index });
-        setIsOpenModalUpdate(true);
-        setIsOpenModal(true);
-    };
-    const [quantityItem, setQuantityItem] = useState(1);
-    const handleClickSub = () => {
-        if (quantityItem > 1) {
-            setQuantityItem((prev) => prev - 1);
-        }
-    };
-    const handleClickAdd = () => {
-        if (quantityItem < item.quantity - item.claimed) {
-            setQuantityItem((prev) => prev + 1);
-        }
-    };
+        });
+    }, [item]);
     return (
         <div
             className={cx('disableSelect')}
@@ -92,7 +99,7 @@ function ItemDetailPerkSelect({ setIsOpenModalUpdate, setIsOpenModal, item, setP
                                 onClick={handleClickSub}
                             />
                             <span style={{ fontWeight: '600' }} className={cx('disableSelect')}>
-                                {quantityItem}
+                                {item.quantityOrder}
                             </span>
                             <BiPlus
                                 className={cx('btn-quantity')}
@@ -115,16 +122,20 @@ function ItemDetailPerkSelect({ setIsOpenModalUpdate, setIsOpenModal, item, setP
                         <span className={cx('disableSelect', 'btn-edit')} onClick={handleClickEdit}>
                             Edit
                         </span>
-                        <span className={cx('disableSelect', 'btn-remove')} onClick={handleClickRemoveItem}>Remove</span>
+                        <span className={cx('disableSelect', 'btn-remove')} onClick={() => handleClickRemoveItem(index)}>
+                            Remove
+                        </span>
                     </div>
                     <span className={cx('disableSelect')} style={{ fontSize: '18px', fontWeight: 'bold' }}>
                         {item.price} USD
                     </span>
                 </div>
             </div>
-            {
-                quantityItem === item.quantity - item.claimed && <span style={{marginTop: '20px', fontSize: '14px', color: '#FF582A'}}>! Số lượng tối đa còn lại có thể chọn là: {item.quantity - item.claimed}</span>
-            }
+            {item.quantityOrder === item.quantity - item.claimed && (
+                <span style={{ marginTop: '20px', fontSize: '14px', color: '#FF582A' }}>
+                    ! Số lượng tối đa còn lại có thể chọn là: {item.quantity - item.claimed}
+                </span>
+            )}
         </div>
     );
 }

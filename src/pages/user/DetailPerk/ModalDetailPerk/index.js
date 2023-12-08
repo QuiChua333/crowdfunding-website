@@ -17,7 +17,7 @@ function ModalDetailPerk({ itemPerk, setIsOpenModal, handleSelectedItem, isOpenM
                 optionsSelected: item.options.map((i) => {
                     return {
                         name: i.name,
-                        value: '',
+                        value: i.itemsOption[0]
                     };
                 }),
             };

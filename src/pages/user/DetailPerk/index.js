@@ -15,6 +15,7 @@ function DetailPerk() {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isOpenModalUpdate, setIsOpenModalUpdate] = useState(false);
   const itemPerkSelectedFirst = location.state;
+  const [quantityContribute,setQuantityContribute] = useState(0)
   // fetch cái list perk theo id của project 
   var listAllPerk = [
     {
@@ -40,7 +41,7 @@ function DetailPerk() {
             }
         ],
         claimed: 10,
-        quantity: 24,
+        quantity: 10,
         estimateShipping: 'December 2023',
         idProject: 'project1'
     },
@@ -69,6 +70,12 @@ function DetailPerk() {
         includeItems: [
             {
                 name: 'Camera Sling 18L', 
+                options: [
+                  {
+                      name: 'Color',
+                      itemsOption: ['Black', 'White', 'Gray'],
+                  }
+              ],
             }
         ],
         claimed: 8,
@@ -131,15 +138,10 @@ function DetailPerk() {
         })
         return next;
       })
-      setListSelected(prev => {
-        return [...prev, {...newItem, oldIndex:index}]
-      })
+      addItemIntoListSelected({...newItem},index)
   }
 
-
-
   useEffect(() => {
-
     let arr = listAllPerk.map(item => {
       if (item.id === itemPerkSelectedFirst.id)
       {
@@ -196,20 +198,29 @@ function DetailPerk() {
     setListPerks(arr);
   }, []);
 
-
   useEffect(() => {
     for (let i = 0; i < listPerks.length; i++) {
       if (listPerks[i].isSelected === true)
       {
-        addItemIntoListSelected(listPerks[i]);
+        addItemIntoListSelected(listPerks[i],i);
       }
     }
   }, [listPerks.length]);
 
+  useEffect(() => {
+    setQuantityContribute(prev => {
+      const res = listSelected.reduce((acc,cur) => {return acc + cur.quantityOrder},0);
+      return res;
+    })
+  }, [listSelected]);
 
-  const addItemIntoListSelected = (item) => {
+  const addItemIntoListSelected = (item,index) => {
     setListSelected(prev => {
-      return [...prev, item];
+      return [...prev, {
+        ...item,
+        oldIndex: index,
+        quantityOrder: 1,
+      }];
     })
   }
 
@@ -227,6 +238,42 @@ function DetailPerk() {
       })
     })
   }
+  const handleChangeQuantityOrder = (type,index) => {
+      setListSelected(prev => {
+        return [...prev].map((item2, index2) => {
+          if (index2 === index) {
+            return {
+              ...item2,
+              quantityOrder: type==='sub'? item2.quantityOrder - 1 : item2.quantityOrder + 1
+            }
+          }
+          else {
+            return item2;
+          }
+        })
+      })
+  }
+
+  const handleClickRemoveItem = (index) => {
+    for (let i = 0; i < listPerks.length; i++) {
+      if (listPerks[i].id === listSelected[index].id) {
+        listPerks[i].isSelected = false;
+      }
+    }
+    setListSelected(prev => {
+      let res = [...prev];
+      res.splice(index, 1);
+      return res
+    })
+}
+  
+  const [total, setTotal] = useState(0);
+  useEffect(() => {
+    setTotal(() => {
+      const res = listSelected.reduce((acc,cur) => {return acc + cur.quantityOrder*cur.price}, 0);
+      return res;
+    })
+  }, [listSelected])
 
 
   return (
@@ -235,7 +282,7 @@ function DetailPerk() {
       <div style={{display: 'flex', height: '100%', padding: '10px 140px', margin: '10px 0'}}>
         <div style={{width: '52%', marginRight: '30px'}}>
           <p style={{fontSize: '20px', fontWeight: '600', marginLeft: '20px'}}>Danh sách quà tặng có thể thêm</p>
-          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr'}}>
+          <div className={cx('custom-scroll')} style={{display: 'grid', gridTemplateColumns: '1fr 1fr', maxHeight: '58%', overflowY: 'scroll'}}>
             {
               listPerks.map((item, index) => {
                 return (
@@ -254,36 +301,25 @@ function DetailPerk() {
 
         <div style={{width: '48%', marginLeft: '30px'}}>
           <div style={{display: 'flex', flexDirection: 'column'}}>
-            <span style={{fontSize: '20px', fontWeight: '600', marginLeft: '20px', marginBottom: '20px'}}>Your Contribution<span style={{fontSize: '14px', fontWeight: '500', marginLeft: '10px', color: '#616161'}}>(<span>{listSelected.length}</span> item)</span></span>
-            <div style={{display: 'flex', flexDirection: 'column', height: '360px', overflowY: 'scroll'}}>
+            <span style={{fontSize: '20px', fontWeight: '600', marginLeft: '20px', marginBottom: '20px'}}>Your Contribution<span style={{fontSize: '14px', fontWeight: '500', marginLeft: '10px', color: '#616161'}}>(<span>{quantityContribute}</span> item)</span></span>
+            <div className={cx('custom-scroll')} style={{display: 'flex', flexDirection: 'column', height: '360px', overflowY: 'scroll'}}>
               {
               listSelected.map((item, index) => {
-                return <ItemDetailPerkSelect setPerkSelected={setPerkSelected} item={item} key={index} index={index} setIsOpenModalUpdate={setIsOpenModalUpdate} setIsOpenModal={setIsOpenModal}/>
+                return <ItemDetailPerkSelect setPerkSelected={setPerkSelected} item={item} key={index} index={index} setIsOpenModalUpdate={setIsOpenModalUpdate} setIsOpenModal={setIsOpenModal} handleChangeQuantityOrder={handleChangeQuantityOrder} handleClickRemoveItem={handleClickRemoveItem}/>
               })
             }
             </div>
           </div>
 
-          <div style={{marginTop: '40px', display: 'flex', flexDirection: 'column', padding: '30px 40px', border: '1px solid #ccc', borderRadius: '4px'}}>
-            <span style={{fontSize: '20px', fontWeight: '600', marginBottom: '20px', marginLeft: '-20px'}}>Contribution summary</span>
-            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '17px', fontWeight: '300'}}>
-              <span>Subtotal</span>
-              <span>$25</span>
-            </div>
-
-            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '17px', fontWeight: '300', marginTop: '6px'}}>
-              <span>Shipping</span>
-              <span>$15</span>
-            </div>
-
-            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '24px', fontWeight: '450', marginTop: '30px'}}>
-              <span>Total</span>
-              <span>$40</span>
+          <div style={{marginTop: '40px', display: 'flex', flexDirection: 'column', padding: '20px 40px', border: '1px solid #ccc', borderRadius: '4px'}}>
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '24px', fontWeight: '450'}}>
+              <span>Tổng tiền</span>
+              <span>$ {total}</span>
             </div>
 
             <div style={{height: '1px', backgroundColor: '#ccc', marginTop: '10px'}}></div>
 
-            <button className={cx('btn-checkout')} type="button">PROCEED TO CHECKOUT</button>
+            <button className={cx('btn-checkout')} type="button">ĐI ĐẾN CHECKOUT</button>
           </div>
           
         </div>

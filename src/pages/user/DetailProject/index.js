@@ -94,7 +94,7 @@ function DetailProject() {
                     }
                 ],
                 claimed: 10,
-                quantity: 24,
+                quantity: 10,
                 estimateShipping: 'December 2023',
                 idProject: 'project1'
             },

@@ -11,10 +11,10 @@ import { BasicCampaign, ContentCampaign, PerksCampaign, NewPerk, ItemsCampaign, 
 import Payment from '~/pages/user/Payment'
 import { EditProfile, EditSetting } from '~/pages/user/Profile/EditProfile'
 import { ViewCampaigns } from '~/pages/user/Profile/ViewProfile'
-
 import { CampaignManagement, UserManagement, VerifyCampaignManagement, ProgressAndContributeManagement, ComplaintManagement } from '~/pages/admin'
 import DetailProject from '~/pages/user/DetailProject'
 import DetailPerk from '~/pages/user/DetailPerk'
+import ProfilePersonal from '~/pages/user/Profile/ViewProfile/ProfilePersonal'
 
 
 // Public routes
@@ -36,12 +36,12 @@ const publicRoutes = [
     { path: '/individuals/:id/edit/profile', component :EditProfile , layout: HeaderOnlyLayout},
     { path: '/individuals/:id/edit/settings', component :EditSetting , layout: HeaderOnlyLayout},
     { path: '/individuals/:id/campaigns', component :ViewCampaigns , layout: HeaderOnlyLayout},
+    { path: '/individuals/:id/profile', component :ProfilePersonal , layout: HeaderOnlyLayout},
     { path: '/sign-up', component: SignUp, layout: null},
     { path: '/login', component: Login, layout: null},
     { path: '/forgot', component: ForgetPassword, layout: null},
-
-
-
+    { path: '/campaigns/:id/detail', component: DetailProject, layout: DefaultLayout},
+    { path: '/campaigns/perk/detail', component: DetailPerk, layout: null},
 
     // admin
 
@@ -50,15 +50,9 @@ const publicRoutes = [
     { path: '/admin/verify-campaign', component :VerifyCampaignManagement , layout: AdminLayout},
     { path: '/admin/progress-contribute', component :ProgressAndContributeManagement , layout: AdminLayout},
     { path: '/admin/complaint', component :ComplaintManagement , layout: AdminLayout},
-    { path: '/admin', component :CampaignManagement , layout: AdminLayout},
-
-
-    { path: '/project/:id/detail', component: DetailProject, layout: DefaultLayout},
-    { path: '/project/perk/detail', component: DetailPerk, layout: null},
+    { path: '/admin', component :CampaignManagement , layout: AdminLayout}, 
 ]
 
-const privateRoutes = [
-    
-]
+const privateRoutes = []
 
 export { publicRoutes, privateRoutes }
