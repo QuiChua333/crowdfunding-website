@@ -47,7 +47,7 @@ function Header2() {
                 </div>
                 <div className={cx('group')}>
                     <ul className={cx('nav-list')}>
-                        <li><a href='#'>How it works</a></li>
+                        <li><a href='/start-a-campaign'>Tạo chiến dịch</a></li>
                         <li><a href='#'>Sign up</a></li>
                         <li><a href='#'>Sign in</a></li>
                     </ul>

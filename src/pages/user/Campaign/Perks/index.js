@@ -12,14 +12,23 @@ import images from "~/assets/images";
 
 
 import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import baseURL from "~/utils/baseURL";
+import { setLoading } from "~/redux/slides/GlobalApp";
+import { useDispatch } from "react-redux";
 
 
 const cx = classNames.bind(styles);
 
 
 function PerksCampaign() {
+    const { id } = useParams();
+    const dispatch = useDispatch();
+    const [campaginState, setCampaignState] = useState({})
+    const [campagin, setCampaign] = useState({})
     const [isHasPerk, setHasPerk] = useState(true);
     const [enableBulkAction, setBulkAction] = useState(false);
     const [numberSelected, setNumberSelected] = useState(0)
@@ -33,9 +42,38 @@ function PerksCampaign() {
         }, 0);
         setNumberSelected(num)
     }
+    const getCampaign = async () => {
+        try {
+            const res = await axios.get(`${baseURL}/campaign/getCampaignById/${id}`)
+            let infoBasic = {
+                id: res.data.data._id,
+                title: res.data.data.title || '',
+                cardImage: res.data.data.cardImage || { url: '', public_id: '' },
+                status: res.data.data.status,
+                videoUrl: res.data.data.videoUrl || '',
+                imageDetailPage: res.data.data.imageDetailPage || { url: '', public_id: '' },
+                story: res.data.data.story || '',
+                faqs: (res.data.data.faqs.length > 0 && res.data.data.faqs) || [{ question: '', answer: '' }]
+            }
+            setCampaignState({ ...infoBasic })
+            setCampaign({ ...infoBasic})
+
+
+        } catch (error) {
+
+        }
+    }
+    useEffect(() => {
+        getCampaign()
+    }, [])
     return (
         <div className={cx('wrapper')}>
-            <SidebarCampaign current={3} />
+             <SidebarCampaign current={3}
+                status={campagin.status}
+                title={campagin.title}
+                cardImage={campagin.cardImage?.url}
+                id={id}
+            />
             <div style={{ flex: '1' }}>
 
                 <HeaderPage isFixed={false} />

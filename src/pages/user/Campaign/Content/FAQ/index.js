@@ -6,14 +6,14 @@ import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scs
 
 const cx =classNames.bind(styles)
 
-function FAQ({ isShowClose, index, removeFAQ, updateValueFAQ, value}) {
+function FAQ({ isShowClose, index, removeFAQ, handleChangeFAQ, item}) {
 
     const handleChange = (e, type) => {
-        const newValue = {
-            ...value,
+        const newItem = {
+            ...item,
             [type]: e.target.value
         }
-        updateValueFAQ(newValue, index);
+        handleChangeFAQ(newItem, index);
 
         
     }
@@ -21,10 +21,6 @@ function FAQ({ isShowClose, index, removeFAQ, updateValueFAQ, value}) {
         removeFAQ(index)
     }
 
-    // useEffect(()=> {
-      
-
-    // },[value])
 
     return (
 
@@ -32,24 +28,24 @@ function FAQ({ isShowClose, index, removeFAQ, updateValueFAQ, value}) {
             <div style={{ flex: 1 }}>
                 <div className={cx('row')}>
                     <div className={cx('title')}>
-                        Question
+                        Câu hỏi
                     </div>
-                    <input onChange={(e) => handleChange(e,'question')} value={value.question} type="text" className={cx('itext-field')} />
+                    <input onChange={(e) => handleChange(e,'question')} value={item.question} type="text" className={cx('itext-field')} />
                     <div className={cx('entreField-validationLabel')}>200</div>
                 </div>
 
                 <div className={cx('row')}>
                     <div className={cx('title')}>
-                        Answer
+                        Trả lời
                     </div>
-                    <textarea onChange={(e) => handleChange(e,'answer')} value={value.answer} className={cx('itext-field')} style={{ minHeight: '60px' }}></textarea>
+                    <textarea onChange={(e) => handleChange(e,'answer')} value={item.answer} className={cx('itext-field')} style={{ minHeight: '60px', paddingTop: '10px' }}></textarea>
                     <div className={cx('entreField-validationLabel')}>500</div>
                 </div>
             </div>
             {
                 isShowClose &&
                 <div onClick={handleClickClose} style={{ cursor: 'pointer', marginTop: '40px' }}>
-                    <span style={{ padding: '5px 8px', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginLeft: '12px' }}><IoCloseSharp /></span>
+                    <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '30px', height: '30px', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginLeft: '12px' }}><IoCloseSharp /></span>
                 </div>
             }
 
