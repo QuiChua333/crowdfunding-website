@@ -1,7 +1,7 @@
 import classNames from "classnames/bind";
 import { useState, useEffect, useRef } from "react";
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { HiCamera } from "react-icons/hi";
 import { MdEdit } from "react-icons/md";
 import { IoCloseSharp } from "react-icons/io5";
@@ -15,12 +15,23 @@ import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scs
 import { HeaderPage } from "~/components/Layout/components/Header";
 import SidebarCampaign from "../Sidebar";
 import FAQ from "./FAQ";
-import { story } from "~/utils/content";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import baseURL from "~/utils/baseURL";
+import { setLoading } from "~/redux/slides/GlobalApp";
+import { useDispatch } from "react-redux";
+import CustomUploadCKEAdapter from "~/utils/CustomUploadCKEAdapter";
 
+ClassicEditor
+    .create( document.querySelector( '#editor' ), {
+        extraPlugins: [ CustomUploadCKEAdapter ],
 
-
-
-
+        // More configuration options.
+        // ...
+    } )
+    .catch( error => {
+        console.log( error );
+    } );
 
 
 
@@ -28,48 +39,59 @@ const cx = classNames.bind(styles);
 
 
 function ContentCampaign() {
-    const [disableAddVideo, setDisableAddVideo] = useState(true);
-    const [isAddVideo, setAddVideo] = useState(false);
-    const [isAddImage, setAddImage] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null)
-    const [urlVideo, setUrlVideo] = useState();
+    const { id } = useParams();
+    const dispatch = useDispatch();
+    const [campaginState, setCampaignState] = useState({})
+    const [campagin, setCampaign] = useState({})
     const [urlEmbedVideo, setUrlEmbedVideo] = useState();
     const [showErrorUrl, setShowErrorUrl] = useState(false);
     const [typeIPitch, setTypeIPitch] = useState(1);
     const inputImage = useRef();
-    const inputWrapper = useRef();
-    const [valFAQ, setValFAQ] = useState([{ question: '', answer: '' }])
-    // const editor = useRef();
-    // const [contentEditor, setContentEditor] = useState('');
-    const handleInputVideoUrl = (e) => {
-        let value = e.target.value;
-        if (value.length > 0) {
-            setDisableAddVideo(false)
-        }
-        else setDisableAddVideo(true)
-        setUrlVideo(value);
-    }
-    const handleAddVideo = (e) => {
-        e.preventDefault();
-        if (!checkLink(urlVideo)) {
-            setShowErrorUrl(true)
-            setAddVideo(false)
 
+
+    const handleClickAddRemoveVideo = (e) => {
+        e.preventDefault();
+        if (!urlEmbedVideo) {
+            if (!checkLink(campaginState.videoUrl)) {
+                setShowErrorUrl(true)
+
+            }
+            else {
+                setShowErrorUrl(false);
+                const urlEmbedVideo = '//www.youtube.com/embed/' + getId(campaginState.videoUrl);
+                setUrlEmbedVideo(urlEmbedVideo);
+            }
         }
         else {
-            setShowErrorUrl(false);
-            const urlEmbedVideo = '//www.youtube.com/embed/' + getId(urlVideo);
-            setUrlEmbedVideo(urlEmbedVideo);
-            setAddVideo(true)
+            setUrlEmbedVideo('');
+            setCampaignState(prev => {
+                return { ...prev, videoUrl: '' }
+            })
+        }
+
+    }
+    const handleChangeImageDetailPage = (e) => {
+        if (e.target.files[0]) {
+            const file = e.target.files[0]
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                let res = reader.result;
+                setCampaignState(prev => {
+                    return { ...prev, imageDetailPage: { ...prev.imageDetailPage, url: res } }
+                })
+            }
         }
     }
-
-    const handlePreviewImage = (event) => {
-        if (event.target.files[0]) {
-            const file = event.target.files[0]
-            file.preview = URL.createObjectURL(file)
-            setSelectedImage(file)
-        }
+    const handleRemoveImageDetailPage = () => {
+        setCampaignState(prev => {
+            return { ...prev, imageDetailPage: { ...prev.imageDetailPage, url: '' } }
+        })
+    }
+    function uploadPlugin(editor) {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            return new CustomUploadCKEAdapter(loader);
+        };
     }
     const getId = (url) => {
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -79,43 +101,106 @@ function ContentCampaign() {
             ? match[2]
             : null;
     }
-    const handleClickAddQuestion = () => {
-        setValFAQ(prev => {
-            const nextState = [...prev, { question: '', answer: '' }];
-            return nextState
+    const handleClickAddFAQ = () => {
+        setCampaignState(prev => {
+            return {
+                ...prev,
+                faqs: [...prev.faqs, { question: '', answer: '' }]
+            }
         })
     }
 
     const handleRemoveFAQ = (index) => {
-        setValFAQ(prev => {
-            const nextState = [...prev]
-            nextState.splice(index, 1)
-            return nextState;
+        setCampaignState(prev => {
+            return {
+                ...prev,
+                faqs: [...prev.faqs].filter((item, index2) => index2 !== index)
+            }
         })
     }
 
-    const handleUpdateValueFAQ = (value, index) => {
-        setValFAQ(prev => {
-
-            const nexState = [...prev];
-            nexState[index] = { ...value };
-            return nexState;
+    const handleChangeFAQ = (value, index) => {
+        setCampaignState(prev => {
+            return {
+                ...prev,
+                faqs: [...prev.faqs].map((item, index2) => {
+                    if (index2 === index) {
+                        return value
+                    }
+                    else return item;
+                })
+            }
         })
     }
 
     useEffect(() => {
-        return () => {
-            selectedImage && URL.revokeObjectURL(selectedImage.preview)
-        }
-    }, [selectedImage])
+        console.log(campaginState)
+    }, [campaginState])
+
+    const handleChangeInputText = (e) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        setCampaignState(prev => {
+            return { ...prev, [name]: value }
+        })
+
+
+
+    }
     const checkLink = (link) => {
         var regex = /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/;
         return regex.test(link)
     }
+    const getCampaign = async () => {
+        try {
+            const res = await axios.get(`${baseURL}/campaign/getCampaignById/${id}`)
+            let infoBasic = {
+                id: res.data.data._id,
+                title: res.data.data.title || '',
+                cardImage: res.data.data.cardImage || { url: '', public_id: '' },
+                status: res.data.data.status,
+                videoUrl: res.data.data.videoUrl || '',
+                imageDetailPage: res.data.data.imageDetailPage || { url: '', public_id: '' },
+                story: res.data.data.story || '',
+                faqs: (res.data.data.faqs.length > 0 && res.data.data.faqs) || [{ question: '', answer: '' }]
+            }
+            setCampaignState({ ...infoBasic })
+            setCampaign({ ...infoBasic })
+            const urlEmbedVideoTMP = '//www.youtube.com/embed/' + getId(res.data.data.videoUrl);
+            setUrlEmbedVideo(urlEmbedVideoTMP)
 
+
+        } catch (error) {
+
+        }
+    }
+    useEffect(() => {
+        getCampaign()
+    }, [])
+    const handleClickSaveContinue = async () => {
+        const body = { ...campaginState }
+        const id = body.id;
+        delete body.id
+        delete body.status
+        delete body.title
+        delete body.cardImage
+        dispatch(setLoading(true))
+        try {
+            const res = await axios.patch(`${baseURL}/campaign/editCampaign/${id}`, body)
+            dispatch(setLoading(false))
+            window.location.href = `/campaigns/${id}/edit/perks/table`
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
     return (
         <div className={cx('wrapper')}>
-            <SidebarCampaign current={2} />
+            <SidebarCampaign current={2}
+                status={campagin.status}
+                title={campagin.title}
+                cardImage={campagin.cardImage?.url}
+                id={id}
+            />
             <div style={{ flex: '1' }}>
 
                 <HeaderPage isFixed={false} />
@@ -124,11 +209,11 @@ function ContentCampaign() {
                     <div className={cx('controlBar')}>
                         <div className={cx('controlBar-container')}>
                             <div className={cx('controlBar-content')}>
-                                Campaign / Content
+                                Chiến dịch / Nội dung
                             </div>
                             <div className={cx('controlBar-controls')}>
-                                <a href="#" className={cx('btn','btn-cancel')}>Save Campaign</a>
-                                <a href="#" className={cx('btn','btn-ok')}>Review & Launch</a>
+                                <a href="#" className={cx('btn', 'btn-cancel')}>Save Campaign</a>
+                                <a href="#" className={cx('btn', 'btn-ok')}>Review & Launch</a>
                             </div>
                         </div>
                         <div className={cx('controlBar-loadingBar')}>
@@ -139,10 +224,10 @@ function ContentCampaign() {
                     <div className={cx('body')}>
                         <div className={cx('entreSection')}>
                             <div className={cx('entreField-header')}>
-                                Pitch Video or Image
+                                Chọn Video hoặc Hình ảnh
                             </div>
                             <div className={cx('entreField-subHeader')}>
-                                Add a video or image to appear on the top of your campaign page. Campaigns with videos raise 2000% more than campaigns without videos. Keep your video 2-3 minutes.
+                                Thêm video hoặc hình ảnh để xuất hiện trên đầu trang chiến dịch của bạn. Chiến dịch có video tăng thêm 200% so với chiến dịch không có video. Giữ cho video của bạn có độ dài 2-3 phút.
                             </div>
 
 
@@ -170,26 +255,24 @@ function ContentCampaign() {
                                     <div className={cx('entreField')} style={{ position: 'relative' }}>
                                         <label className={cx('entreField-label')}>Video URL <span className={cx('entreField-required')}>*</span></label>
                                         <div className={cx('entreField-subLabel')}>
-                                            Enter a YouTube or Vimeo URL to appear at the top of your campaign page. Make sure your video has closed captioning enabled on Youtube or Vimeo.
+                                            Nhập URL YouTube để xuất hiện ở đầu trang chiến dịch của bạn. Đảm bảo video của bạn đã bật phụ đề trên Youtube.
                                         </div>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <input onChange={handleInputVideoUrl} type="text" placeholder="http://" className={cx('itext-field')} style={{ flex: '1' }} />
-                                            <a onClick={handleAddVideo} href="#" className={cx('btn-add-video', {
-                                                disabled: disableAddVideo
-                                            })} >ADD VIDEO</a>
+                                            <input onChange={handleChangeInputText} name="videoUrl" value={campaginState.videoUrl} type="text" placeholder="http://" className={cx('itext-field')} style={{ flex: '1' }} />
+                                            <a onClick={handleClickAddRemoveVideo} href="#" className={cx('btn-add-video')} >{urlEmbedVideo ? 'XÓA VIDEO' : 'THÊM VIDEO'}</a>
                                         </div>
                                         <div className={cx('entreField-error', {
                                             hide: !showErrorUrl
                                         })}>
-                                            Please enter a valid YouTube or Vimeo URL
+                                            Vui lòng nhập đúng định dạng Youtube URL
                                         </div>
 
                                         <div className={cx('videoPlaceholder', {
-                                            hide: isAddVideo
+                                            hide: urlEmbedVideo
                                         })}></div>
                                         <div style={{ marginTop: '10px' }}>
                                             {
-                                                isAddVideo &&
+                                                urlEmbedVideo &&
                                                 <iframe src={urlEmbedVideo} width="695" height="460" scrolling="no" title="YouTube embed" frameborder="0" allow="autoplay; fullscreen; encrypted-media; picture-in-picture;" allowfullscreen="true">
 
                                                 </iframe>
@@ -203,16 +286,18 @@ function ContentCampaign() {
                                     hide: typeIPitch === 1
                                 })}>
                                     <div className={cx('entreField')}>
-                                        <label className={cx('entreField-label')}>Pitch Image <span className={cx('entreField-required')}>*</span></label>
+                                        <label className={cx('entreField-label')}>Chọn hình ảnh <span className={cx('entreField-required')}>*</span></label>
                                         <div className={cx('entreField-subLabel')}>
-                                            Upload an image to appear at the top of your campaign page. <br />
-                                            695 x 460 recommended resolution.
+                                            Tải hình ảnh lên để xuất hiện ở đầu trang chiến dịch của bạn. <br />
+                                            Độ phân giải được đề xuất là 695 x 460.
+
+
                                         </div>
                                         <div>
-                                            <div onClick={() => { inputImage.current.click() }} className={cx('entreField-input-image')} style={{width: '695px', height: '460px'}} ref={inputWrapper}>
+                                            <div onClick={() => { inputImage.current.click() }} className={cx('entreField-input-image')} style={{ width: '695px', height: '460px' }} >
 
                                                 {
-                                                    !selectedImage &&
+                                                    !campaginState.imageDetailPage?.url &&
                                                     <div className={cx('tertiaryAction')}>
                                                         <span className={cx('tertiaryAction-icon')}>
                                                             <HiCamera style={{ color: '#7A69B3', fontSize: '18px' }} />
@@ -225,18 +310,18 @@ function ContentCampaign() {
                                                 }
 
                                                 {
-                                                    selectedImage &&
+                                                    campaginState.imageDetailPage?.url &&
                                                     <div className={cx('image-upload')}>
-                                                        <img style={{ position: 'relative', objectFit: 'cover' }} width="695" height="460" src={selectedImage.preview} />
+                                                        <img style={{ position: 'relative', objectFit: 'cover' }} width="695" height="460" src={campaginState.imageDetailPage?.url} />
                                                         <div className={cx('editFile')}>
                                                             <span className={cx('editFile-icon')}><MdEdit style={{ color: '#7a69b3', fontSize: '18px' }} /></span>
-                                                            <span onClick={(e) => { e.stopPropagation(); inputImage.current.value = null; setSelectedImage(null) }} className={cx('editFile-icon')}><IoCloseSharp style={{ color: '#7a69b3', fontSize: '22px' }} /></span>
+                                                            <span onClick={(e) => { e.stopPropagation(); inputImage.current.value = null; handleRemoveImageDetailPage() }} className={cx('editFile-icon')}><IoCloseSharp style={{ color: '#7a69b3', fontSize: '22px' }} /></span>
                                                         </div>
 
                                                     </div>
                                                 }
                                             </div>
-                                            <input onChange={handlePreviewImage} className={cx('entreImage-file')} ref={inputImage} name="file" type="file" accept="image/jpg, image/jpeg, image/png" />
+                                            <input onChange={handleChangeImageDetailPage} className={cx('entreImage-file')} ref={inputImage} name="file" type="file" accept="image/jpg, image/jpeg, image/png" />
                                         </div>
                                     </div>
                                 </div>
@@ -250,28 +335,85 @@ function ContentCampaign() {
 
                         <div className={cx('entreSection')}>
                             <div className={cx('entreField-header')}>
-                                Story <span className={cx('entreField-required')}>*</span>
+                                Câu chuyện <span className={cx('entreField-required')}>*</span>
                             </div>
                             <div className={cx('entreField-subHeader')}>
-                                Tell potential contributors more about your campaign. Provide details that will motivate people to contribute. A good pitch is compelling, informative, and easy to digest. Learn more.
+                                Cho những người đóng góp tiềm năng biết thêm về chiến dịch của bạn. Cung cấp chi tiết sẽ thúc đẩy mọi người đóng góp. Một chiến dịch quảng bá tốt phải hấp dẫn, nhiều thông tin và dễ hiểu.
                             </div>
 
                             <div className={cx('entreField-subLabel')}>
-                                Images that are intended to span the width of the story section should have a minimum width of 695 pixels. Images wider than 695 pixels will be resized proportionally.
+                                Hình ảnh nhằm kéo dài chiều rộng của phần câu chuyện phải có chiều rộng tối thiểu là 695 pixel. Hình ảnh rộng hơn 695 pixel sẽ được thay đổi kích thước tương ứng.
                             </div>
 
                             <div className={cx('ck-editor')}>
                                 <CKEditor
                                     editor={ClassicEditor}
-                                    // config={{
-                                    //     extraPlugins: [uploadPlugin]
-                                    // }}
+                                    config={{
+                                        extraPlugins: [uploadPlugin],
+                                        toolbar: {
+                                            items: [
+                                                'heading',
+                                                '|',
+                                                'bold',
+                                                'italic',
+                                                'link',
+                                                'bulletedList',
+                                                'numberedList',
+                                                '|',
+                                                'indent',
+                                                'outdent',
+                                                '|',
+                                                'imageUpload',
+                                                'blockQuote',
+                                                'insertTable',
+                                                'mediaEmbed',
+                                                'undo',
+                                                'redo',
+                                                'paragraph'
+                                            ]
+                                        },
+                                        image: {
+                                            toolbar: [
+                                                'imageStyle:full',
+                                                'imageStyle:side',
+                                                'toggleImageCaption',
+                                                'PictureEditing',
+                                                '|',
+                                                'imageTextAlternative',
+                                                'resizeImage:50',
+                                                'resizeImage:75',
+                                                'resizeImage:original',
+                                            ],
+                                            resizeOptions: [
+                                                {
+                                                    name: 'resizeImage:original',
+                                                    value: null,
+                                                    icon: 'original'
+                                                },
+                                                {
+                                                    name: 'resizeImage:50',
+                                                    value: '50',
+                                                    icon: 'medium'
+                                                },
+                                                {
+                                                    name: 'resizeImage:75',
+                                                    value: '75',
+                                                    icon: 'large'
+                                                }
+                                            ]
+                                        },
+                                        table: {
+                                            contentToolbar: [
+                                                'tableColumn',
+                                                'tableRow',
+                                                'mergeTableCells'
+                                            ]
+                                        },
+                                    }}
 
-                                    // data="<p>Hello from CKEditor&nbsp;5!</p>"
-                                    data="<h3>Short Summary</h3><p>&nbsp;</p><h3>What We Need &amp; What You Get</h3><p>Break it down for folks in more detail:</p><ul><li>Explain how much funding you need and where it's going. Be transparent and specific-people need to trust you to want to fund you.</li><li>Tell people about your unique perks. Get them excited!</li><li>Describe where the funds go if you don't reach your entire goal.</li></ul><h3>The Impact</h3><p>Feel free to explain more about your campaign and let people know the difference their contribution will make:</p><ul><li>Explain why your project is valuable to the contributor and to the world.</li><li>Point out your successful track record with projects like this (if you have one).</li><li>Make it real for people and build trust.</li></ul><h3>Risks &amp; Challenges</h3><p>People value your transparency. Be open and stand out by providing insight into the risks and obstacles you may face on the way to achieving your goal.</p><ul><li>Share what qualifies you to overcome these hurdles.</li><li>Describe your plan for solving these challenges.</li></ul><h3>Other Ways You Can Help</h3><p>Some people just can't contribute, but that doesn't mean they can't help:</p><ul><li>Ask folks to get the word out and make some noise about your campaign.</li><li>Remind them to use the Indiegogo share tools!</li></ul><p>And that's all there is to it.</p><p>&nbsp;</p>"
+                          
+                                    data={campaginState.story || "<h3>Short Summary</h3><p>&nbsp;</p><h3>What We Need &amp; What You Get</h3><p>Break it down for folks in more detail:</p><ul><li>Explain how much funding you need and where it's going. Be transparent and specific-people need to trust you to want to fund you.</li><li>Tell people about your unique perks. Get them excited!</li><li>Describe where the funds go if you don't reach your entire goal.</li></ul><h3>The Impact</h3><p>Feel free to explain more about your campaign and let people know the difference their contribution will make:</p><ul><li>Explain why your project is valuable to the contributor and to the world.</li><li>Point out your successful track record with projects like this (if you have one).</li><li>Make it real for people and build trust.</li></ul><h3>Risks &amp; Challenges</h3><p>People value your transparency. Be open and stand out by providing insight into the risks and obstacles you may face on the way to achieving your goal.</p><ul><li>Share what qualifies you to overcome these hurdles.</li><li>Describe your plan for solving these challenges.</li></ul><h3>Other Ways You Can Help</h3><p>Some people just can't contribute, but that doesn't mean they can't help:</p><ul><li>Ask folks to get the word out and make some noise about your campaign.</li><li>Remind them to use the Indiegogo share tools!</li></ul><p>And that's all there is to it.</p><p>&nbsp;</p>"}
                                     onReady={editor => {
-                                        // You can store the "editor" and use when it is needed.
-                                        // console.log('Editor is ready to use!', editor);
 
                                         editor.editing.view.change((writer) => {
                                             writer.setStyle(
@@ -283,13 +425,14 @@ function ContentCampaign() {
                                     }}
                                     onChange={(event, editor) => {
                                         const data = editor.getData();
-                                     
+                                        setCampaignState(prev => ({ ...prev, story: data }))
+
                                     }}
                                     onBlur={(event, editor) => {
-                                  
+
                                     }}
                                     onFocus={(event, editor) => {
-                         
+
                                     }}
 
                                 />
@@ -305,24 +448,24 @@ function ContentCampaign() {
                                 FAQ <span className={cx('entreField-required')}>*</span>
                             </div>
                             <div className={cx('entreField-subHeader')}>
-                                The FAQ section should provide the most common details that backers are looking for when evaluating your campaign. We will also provide common answers to questions about crowdfunding and how Indiegogo works.
+                                Phần Câu hỏi thường gặp sẽ cung cấp các chi tiết phổ biến nhất mà người ủng hộ đang tìm kiếm khi đánh giá chiến dịch của bạn. Các thắc mắc ban đầu về chiến dịch có thể sẽ được giải quyết tại đây.
                             </div>
 
                             <div>
-                                {valFAQ.map((item, index) => {
-                                    return <FAQ key={index} index={index} value={item} isShowClose={valFAQ.length > 1} removeFAQ={handleRemoveFAQ} updateValueFAQ={handleUpdateValueFAQ} />
+                                {campaginState.faqs?.map((item, index) => {
+                                    return <FAQ key={index} index={index} item={item} isShowClose={campaginState.faqs.length > 1} removeFAQ={handleRemoveFAQ} handleChangeFAQ={handleChangeFAQ} />
                                 })}
                             </div>
 
-                            <div onClick={handleClickAddQuestion} style={{ padding: '16px 0', cursor: 'pointer' }}>
-                                <span style={{ padding: '5px 8px', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginRight: '12px' }}><FaPlus /></span>
-                                <span style={{ color: '#7a69b3', fontWeight: '600' }}>ADD ANOTHER QUESTION</span>
+                            <div onClick={handleClickAddFAQ} style={{ padding: '16px 0', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                                <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '35px', height: '35px', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginRight: '12px' }}><FaPlus /></span>
+                                <span style={{ color: '#7a69b3', fontWeight: '600' }}>THÊM CÂU HỎI KHÁC</span>
                             </div>
 
 
 
                             <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                <a href="#" className={cx('btn','btn-ok')} >SAVE & CONTINUE</a>
+                                <a onClick={handleClickSaveContinue} className={cx('btn', 'btn-ok')} >SAVE & CONTINUE</a>
                             </div>
                         </div>
 

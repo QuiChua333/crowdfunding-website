@@ -1,8 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
-import counterReducer from './slides/counterSlide'
+import globalAppReducer from './slides/GlobalApp'
+import userCampaignReducer from './slides/UserCampaign'
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
-    counter: counterReducer
+    globalApp: globalAppReducer,
+    userCampaign: userCampaignReducer,
   },
 })
+export default store

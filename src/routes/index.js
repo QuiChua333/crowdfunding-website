@@ -16,6 +16,8 @@ import { CampaignManagement, UserManagement, VerifyCampaignManagement, ProgressA
 import DetailProject from '~/pages/user/DetailProject'
 import DetailPerk from '~/pages/user/DetailPerk'
 
+import { PrefixCampaign } from '~/pages/PrefixPage'
+
 
 // Public routes
 const publicRoutes = [
@@ -55,6 +57,12 @@ const publicRoutes = [
 
     { path: '/project/:id/detail', component: DetailProject, layout: DefaultLayout},
     { path: '/project/perk/detail', component: DetailPerk, layout: null},
+
+
+
+    // Prefix page
+    { path: '/start-a-campaign', component: PrefixCampaign, layout: HeaderOnlyLayout},
+
 ]
 
 const privateRoutes = [

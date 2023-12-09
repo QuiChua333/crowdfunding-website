@@ -8,55 +8,141 @@ import { useRef, useEffect } from "react";
 import { FaAngleDown } from "react-icons/fa";
 import { AiFillQuestionCircle } from "react-icons/ai";
 import { useState } from "react";
-
-
-
 import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
 import MenuDropDown from "../MenuDropDown";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import baseURL from "~/utils/baseURL";
+import { setLoading } from "~/redux/slides/GlobalApp";
+import { useDispatch } from "react-redux";
 
 
 const cx = classNames.bind(styles);
-
 function BasicCampaign() {
-    const menu = [
-        {
-            category: 'TECH & INNOVATION',
-            listItem: ['Audio','Audio','Education','Energy & Green Tech','Fashion & Wearables','Food & Beverages','Health & Fitness','Home','Phones & Accessories','Fashion & Wearables','Food & Beverages','Health & Fitness','Home','Phones & Accessories']
-        },
-        {
-            category: 'CREATIVE WORKS',
-            listItem: ['Audio','Audio','Education','Energy & Green Tech','Fashion & Wearables','Food & Beverages','Health & Fitness']
-        },
-        {
-            category: 'COMMUNITY PROJECTS',
-            listItem: ['Audio','Audio','Education','Energy & Green Tech','Fashion & Wearables']
-        }
-    ]
+    const dispatch = useDispatch();
+    const {id} = useParams();
+    const [campaginState,setCampaignState] = useState({})
+    const [campagin,setCampaign] = useState({})
+    const [listFieldGrouByCategory, setListFieldGrouByCategory] = useState([])
     const inputImage = useRef();
-    const inputWrapper = useRef();
-    const [selectedImage, setSelectedImage] = useState(null)
     const [showCategory, setshowCategory] = useState(false);
 
     const handleClickCategorySelector = function () {
         setshowCategory(!showCategory)
     }
 
-    const handlePreviewImage = (event) => {
-        if (event.target.files[0]) {
-            const file = event.target.files[0]
-            file.preview = URL.createObjectURL(file)
-            setSelectedImage(file)
+    const handleChangeCardImage = (e) => {
+        if (e.target.files[0]) {
+            const file = e.target.files[0]
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                let res = reader.result;
+                setCampaignState(prev => {
+                    return {...prev, cardImage: {...prev.cardImage, url: res}}
+                })
+            }
         }
     }
+    const handleRemoveCardImage = () => {
+        setCampaignState(prev => {
+            return {...prev, cardImage: {...prev.cardImage, url: ''}}
+        })
+    }
 
+    const elementCategory = useRef(null)
     useEffect(() => {
-        return () => {
-            selectedImage && URL.revokeObjectURL(selectedImage.preview)
+        function handleClickOutside(event) {
+            if (elementCategory.current && !elementCategory.current.contains(event.target)) {
+                setshowCategory(false);
+            }
         }
-    }, [selectedImage])
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [elementCategory]);
+   
+    const getListCategory = async () => {
+        try {
+            const res = await axios.get(`${baseURL}/field/getFieldGroupByCategory`)
+            setListFieldGrouByCategory(res.data.data)
+        } catch (error) {
+            
+        }
+    }
+    const getCampaign = async () => {
+        try {
+            const res = await axios.get(`${baseURL}/campaign/getCampaignById/${id}`)
+            let infoBasic = {
+                id: res.data.data._id,
+                title: res.data.data.title || '',
+                tagline: res.data.data.tagline || '',
+                cardImage: res.data.data.cardImage  || {url: '', public_id: ''},
+                location: res.data.data.location || {country: '', city: ''},
+                field: res.data.data.field || '',
+                duration: res.data.data.duration || '',
+                status: res.data.data.status,
+            }
+            setCampaignState({...infoBasic})
+            setCampaign({...infoBasic})
+           
+            
+        } catch (error) {
+            
+        }
+    }
+    const handleChangeInputText = (e) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        if (name==='country' || name==='city') {
+            setCampaignState(prev => {
+                return {...prev, location: {...prev.location, [name]: value}}
+            })
+        }
+        else {
+            setCampaignState(prev => {
+                return {...prev, [name]: value}
+            })
+        }
+        
+    }
+    const handleChangeField = (field) => {
+        setCampaignState(prev => {
+            return {...prev, field: field}
+        })
+    }
+    useEffect(() => {
+        getCampaign()
+        getListCategory()
+    },[])
+    useEffect(() => {
+        console.log(campaginState)
+    },[campaginState])
+
+    const handleClickSaveContinue = async () => {
+        const body = {...campaginState}
+        const id = body.id;
+        delete body.id
+        delete body.status
+        dispatch(setLoading(true))
+        try {
+            const res = await axios.patch(`${baseURL}/campaign/editCampaign/${id}`,body)
+            dispatch(setLoading(false))
+            window.location.href = `/campaigns/${id}/edit/story`
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+    
     return (
         <div className={cx('wrapper')}>
-            <SidebarCampaign current={1} />
+            <SidebarCampaign current={1} 
+            status={campagin.status} 
+            title={campagin.title} 
+            cardImage={campagin.cardImage?.url}
+            id={id}
+            />
             <div style={{ flex: '1' }}>
 
                 <HeaderPage isFixed={false} />
@@ -65,7 +151,7 @@ function BasicCampaign() {
                     <div className={cx('controlBar')}>
                         <div className={cx('controlBar-container')}>
                             <div className={cx('controlBar-content')}>
-                                Campaign / Basic
+                                Chiến dịch / Cơ bản
                             </div>
                             <div className={cx('controlBar-controls')}>
                                 <a href="#" className={cx('btn','btn-cancel')}>Save Campaign</a>
@@ -79,41 +165,41 @@ function BasicCampaign() {
                     <div className={cx('body')}>
                         <div className={cx('entreSection')}>
                             <div className={cx('entreField-header')}>
-                                Basics
+                                Cơ bản
                             </div>
                             <div className={cx('entreField-subHeader')}>
-                                Make a good first impression: introduce your campaign objectives and entice people to learn more. This basic information will represent your campaign on your campaign page, on your campaign card, and in searches.
+                            Tạo ấn tượng tốt đầu tiên: giới thiệu mục tiêu chiến dịch của bạn và lôi kéo mọi người tìm hiểu thêm. Thông tin cơ bản này sẽ đại diện cho chiến dịch của bạn trên trang chiến dịch, trên thẻ chiến dịch và trong các tìm kiếm.
                             </div>
 
                             <div className={cx('entreField')}>
-                                <label className={cx('entreField-label')}>Campaign Title <span className={cx('entreField-required')}>*</span></label>
+                                <label className={cx('entreField-label')}>Tiêu đề <span className={cx('entreField-required')}>*</span></label>
                                 <div className={cx('entreField-subLabel')}>
-                                    What is the title of your campaign?
+                                    Tiêu đề chiến dịch của bạn là gì?
                                 </div>
-                                <input type="text" className={cx('itext-field')} />
+                                <input type="text" className={cx('itext-field')} name="title" value={campaginState.title} onChange={handleChangeInputText}/>
                                 <div className={cx('entreField-validationLabel')}>50</div>
                             </div>
 
                             <div className={cx('entreField')}>
-                                <label className={cx('entreField-label')}>Campaign Tagline <span className={cx('entreField-required')}>*</span></label>
+                                <label className={cx('entreField-label')}>Dòng giới thiệu <span className={cx('entreField-required')}>*</span></label>
                                 <div className={cx('entreField-subLabel')}>
-                                    Provide a short description that best describes your campaign to your audience.
+                                Cung cấp ngắn mô tả đúng nhất chiến dịch của bạn cho mọi người.
                                 </div>
-                                <textarea className={cx('itext-field')} style={{ minHeight: '60px' }}></textarea>
+                                <textarea className={cx('itext-field')} style={{ minHeight: '60px' }} name="tagline" value={campaginState.tagline} onChange={handleChangeInputText}></textarea>
                                 <div className={cx('entreField-validationLabel')}>100</div>
                             </div>
 
                             <div className={cx('entreField')}>
-                                <label className={cx('entreField-label')}>Campaign Card Image <span className={cx('entreField-required')}>*</span></label>
+                                <label className={cx('entreField-label')}>Ảnh thẻ chiến dịch <span className={cx('entreField-required')}>*</span></label>
                                 <div className={cx('entreField-subLabel')}>
-                                    Upload a square image that represents your campaign.
-                                    640 x 640 recommended resolution, 220 x 220 minimum resolution.
+                                Tải lên hình ảnh hình vuông đại diện cho chiến dịch của bạn. 
+                                Độ phân giải khuyến nghị 640 x 640, độ phân giải tối thiểu 220 x 220.
                                 </div>
                                 <div>
-                                    <div onClick={() => { inputImage.current.click(); }} className={cx('entreField-input-image')} style={{width: '400px', height: '400px'}} ref={inputWrapper} >
+                                    <div onClick={() => { inputImage.current.click(); }} className={cx('entreField-input-image')} style={{width: '400px', height: '400px'}} >
 
                                         {
-                                            !selectedImage &&
+                                            !campaginState.cardImage?.url &&
                                             <div className={cx('tertiaryAction')}>
                                                 <span className={cx('tertiaryAction-icon')}>
                                                     <HiCamera style={{ color: '#7A69B3', fontSize: '18px' }} />
@@ -126,12 +212,12 @@ function BasicCampaign() {
                                         }
 
                                         {
-                                            selectedImage &&
+                                            campaginState.cardImage?.url &&
                                             <div>
-                                                <img style={{ position: 'relative' }} width="400" height="400" crop="fill" src={selectedImage.preview} />
+                                                <img style={{ position: 'relative', objectFit: 'cover' }} width="400" height="400"  src={campaginState.cardImage?.url} />
                                                 <div className={cx('editFile')}>
                                                     <span className={cx('editFile-icon')}><MdEdit style={{ color: '#7a69b3', fontSize: '18px' }} /></span>
-                                                    <span onClick={(e) => { e.stopPropagation(); inputImage.current.value = null; setSelectedImage(null) }} className={cx('editFile-icon')}><IoCloseSharp style={{ color: '#7a69b3', fontSize: '22px' }} /></span>
+                                                    <span onClick={(e) => { e.stopPropagation(); inputImage.current.value = null; handleRemoveCardImage()}} className={cx('editFile-icon')}><IoCloseSharp style={{ color: '#7a69b3', fontSize: '22px' }} /></span>
                                                 </div>
                                             </div>
                                         }
@@ -139,40 +225,40 @@ function BasicCampaign() {
 
                                     </div>
 
-                                    <input onChange={handlePreviewImage} className={cx('entreImage-file')} ref={inputImage} name="file" type="file" accept="image/jpg, image/jpeg, image/png" />
+                                    <input onChange={handleChangeCardImage} className={cx('entreImage-file')} ref={inputImage} name="file" type="file" accept="image/jpg, image/jpeg, image/png" />
                                 </div>
                             </div>
 
                             <div className={cx('entreField')}>
-                                <label className={cx('entreField-label')}>Location <span className={cx('entreField-required')}>*</span></label>
+                                <label className={cx('entreField-label')}>Địa điểm <span className={cx('entreField-required')}>*</span></label>
                                 <div className={cx('entreField-subLabel')}>
-                                    Choose the location where you are running the campaign. This location will be visible on your campaign page for your audience to see.
+                                Chọn vị trí nơi bạn đang/sẽ chạy chiến dịch. Vị trí này sẽ hiển thị trên trang chiến dịch của bạn để mọi người có thể xem.
                                 </div>
                                 <div className={cx('d-flex')}>
-                                    <input type="text" placeholder="Country" className={cx('itext-field')} />
-                                    <input type="text" placeholder="City" className={cx('itext-field')} style={{ marginLeft: '10px' }} />
+                                    <input type="text" placeholder="Quốc gia" className={cx('itext-field')}  name="country" value={campaginState.location?.country} onChange={handleChangeInputText}/>
+                                    <input type="text" placeholder="Thành phố" className={cx('itext-field')} style={{ marginLeft: '10px' }} name="city" value={campaginState.location?.city} onChange={handleChangeInputText}/>
                                 </div>
 
                             </div>
 
 
                             <div className={cx('entreField')}>
-                                <label className={cx('entreField-label')}>Category  <span className={cx('entreField-required')}>*</span></label>
+                                <label className={cx('entreField-label')}>Lĩnh vực  <span className={cx('entreField-required')}>*</span></label>
                                 <div className={cx('entreField-subLabel')}>
-                                    To help backers find your campaign, select a category that best represents your project.
+                                Để giúp những người ủng hộ tìm thấy chiến dịch của bạn, hãy chọn lĩnh vực thể hiện rõ nhất dự án của bạn.
                                 </div>
                                 <div className={cx('entreField-categorySelect')}>
-                                    <a className={cx('entreDropdown-select', 'itext-field', {
+                                    <a ref={elementCategory} className={cx('entreDropdown-select', 'itext-field', {
                                         borderInput: showCategory
                                     })} onClick={handleClickCategorySelector} >
                                         <span>
-                                            Audio
+                                            {campaginState.field}
                                         </span>
 
                                         <FaAngleDown className={cx('icon', 'icon-down')} />
                                         {
                                             showCategory &&
-                                            <MenuDropDown menu={menu}/>
+                                            <MenuDropDown listFieldGrouByCategory={listFieldGrouByCategory} onClickItem={handleChangeField}/>
                                         }
 
                                     </a>
@@ -181,22 +267,21 @@ function BasicCampaign() {
                             </div>
 
                             <div className={cx('entreField')}>
-                                <label className={cx('entreField-label')}>Campaign Duration <span className={cx('entreField-required')}>*</span>   <AiFillQuestionCircle style={{ fontSize: '20px' }} />
+                                <label className={cx('entreField-label')}>Thời gian của chiến dịch <span className={cx('entreField-required')}>*</span>   <AiFillQuestionCircle style={{ fontSize: '20px' }} />
 
                                 </label>
                                 <div className={cx('entreField-subLabel')}>
-                                    Campaign is scheduled to end on December 2, 2023 at 2:59 PM GMT+7
-                                    You are eligible for unlimited extensions up to the 60 day maximum.
+                                Thời gian từ lúc chiến dịch của bạn được đăng tải cho đến khi nó kết thúc. Chúng tôi quy định thời gian tối đa cho mỗi chiến dịch là 60 ngày.
                                 </div>
 
-                                <input type="text" className={cx('itext-field')} style={{ width: '55px', padding: '5px 10px', textAlign: 'center' }} />
+                                <input type="text" className={cx('itext-field')} style={{ width: '55px', padding: '5px 10px', textAlign: 'center' }} name="duration" value={campaginState.duration} onChange={handleChangeInputText}/>
 
 
 
                             </div>
 
                             <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                <a href="#" className={cx('btn','btn-ok')} >SAVE & CONTINUE</a>
+                                <a onClick={handleClickSaveContinue} className={cx('btn','btn-ok')} >SAVE & CONTINUE</a>
                             </div>
 
                         </div>
