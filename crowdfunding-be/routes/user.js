@@ -3,11 +3,7 @@ import { UserController } from "../controllers/index.js";
 
 const router = express.Router();
 
-
-
-
-router.get('/', (req, res) => {
-    res.send('Welcome to User')
-})
-
+router.post('/register', UserController.registerUser);
+router.get("/:id/verify/:tokenLinkVerifyEmail", UserController.verifyEmailRegister);
+router.post('/login', UserController.loginUser);
 export default router

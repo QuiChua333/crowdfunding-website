@@ -57,10 +57,10 @@ function ProfilePersonal() {
 
                 <div className={cx('content')}>
                     <div className={cx('tabpanel')}>
-                        <Link to="/individuals/:id" className={cx('tab', 'active')}>
+                        <Link to="/individuals/:id/profile" className={cx('tab', 'active')}>
                             Profile
                         </Link>
-                        <Link to="#" className={cx('tab')}>
+                        <Link to="/individuals/:id/campaigns" className={cx('tab')}>
                             Campaigns
                         </Link>
                         <Link to="/individuals/:id/contributions" className={cx('tab')}>

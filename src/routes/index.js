@@ -17,6 +17,7 @@ import DetailPerk from '~/pages/user/DetailPerk'
 import ProfilePersonal from '~/pages/user/Profile/ViewProfile/ProfilePersonal'
 import TemplateEmailVerify from '~/pages/TemplateEmailVerify'
 import ResetPassword from '~/pages/ResetPassword'
+import Contributes from '~/pages/user/Profile/ViewProfile/Contributes'
 
 
 // Public routes
@@ -39,10 +40,11 @@ const publicRoutes = [
     { path: '/individuals/:id/edit/settings', component :EditSetting , layout: HeaderOnlyLayout},
     { path: '/individuals/:id/campaigns', component :ViewCampaigns , layout: HeaderOnlyLayout},
     { path: '/individuals/:id/profile', component :ProfilePersonal , layout: HeaderOnlyLayout},
+    { path: '/individuals/:id/contributions', component :Contributes , layout: HeaderOnlyLayout},
     { path: '/sign-up', component: SignUp, layout: null},
     { path: '/login', component: Login, layout: null},
     { path: '/forgot', component: ForgetPassword, layout: null},
-    { path: '/users/:id/verify/:token', component: TemplateEmailVerify, layout: null},
+    { path: '/users/:id/verify/:tokenLinkVerifyEmail', component: TemplateEmailVerify, layout: null},
     { path: '/password-reset/:id/:token', component: ResetPassword, layout: null},
     { path: '/campaigns/:id/detail', component: DetailProject, layout: DefaultLayout},
     { path: '/campaigns/perk/detail', component: DetailPerk, layout: null},
