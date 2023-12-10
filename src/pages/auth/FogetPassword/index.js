@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './FogetPassword.module.scss';
-
+import axios from 'axios';
 const cx = classNames.bind(styles);
 
 function ForgetPassword() {
@@ -33,21 +33,21 @@ function ForgetPassword() {
         e.preventDefault();
         let flagEmail = validateEmail(email);
         if (flagEmail) {
-          // try {
-        // 	const url = `http://localhost:8080/api/password-reset`;
-        // 	const { data } = await axios.post(url, { email });
-        // 	setMsg(data.message);
-        // 	setError("");
-        // } catch (error) {
-        // 	if (
-        // 		error.response &&
-        // 		error.response.status >= 400 &&
-        // 		error.response.status <= 500
-        // 	) {
-        // 		setError(error.response.data.message);
-        // 		setMsg("");
-        // 	}
-        // }
+          try {
+        	const url = `http://localhost:5000/user/forgot-password`;
+        	const { data } = await axios.post(url, { email });
+        	setMsg(`Một liên kết cập nhật mật khẩu đã được gửi đến ${email}`);
+        	setError("");
+        } catch (error) {
+        	if (
+        		error.response &&
+        		error.response.status >= 400 &&
+        		error.response.status <= 500
+        	) {
+        		setError(error.response.data.message);
+        		setMsg("");
+        	}
+        }
         }
         
     };

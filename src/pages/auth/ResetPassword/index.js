@@ -8,7 +8,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 const cx = classNames.bind(styles);
 
 function ResetPassword() {
-    const [validUrl, setValidUrl] = useState(false);
+    const [validUrl, setValidUrl] = useState(null);
     const [pass, setPass] = useState('');
     const [textValidatePass, setTextValidatePass] = useState('');
     const [confirmPass, setConfirmPass] = useState('');
@@ -54,20 +54,22 @@ function ResetPassword() {
 
     const [msg, setMsg] = useState('');
     const [error, setError] = useState('');
-    // const param = useParams();
-    // const url = `http://localhost:8080/api/password-reset/${param.id}/${param.token}`;
+    const param = useParams();
 
-    // useEffect(() => {
-    // 	const verifyUrl = async () => {
-    // 		try {
-    // 			await axios.get(url);
-    // 			setValidUrl(true);
-    // 		} catch (error) {
-    // 			setValidUrl(false);
-    // 		}
-    // 	};
-    // 	verifyUrl();
-    // }, [param, url]);
+    useEffect(() => {
+        const verifyUrl = async () => {
+            try {
+                const url = `http://localhost:5000/user/forgot-password/${param.id}/verify-link/${param.tokenResetPassword}`;
+                const { data } = await axios.get(url);
+                console.log(data);
+                setValidUrl(true);
+            } catch (error) {
+                console.log(error);
+                setValidUrl(false);
+            }
+        };
+        verifyUrl();
+    }, [param]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -75,28 +77,29 @@ function ResetPassword() {
         let flagConfirmPass = validateConfirmPass(confirmPass);
         if (flagPassword && flagConfirmPass) {
             // Xử lý submit ở đây..
-            // try {
-            // 	const { data } = await axios.post(url, { password });
-            // 	setMsg(data.message);
-            // 	setError("");
-            // 	window.location = "/login";
-            // } catch (error) {
-            // 	if (
-            // 		error.response &&
-            // 		error.response.status >= 400 &&
-            // 		error.response.status <= 500
-            // 	) {
-            // 		setError(error.response.data.message);
-            // 		setMsg("");
-            // 	}
-            // }
+            try {
+                const url = `http://localhost:5000/user/forgot-password/update-new-password`;
+            	const { data } = await axios.patch(url, {newPassword: pass, id: param.id});
+            	setMsg("Cập nhật mật khẩu mới thành công");
+            	setError("");
+            	window.location.href = "/login";
+            } catch (error) {
+            	if (
+            		error.response &&
+            		error.response.status >= 400 &&
+            		error.response.status <= 500
+            	) {
+            		setError(error.response.data.message);
+            		setMsg("");
+            	}
+            }
         }
     };
     return (
-        <Fragment>
-            {validUrl ? (
-                <div className={cx('container')}>
-                    <form className={cx('form_container')} onSubmit={handleSubmit}>
+        <div className={cx('container')}>
+            {validUrl && (
+                <>
+                <form className={cx('form_container')} onSubmit={handleSubmit}>
                         <h2>Cập nhật mật khẩu</h2>
                         <span className={cx('title')}>Hãy nhập mật khẩu mới cho tài khoản của bạn</span>
                         <div style={{ display: 'flex', flexDirection: 'column', height: '70px' }}>
@@ -117,7 +120,7 @@ function ResetPassword() {
                             </div>
                             <span className={cx('text-validate')}>{textValidatePass}</span>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', height: '70px', marginTop: '10px'}}>
+                        <div style={{ display: 'flex', flexDirection: 'column', height: '70px', marginTop: '10px' }}>
                             <div className={cx('container-pass')}>
                                 <input
                                     type={showConfirmPass ? 'text' : 'password'}
@@ -143,11 +146,11 @@ function ResetPassword() {
                             Xác nhận
                         </button>
                     </form>
-                </div>
-            ) : (
-                <h1 className={cx('not-found')}>404 Not Found</h1>
+                </>
             )}
-        </Fragment>
+
+            {validUrl === false && <h1 className={cx('not-found')}>404 Not Found</h1>}
+        </div>
     );
 }
 

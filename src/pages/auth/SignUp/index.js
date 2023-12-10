@@ -90,23 +90,7 @@ function SignUp() {
         }
     }
 
-    // const handleSubmit = async (e) => {
-    // 	e.preventDefault();
-    // 	try {
-    // 		const url = "http://localhost:8080/api/users";
-    // 		const { data: res } = await axios.post(url, data);
-    // 		setMsg(res.message);
-    // 	} catch (error) {
-    // 		if (
-    // 			error.response &&
-    // 			error.response.status >= 400 &&
-    // 			error.response.status <= 500
-    // 		) {
-    // 			setError(error.response.data.message);
-    // 		}
-    // 	}
-    // };
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         let flagName = validateName(name);
         let flagEmail = validateEmail(email);
@@ -114,6 +98,24 @@ function SignUp() {
         let flagConfirmPass = validateConfirmPass(confirmPass);
         if (flagName && flagEmail && flagPassword && flagConfirmPass) {
             // Xử lý submit ở đây..
+            try {
+                const url = "http://localhost:5000/user/register";
+                const data = {
+                    fullName: name,
+                    email,
+                    password: pass
+                }
+                const { data: res } = await axios.post(url, data);
+                setMsg(res.message);
+            } catch (error) {
+                if (
+                    error.response &&
+                    error.response.status >= 400 &&
+                    error.response.status <= 500
+                ) {
+                    setError(error.response.data.message);
+                }
+            }
         } 
     };
 

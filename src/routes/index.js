@@ -1,12 +1,12 @@
 import Home from '~/pages/user/Home'
-import Following from '~/pages/Following'
+import Following from '~/pages/auth/Following'
 import Upload from '~/pages/Upload'
 import { DefaultLayout, HeaderOnlyLayout, AdminLayout } from '~/components/Layout'
 import { HomeLayout } from '~/components/Layout'
 import Explore from '~/pages/user/Explore'
-import SignUp from '~/pages/SignUp'
-import Login from '~/pages/Login'
-import ForgetPassword from '~/pages/FogetPassword'
+import SignUp from '~/pages/auth/SignUp'
+import Login from '~/pages/auth/Login'
+import ForgetPassword from '~/pages/auth/FogetPassword'
 import { BasicCampaign, ContentCampaign, PerksCampaign, NewPerk, ItemsCampaign, NewItem, TeamCampaign, FundingCampaign, SettingCampaign } from '~/pages/user/Campaign'
 import Payment from '~/pages/user/Payment'
 import { EditProfile, EditSetting } from '~/pages/user/Profile/EditProfile'
@@ -15,8 +15,8 @@ import { CampaignManagement, UserManagement, VerifyCampaignManagement, ProgressA
 import DetailProject from '~/pages/user/DetailProject'
 import DetailPerk from '~/pages/user/DetailPerk'
 import ProfilePersonal from '~/pages/user/Profile/ViewProfile/ProfilePersonal'
-import TemplateEmailVerify from '~/pages/TemplateEmailVerify'
-import ResetPassword from '~/pages/ResetPassword'
+import TemplateEmailVerify from '~/pages/auth/TemplateEmailVerify'
+import ResetPassword from '~/pages/auth/ResetPassword'
 import Contributes from '~/pages/user/Profile/ViewProfile/Contributes'
 
 
@@ -45,7 +45,7 @@ const publicRoutes = [
     { path: '/login', component: Login, layout: null},
     { path: '/forgot', component: ForgetPassword, layout: null},
     { path: '/users/:id/verify/:tokenLinkVerifyEmail', component: TemplateEmailVerify, layout: null},
-    { path: '/password-reset/:id/:token', component: ResetPassword, layout: null},
+    { path: '/user/:id/update-new-password/:tokenResetPassword', component: ResetPassword, layout: null},
     { path: '/campaigns/:id/detail', component: DetailProject, layout: DefaultLayout},
     { path: '/campaigns/perk/detail', component: DetailPerk, layout: null},
 

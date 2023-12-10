@@ -23,7 +23,7 @@ const registerUser = async (req, res) => {
             },
             process.env.JWT_SECRET_LINK_VERIFY_EMAIL,
             {
-                expiresIn: '5m',
+                expiresIn: process.env.EXPIRED_LINK_VERIFY_EMAI,
             },
         );
         const url = `${process.env.FRONT_END_URL}users/${newUser.id}/verify/${tokenVerifyEmailLink}`;
@@ -61,22 +61,82 @@ const loginUser = async (req, res) => {
                 },
                 process.env.JWT_SECRET_LINK_VERIFY_EMAIL,
                 {
-                    expiresIn: '5m',
+                    expiresIn: process.env.EXPIRED_LINK_VERIFY_EMAI,
                 },
             );
             const url = `${process.env.FRONT_END_URL}users/${user.id}/verify/${tokenVerifyEmailLink}`;
             await sendEmail(user.email, 'Verify Email', url);
 
-            return res.status(400).json({ message: "An Email sent to your account please verify" });
+            return res.status(200).json({ message: "An Email sent to your account please verify" });
         }
 
         const accessToken = generateAccessToken({email: user.email});
         const refreshToken = generateRefreshToken({email: user.email});
         user.refreshToken = refreshToken;
         await user.save();
-        return res.status(200).json({ data: {accessToken,refreshToken}, message: "Logged in successfully" });
-    } catch (error) {}
+        return res.status(200).json({ data: {accessToken,refreshToken, isAdmin: user.isAdmin}, message: "Logged in successfully" });
+    } catch (error) {
+        return res.status(400).json({
+            message: error.message,
+        });
+    }
 };
+
+const forgotPassword = async (req, res) => {
+    try {
+        const {email} = req.body;
+        let emailUser = await User.findOne({email}).exec();
+        if (!emailUser) {
+            return res.status(401).json({ message: 'This email is not existed or registered !' });
+        }
+        const tokenResetPassword = jwt.sign(
+            {
+                email: emailUser.email
+            },
+            process.env.JWT_SECRET_LINK_RESET_PASSWORD,
+            {
+                expiresIn: process.env.EXPIRED_LINK_RESET_PASSWORD,
+            },
+        );
+        const url = `${process.env.FRONT_END_URL}user/${emailUser.id}/update-new-password/${tokenResetPassword}`;
+        await sendEmail(emailUser.email, 'Password Reset', url);
+
+        res.status(200).json({ message: "Password reset link sent to your email account" });
+
+    } catch (error) {
+        return res.status(400).json({
+            message: error.message,
+        });
+    }
+}
+
+const verifyLinkForgotPassword = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).exec();
+        if (!user) return res.status(400).json({ message: 'Invalid link' });
+
+        const token = req.params.tokenVerifyLinkForgotPassword;
+        jwt.verify(token, process.env.JWT_SECRET_LINK_RESET_PASSWORD);
+        res.status(200).json({ message: 'successfully' });
+    } catch (error) {
+        res.status(400).json({ message: 'Invalid link' });
+    }
+}
+
+const updateNewPassword = async (req, res) => {
+    try {
+        const {newPassword, id} = req.body;
+        const user = await User.findById(id).exec();
+        const hashedPassword = await bcrypt.hash(newPassword, parseInt(process.env.ROUNDS));
+        user.password = hashedPassword;
+        await user.save();
+        return res.status(200).json({ message: "Password updated successfully"});
+    } catch (error) {
+        return res.status(400).json({
+            message: error.message,
+        });
+    }
+}
 
 const generateAccessToken = (payload) => {
     return jwt.sign(payload,process.env.JWT_SECRET_ACCESS_TOKEN,{
@@ -108,4 +168,7 @@ export default {
     registerUser,
     verifyEmailRegister,
     loginUser,
+    forgotPassword,
+    verifyLinkForgotPassword,
+    updateNewPassword
 };

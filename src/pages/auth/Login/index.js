@@ -52,29 +52,38 @@ function Login() {
             }
         }
     };
-    // const handleSubmit = async (e) => {
-    // 	e.preventDefault();
-    // 	try {
-    // 		const url = "http://localhost:8080/api/auth";
-    // 		const { data: res } = await axios.post(url, data);
-    // 		localStorage.setItem("token", res.data);
-    // 		window.location = "/";
-    // 	} catch (error) {
-    // 		if (
-    // 			error.response &&
-    // 			error.response.status >= 400 &&
-    // 			error.response.status <= 500
-    // 		) {
-    // 			setError(error.response.data.message);
-    // 		}
-    // 	}
-    // };
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         let flagEmail = validateEmail(email);
         let flagPassword = validatePass(pass);
         if (flagEmail && flagPassword) {
             // Xử lý submit ở đây
+            try {
+                const url = "http://localhost:5000/user/login";
+                const data = {
+                    email,
+                    password: pass
+                }
+                const { data: res } = await axios.post(url, data);
+                localStorage.setItem("accessToken", res.data.accessToken);
+                localStorage.setItem("refreshToken", res.data.refreshToken);
+                if ( res.data.isAdmin) {
+                    window.location.href = "/admin/campaigns";
+                }
+                else {
+                    window.location.href = "/";
+                }
+                
+            } catch (error) {
+                if (
+                    error.response &&
+                    error.response.status >= 400 &&
+                    error.response.status <= 500
+                ) {
+                    setError(error.response.data.message);
+                }
+            }
         }
     };
 
