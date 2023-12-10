@@ -50,7 +50,6 @@ const publicRoutes = [
     { path: '/campaigns/perk/detail', component: DetailPerk, layout: null},
 
     // admin
-
     { path: '/admin/campaigns', component :CampaignManagement , layout: AdminLayout},
     { path: '/admin/users', component :UserManagement , layout: AdminLayout},
     { path: '/admin/verify-campaign', component :VerifyCampaignManagement , layout: AdminLayout},

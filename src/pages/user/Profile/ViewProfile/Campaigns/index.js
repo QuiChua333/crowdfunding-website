@@ -27,7 +27,7 @@ function ViewCampaigns() {
             </div>
 
             <div className={cx('body')}>
-                <h1 className={cx('header-name')}>Huỳnh Ngọc Quí</h1>
+                <h1 className={cx('header-name')}>Phan Trọng Tính</h1>
 
                 <div className={cx('content')}>
                     <div className={cx('tabpanel')}>
