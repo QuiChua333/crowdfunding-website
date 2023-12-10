@@ -6,10 +6,19 @@ export default mongoose.model('Report',
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Campaign'
         },
-        text: String,
+        content: String,
         title: String,
         date: Date,
         isResponsed: Boolean,
-        images: [String]
+        responsed: {
+            content: String,
+            date: Date,
+            images: [],
+        },
+        images: [String],
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }
     })
 )

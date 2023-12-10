@@ -10,14 +10,11 @@ function DropDown({ menu, onClickItem, index }) {
     return (
         <div className={cx('wrapper')}>
            <div className={cx('action')}>
-                Xem và chỉnh sửa dự án
-           </div>
-           <div className={cx('action')}>
-                Tạm ngưng dự án
+                Xem chi tiết
            </div>
            <div style={{height: '1px', background: '#ccc'}}></div>
            <div className={cx('action','action-delete')}>
-                Xóa dự án
+                Xóa
            </div>
         </div>
     );

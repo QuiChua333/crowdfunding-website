@@ -22,13 +22,13 @@ function ComplaintManagement() {
             </div>
             <div className={cx('table-action')}>
                 <div style={{opacity: numberSelected==0 && '0'}}>
-                    <span ><strong style={{ display: 'inline-block', minWidth: '12px' }}>{numberSelected}</strong> perks selected</span>
+                    <span ><strong style={{ display: 'inline-block', minWidth: '12px' }}>{numberSelected}</strong> selected</span>
                     <div style={{ display: 'inline-block', marginLeft: '24px', position: 'relative' }}>
                         <a onClick={(e) => { e.preventDefault(); setOpenDropdownAction(prev => !prev) }} href="#" className={cx('btn', 'btn-ok')} >Xóa
                         </a>
                     </div>
                 </div>
-                <Filter listConditions={['Tất cả','Loại A','Loại B']} handleClickItem={handleClickItemFilter}/>
+                <Filter listConditions={['Tất cả','Đã phản hồi','Chưa phản hồi']} handleClickItem={handleClickItemFilter}/>
             </div>
             <div style={{ marginTop: '40px' }}>
                 <ComplaintTable  />
