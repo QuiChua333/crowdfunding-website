@@ -4,27 +4,26 @@ export default mongoose.model('Campaign',
     new Schema({
         title: String,
         tagline: String,
-        cardImage: String,
+        cardImage: {
+            url: String,
+            public_id: String,
+        },
         location: {
             country: String,
             city: String,
         },
-        category: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Category'
-        },
-        field: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Field'
-        },
+        field: String,
+        status: String,
         startDate: Date,
         duration: Number,
         videoUrl: String,
-        imageDetailPage: String,
+        imageDetailPage: {
+            url: String,
+            public_id: String,
+        },
         story: String,
         goal: Number,
         momoNumber: String,
-        isPause: Boolean,
         faqs: [
             {
                 question: String,

@@ -21,7 +21,7 @@ function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
     const noCheckOptionElement = useRef(null)   
     const handleClickOption = () => {
         setChooseOption(true)
-        setListOption([{ name: '', value: [] }]);
+        setListOption([{ name: '', values: [] }]);
 
     }
 
@@ -30,7 +30,7 @@ function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
         setListOption(null)
     }
     const handleClickAddOption = () => {
-        setListOption(prev => [...prev, { name: '', value: [] }])
+        setListOption(prev => [...prev, { name: '', values: [] }])
     }
 
     const handleClickClose = (index) => {
@@ -49,7 +49,7 @@ function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
                     // item.value.splice(indexB,1);
                     return {
                         ...item,
-                        value: item.value.filter((item,index2) => {
+                        values: item.values.filter((item,index2) => {
                             return index2!==indexB
                         })
                     }
@@ -67,7 +67,7 @@ function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
                     setListOption(prev => {
                         const nextState = prev.map((item, index) => {
                             if (index === indexChange) {
-                                return { ...item, value: [...item.value, newValue] }
+                                return { ...item, values: [...item.values, newValue] }
                             } else return item;
                         })
                         e.target.value='';
@@ -90,14 +90,13 @@ function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
     }
 
     const handleClickSaveItem = () => {
-        const newItem = {itemName, listOption};
+        const newItem = {name: itemName, options: listOption, isHasOption: chooseOption};
         if (optionEdit.type==='add') {
             addNewItem(newItem);
         }
         else if (optionEdit.type==='update') {
             updateItem(newItem,optionEdit.index)
         }
-        setShowModal(false)
     }
     useEffect(() => {
         noCheckOptionElement.current.checked = true;
@@ -114,21 +113,21 @@ function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
             <div className={cx('modal-container')}>
                 <div className={cx('modal-content')}>
                     <div className={cx('modalContent-body')}>
-                        <label className={cx('entreField-label')} style={{ fontSize: '24px', marginBottom: '0px' }}>Item</label>
+                        <label className={cx('entreField-label')} style={{ fontSize: '24px', marginBottom: '0px' }}>Vật phẩm</label>
 
                         <div className={cx('entreField')}>
-                            <label className={cx('entreField-label')}>Item Name<span className={cx('entreField-required')}>*</span></label>
+                            <label className={cx('entreField-label')}>Tên vật phẩm<span className={cx('entreField-required')}>*</span></label>
                             <div className={cx('entreField-subLabel')}>
-                                Use a concise and obvious name for the item.
+                            Sử dụng tên ngắn gọn và rõ ràng cho vật phẩm.
                             </div>
                             <input onChange={(e) => setItemName(e.target.value)} type="text" className={cx('itext-field')} value={itemName}/>
                             <div className={cx('entreField-validationLabel')}>30</div>
                         </div>
 
                         <div className={cx('entreField')} style={{ marginTop: '60px' }}>
-                            <label className={cx('entreField-label')}>Options</label>
+                            <label className={cx('entreField-label')}>Tùy chọn</label>
                             <div className={cx('entreField-subLabel')}>
-                                Do you have options that backers can choose from for this item, e.g., color, size, etc.? This will create SKUs that you can use later to help with fulfillment.
+                            Bạn có các tùy chọn mà người ủng hộ có thể chọn cho vật phẩm này không. Ví dụ: màu sắc, kích thước, ...?
 
                             </div>
                             <div style={{ marginTop: '32px' }}>
@@ -136,7 +135,7 @@ function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
                                     <input onClick={handleClickNoOption} type="radio" value={'VSBL'} name="itemOptions" ref={noCheckOptionElement} />
                                     <span className={cx('inputRadioGroup-radio-button')}></span>
                                     <span className={cx('inputRadioGroup-radio-label')}>
-                                        <span>No, I am not offering any options for this item.</span>
+                                        <span>Không, tôi không cung cấp các lựa chọn cho mặt hàng này.</span>
                                     </span>
                                 </label>
 
@@ -144,7 +143,7 @@ function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
                                     <input type="radio" value={'INVS'} name="itemOptions" />
                                     <span className={cx('inputRadioGroup-radio-button')}></span>
                                     <span className={cx('inputRadioGroup-radio-label')}>
-                                        <span>Yes, I am offering options for this item.</span>
+                                        <span>Có, tôi đang cung cấp các lựa chọn cho mặt hàng này.</span>
                                     </span>
                                 </label>
                             </div>
@@ -154,8 +153,8 @@ function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
                             <>
                                 <div className={cx('entreField')}>
                                     <div className={cx('inputDoubleField-headers')} style={{ display: 'flex' }}>
-                                        <div style={{ padding: '6px' }} class='col-4'><label className={cx('entreField-label')} style={{ marginBottom: '0px' }}>Option Name</label></div>
-                                        <div style={{ padding: '6px' }} class='col-8'><label className={cx('entreField-label')} style={{ marginBottom: '0px' }}>Option Value</label></div>
+                                        <div style={{ padding: '6px' }} class='col-4'><label className={cx('entreField-label')} style={{ marginBottom: '0px' }}>Tên tùy chọn</label></div>
+                                        <div style={{ padding: '6px' }} class='col-8'><label className={cx('entreField-label')} style={{ marginBottom: '0px' }}>Giá trị tùy chọn</label></div>
                                     </div>
                                     {listOption.map((itemA, indexA) => {
                                         return (
@@ -166,20 +165,20 @@ function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
                                                 <div class='col-7' style={{ padding: '6px' }} >
 
                                                     <div className={cx('inputTags')}>
-                                                        {listOption[indexA].value.map((itemB, indexB) => {
+                                                        {listOption[indexA].values.map((itemB, indexB) => {
                                                             return (
                                                                 <span key={indexB} className={cx('inputTags-tag')}>{itemB}<span onClick={() => handleClickRemoveMiniValue(indexA,indexB)} style={{ color: '#7a69b3', marginLeft: '8px', cursor: 'pointer', fontSize: '16px', marginTop: '-2px' }}><IoCloseSharp /></span></span>
                                                             )
                                                         })}
 
-                                                        <input onKeyUp={(e) => handleKeyUpInputTag(e, indexA)} onFocus={(e) => e.target.parentElement.style.border = '1px solid #000'} onBlur={(e) => e.target.parentElement.style.border = '1px solid #ddd'} placeholder={itemA.value.length === 0 && "Small, Medium, Large"} maxlength="30" className={cx('input-value-option')} />
+                                                        <input onKeyUp={(e) => handleKeyUpInputTag(e, indexA)} onFocus={(e) => e.target.parentElement.style.border = '1px solid #000'} onBlur={(e) => e.target.parentElement.style.border = '1px solid #ddd'} placeholder={itemA.values.length === 0 && "Small, Medium, Large"} maxlength="30" className={cx('input-value-option')} />
                                                     </div>
-                                                </div>
+                                                </div>  
                                                 {
                                                     listOption?.length > 1 &&
                                                     <div class='col'>
-                                                        <div onClick={() => handleClickClose(indexA)} style={{ cursor: 'pointer', marginTop: '16px' }}>
-                                                            <span style={{ padding: '5px 8px', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginLeft: '12px' }}><IoCloseSharp /></span>
+                                                        <div onClick={() => handleClickClose(indexA)} style={{ cursor: 'pointer', marginTop: '12px' }}>
+                                                            <span style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginLeft: '12px' }}><IoCloseSharp /></span>
                                                         </div>
                                                     </div>
                                                 }
@@ -191,9 +190,9 @@ function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
                                 </div>
                                 {
                                     showBtnAddOption &&
-                                    <div onClick={handleClickAddOption} style={{ padding: '16px 0', cursor: 'pointer' }}>
-                                        <span style={{ padding: '5px 8px', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginRight: '12px', fontSize: '16px' }}><AiOutlinePlus /></span>
-                                        <span style={{ color: '#7a69b3', fontWeight: '600' }}>ADD OPTION</span>
+                                    <div onClick={handleClickAddOption} style={{ padding: '16px 0', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                                        <span style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginRight: '12px', fontSize: '16px' }}><AiOutlinePlus /></span>
+                                        <span style={{ color: '#7a69b3', fontWeight: '600' }}>THÊM TÙY CHỌN</span>
                                     </div>
                                 }
                             </>
@@ -203,8 +202,8 @@ function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
                     </div>
                     <div className={cx('modalContent-footer')}>
                         <div className={cx('controlBar-controls')}>
-                            <span onClick={() => setShowModal(false)} className={cx('btn','btn-cancel')}>CANCEL</span>
-                            <span onClick={handleClickSaveItem} className={cx('btn','btn-ok')}>SAVE ITEM</span>
+                            <span onClick={() => setShowModal(false)} className={cx('btn','btn-cancel')}>HỦY</span>
+                            <span onClick={handleClickSaveItem} className={cx('btn','btn-ok')}>LƯU VẬT PHẨM</span>
                             {/* <a href="#" className={cx('btn','btn-ok')}>SAVE ITEM</a> */}
                         </div>
                     </div>

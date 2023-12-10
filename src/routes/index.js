@@ -14,6 +14,8 @@ import { ViewCampaigns } from '~/pages/user/Profile/ViewProfile'
 import { CampaignManagement, UserManagement, VerifyCampaignManagement, ProgressAndContributeManagement, ComplaintManagement } from '~/pages/admin'
 import DetailProject from '~/pages/user/DetailProject'
 import DetailPerk from '~/pages/user/DetailPerk'
+
+import { PrefixCampaign } from '~/pages/PrefixPage'
 import ProfilePersonal from '~/pages/user/Profile/ViewProfile/ProfilePersonal'
 import TemplateEmailVerify from '~/pages/auth/TemplateEmailVerify'
 import ResetPassword from '~/pages/auth/ResetPassword'
@@ -29,7 +31,7 @@ const publicRoutes = [
     { path: '/campaigns/:id/edit/basic', component : BasicCampaign, layout: null},
     { path: '/campaigns/:id/edit/story', component : ContentCampaign, layout: null},
     { path: '/campaigns/:id/edit/perks/table', component : PerksCampaign, layout: null},
-    { path: '/campaigns/:id/edit/perks/new', component : NewPerk, layout: null},
+    { path: '/campaigns/:id/edit/perks/:idPerk', component : NewPerk, layout: null},
     { path: '/campaigns/:id/edit/items/table', component : ItemsCampaign, layout: null},
     { path: '/campaigns/:id/edit/items/new', component : NewItem, layout: null},
     { path: '/campaigns/:id/edit/team', component : TeamCampaign, layout: null},
@@ -55,7 +57,14 @@ const publicRoutes = [
     { path: '/admin/verify-campaign', component :VerifyCampaignManagement , layout: AdminLayout},
     { path: '/admin/progress-contribute', component :ProgressAndContributeManagement , layout: AdminLayout},
     { path: '/admin/complaint', component :ComplaintManagement , layout: AdminLayout},
-    { path: '/admin', component :CampaignManagement , layout: AdminLayout}, 
+    { path: '/admin', component :CampaignManagement , layout: AdminLayout},
+
+
+    { path: '/project/:id/detail', component: DetailProject, layout: DefaultLayout},
+    { path: '/project/perk/detail', component: DetailPerk, layout: null},
+
+     // Prefix page
+     { path: '/start-a-campaign', component: PrefixCampaign, layout: HeaderOnlyLayout},
 ]
 
 const privateRoutes = []

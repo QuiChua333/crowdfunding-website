@@ -9,6 +9,10 @@ export default mongoose.model('Item',
                 name: String,
                 values: [String]
             }
-        ]
+        ],
+        campaign: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Campaign'
+        }
     })
 )

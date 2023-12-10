@@ -24,6 +24,16 @@
                 background-color: #e21941;
             }
         }
+        &.disabled {
+            cursor: default;
+            &:hover {
+                background-color: #fff;
+            }
+
+            span {
+                color: #aaa;
+            }
+        }
     }
 
     .btn {

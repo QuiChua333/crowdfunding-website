@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import DropDown from "./DropDown";
 const cx = classNames.bind(styles)
 
-function ItemShipping({ index, onChangeItem, removeItem, listLocation, lengthListShip, itemData }) {
+function ItemShipping({ index, onChangeItem, removeItem, listLocationShip, lengthListItemShiping, itemData, listLocationShipChoosen }) {
 
     const [showLocation, setShowLocation] = useState(false);
     const element = useRef(null)
@@ -14,8 +14,8 @@ function ItemShipping({ index, onChangeItem, removeItem, listLocation, lengthLis
         onChangeItem({...itemData, location},index)
     }
     const handleChangeValue = (e) => {
-        const value = Number(e.target.value.trim());
-        onChangeItem({...itemData, value},index)
+        const value = e.target.value;
+        onChangeItem({...itemData, fee: value},index)
     }
     useEffect(() => {
         function handleClickOutside(event) {
@@ -40,14 +40,14 @@ function ItemShipping({ index, onChangeItem, removeItem, listLocation, lengthLis
                         borderInput: showLocation
                     })} onClick={() => setShowLocation(prev => !prev)} ref={element}>
                         <span>
-                            {itemData.location || 'Select location'}
+                            {itemData.location ||  'Chọn địa điểm'}
                         </span>
 
                         <FaAngleDown className={cx('icon', 'icon-down')} />
                         {
                             showLocation &&
                             <div className={cx('dropdown-outer')}>
-                                <DropDown listItem={listLocation} onClickItem={location => handleChangeLocation(location)} />
+                                <DropDown listItem={listLocationShip} onClickItem={location => handleChangeLocation(location)}  listLocationShipChoosen={listLocationShipChoosen} />
                             </div>
                         }
 
@@ -59,8 +59,8 @@ function ItemShipping({ index, onChangeItem, removeItem, listLocation, lengthLis
 
                 <div className={cx('inputCurrencyField')} style={{ width: '100%' }}>
                     <span className={cx('inputCurrencyField-symbol')}>$</span>
-                    <input onChange={(e) => handleChangeValue(e)} value={itemData.value} placeholder={"20000"} type="text" maxlength="50" className={cx('itext-field', 'inputCurrencyField-input')} />
-                    <span className={cx('inputCurrencyField-isoCode')}>USD</span>
+                    <input onChange={(e) => handleChangeValue(e)} value={itemData.fee} placeholder={"20000"} type="text" maxlength="50" className={cx('itext-field', 'inputCurrencyField-input')} />
+                    <span className={cx('inputCurrencyField-isoCode')}>VNĐ</span>
                 </div>
 
 
@@ -68,7 +68,7 @@ function ItemShipping({ index, onChangeItem, removeItem, listLocation, lengthLis
             </div>
 
             {
-                lengthListShip > 1&&
+                lengthListItemShiping > 1 &&
                 <div class='col'>
                     <div onClick={() => removeItem(index)} style={{ cursor: 'pointer', marginTop: '16px' }}>
                         <span style={{ padding: '5px 8px', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginLeft: '12px' }}><IoCloseSharp /></span>

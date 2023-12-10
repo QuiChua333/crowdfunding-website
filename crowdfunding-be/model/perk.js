@@ -10,8 +10,11 @@ export default mongoose.model('Perk',
         estDelivery: Date,
         isVisible: Boolean,
         items: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Item'
+            item: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Item'
+            },
+            quantity: Number
         }],
         description: String,
         image: String,
@@ -22,7 +25,10 @@ export default mongoose.model('Perk',
                 fee: Number
             }
         ],
-        
+        campaign: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Campaign'
+        }
 
     })
 )

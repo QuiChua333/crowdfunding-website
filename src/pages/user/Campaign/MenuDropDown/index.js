@@ -3,14 +3,14 @@ import classNames from "classnames/bind";
 import styles from './MenuDropDown.module.scss'
 const cx = classNames.bind(styles)
 
-function MenuDropDown({ menu, onClickItem, index }) {
+function MenuDropDown({ listFieldGrouByCategory, onClickItem }) {
     const handleClickItem = (item) => {
-        onClickItem(item,index)
+        onClickItem(item)
     }
     return (
         <div className={cx('category-menu')}>
             {
-                menu.map((item, index) => {
+                listFieldGrouByCategory.map((item, index) => {
                     return (
                         <div className={cx('categoryMenu-sub')} key={index}>
                             <div className={cx('categoryMenu-sub-header')}>
@@ -18,7 +18,7 @@ function MenuDropDown({ menu, onClickItem, index }) {
                             </div>
 
                             {
-                                item.listItem.map((item2, index2) => {
+                                item.listFields.map((item2, index2) => {
                                     return (
                                         <div onClick={() => handleClickItem(item2)} key={index2} className={cx('categoryMenu-sub-item')}>
                                             {item2}
