@@ -9,7 +9,6 @@ export default class CustomUploadCKEAdapter{
     upload = () => {
         return this.loader.file.then((file) => new Promise((resolve,reject) => {
             // upload image server
-            console.log(file)
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onloadend = () => {

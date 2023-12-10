@@ -3,25 +3,19 @@ import styles from './DropDown.module.scss'
 import { useEffect, useState } from "react";
 const cx = classNames.bind(styles)
 
-function DropDown({ listItemInclude, onClickItem, index, setOpenModalItem, setOptionEdit }) {
-     const [listItemIncludeName, setListItemIncludeName] = useState([]);
-     useEffect(() => {
-          setListItemIncludeName(prev => {
-               const nextState = [...listItemInclude].map((item, index) => {
-                    return item.itemName;
-               })
-               return nextState;
-          })
-     }, [])
-     const handleClickItem = (item) => {
-          onClickItem(item, index)
+function DropDown({ listItemInclude, onClickItem, index, setOpenModalItem, setOptionEdit, listItemChoosen }) {
+     const handleClickItem = (item,e) => {
+          if (listItemChoosen?.includes(item.name)) {
+               e.stopPropagation();
+          }
+          else  onClickItem(item)
      }
      return (
           <div className={cx('wrapper')}>
                {
-                    listItemIncludeName.map((item, index) => {
-                         return <div onClick={() => onClickItem({ ...listItemInclude[index] })} className={cx('item')} key={index}>
-                              {item}
+                    listItemInclude.map((item, index) => {
+                         return <div onClick={(e) => handleClickItem(item,e)} className={cx('item',{disabled: listItemChoosen?.includes(item.name)})} key={index}>
+                              <span>{item.name}</span>
                          </div>
                     })
                }

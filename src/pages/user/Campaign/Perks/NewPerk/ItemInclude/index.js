@@ -6,16 +6,16 @@ import { useEffect, useRef, useState } from "react";
 import DropDown from "./DropDown";
 const cx = classNames.bind(styles)
 
-function ItemInclude({ index, onChangeItem, removeItem, listItemInclude, itemData, lengthListItem, setOpenModalItem, setOptionEdit}) {
-    
+function ItemInclude({ index, onChangeItem, removeItem, listItemsAvailable, itemData, lengthListItem, setOpenModalItem, setOptionEdit, listItemChoosen}) {
+
     const [showListItemInclude, setShowListItemInclude] = useState(false);
     const element = useRef(null)
     const handleClickItemInclude = (item) => {
-        onChangeItem({...item,quantity: itemData.quantity},index)
+        onChangeItem({...itemData, name: item.name, quantity: itemData.quantity, id: item.id},index)
         
     }
     const handleChangeItem = (e) => {
-        const quantity = Number(e.target.value.trim());
+        const quantity = e.target.value;
         onChangeItem({...itemData, quantity: quantity },index)
     }
     
@@ -40,14 +40,14 @@ function ItemInclude({ index, onChangeItem, removeItem, listItemInclude, itemDat
                         borderInput: showListItemInclude
                     })} onClick={() => setShowListItemInclude(prev => !prev)} ref={element}>
                         <span>
-                            {itemData.itemName || 'Select an item'}
+                            {itemData.name || 'Chọn một vật phẩm'}
                         </span>
 
                         <FaAngleDown className={cx('icon', 'icon-down')} />
                         {
                             showListItemInclude &&
                             <div className={cx('dropdown-outer')}>
-                                <DropDown listItemInclude={listItemInclude} onClickItem={handleClickItemInclude} index={index} setOpenModalItem={setOpenModalItem} setOptionEdit={setOptionEdit}/>
+                                <DropDown listItemInclude={listItemsAvailable} onClickItem={handleClickItemInclude} index={index} setOpenModalItem={setOpenModalItem} setOptionEdit={setOptionEdit} listItemChoosen={listItemChoosen}/>
                             </div>
                         }
 
@@ -59,7 +59,7 @@ function ItemInclude({ index, onChangeItem, removeItem, listItemInclude, itemDat
 
                 <div className={cx('inputCurrencyField')} style={{ width: '100%' }}>
                     
-                    <input onChange={(e) => handleChangeItem(e)} value={itemData.quantity} placeholder={"20000"} type="text" maxlength="50" className={cx('itext-field', 'inputCurrencyField-input')} disabled={!itemData.itemName} />
+                    <input onChange={(e) => handleChangeItem(e)} value={itemData.quantity} placeholder={"20000"} type="text" maxlength="50" className={cx('itext-field', 'inputCurrencyField-input')} disabled={!itemData.name} />
             
                 </div>
 
@@ -71,8 +71,8 @@ function ItemInclude({ index, onChangeItem, removeItem, listItemInclude, itemDat
            {
             lengthListItem > 1 &&
             <div class='col'>
-                <div onClick={() => removeItem(index)} style={{ cursor: 'pointer', marginTop: '16px' }}>
-                    <span style={{ padding: '5px 8px', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginLeft: '12px' }}><IoCloseSharp /></span>
+                <div onClick={() => removeItem(index)} style={{ cursor: 'pointer', marginTop: '12px' }}>
+                    <span style={{  width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginLeft: '12px' }}><IoCloseSharp /></span>
                 </div>
             </div>
            }

@@ -27,9 +27,8 @@ const cx = classNames.bind(styles);
 function PerksCampaign() {
     const { id } = useParams();
     const dispatch = useDispatch();
-    const [campaginState, setCampaignState] = useState({})
     const [campagin, setCampaign] = useState({})
-    const [isHasPerk, setHasPerk] = useState(true);
+    const [listPerks, setListPerks] = useState([]);
     const [enableBulkAction, setBulkAction] = useState(false);
     const [numberSelected, setNumberSelected] = useState(0)
     const [isOpenDropdownBulkAction, setOpenDropdownBulkAction] = useState(false)
@@ -50,153 +49,156 @@ function PerksCampaign() {
                 title: res.data.data.title || '',
                 cardImage: res.data.data.cardImage || { url: '', public_id: '' },
                 status: res.data.data.status,
-                videoUrl: res.data.data.videoUrl || '',
-                imageDetailPage: res.data.data.imageDetailPage || { url: '', public_id: '' },
-                story: res.data.data.story || '',
-                faqs: (res.data.data.faqs.length > 0 && res.data.data.faqs) || [{ question: '', answer: '' }]
             }
-            setCampaignState({ ...infoBasic })
-            setCampaign({ ...infoBasic})
+            setCampaign({ ...infoBasic })
 
 
         } catch (error) {
 
         }
     }
+    const getPerksByCampaignId = async () => {
+        try {
+            const res = await axios.get(`${baseURL}/perk/getPerksByCampaignId/${id}`)
+            setListPerks(res.data.data)
+        } catch (error) {
+
+        }
+    }
     useEffect(() => {
         getCampaign()
+        getPerksByCampaignId()
     }, [])
     return (
-        <div className={cx('wrapper')}>
-             <SidebarCampaign current={3}
-                status={campagin.status}
-                title={campagin.title}
-                cardImage={campagin.cardImage?.url}
-                id={id}
-            />
-            <div style={{ flex: '1' }}>
+        <div>
+            <div className={cx('wrapper')}>
+                <SidebarCampaign current={3}
+                    status={campagin.status}
+                    title={campagin.title}
+                    cardImage={campagin.cardImage?.url}
+                    id={id}
+                />
+                <div style={{ flex: '1' }}>
 
-                <HeaderPage isFixed={false} />
+                    <HeaderPage isFixed={false} />
 
-                <div className={cx('content')}>
-                    <div className={cx('controlBar')}>
-                        <div className={cx('controlBar-container')}>
-                            <div className={cx('controlBar-content')}>
-                                Campaign / Perks
+                    <div className={cx('content')}>
+                        <div className={cx('controlBar')}>
+                            <div className={cx('controlBar-container')}>
+                                <div className={cx('controlBar-content')}>
+                                    Chiến dịch / Đặc quyền
+                                </div>
+                                <div className={cx('controlBar-controls')}>
+                                    <a href="#" className={cx('btn', 'btn-cancel')}>Save Campaign</a>
+                                    <a href="#" className={cx('btn', 'btn-ok')}>Review & Launch</a>
+                                </div>
                             </div>
-                            <div className={cx('controlBar-controls')}>
-                                <a href="#" className={cx('btn', 'btn-cancel')}>Save Campaign</a>
-                                <a href="#" className={cx('btn', 'btn-ok')}>Review & Launch</a>
+                            <div className={cx('controlBar-loadingBar')}>
+
                             </div>
                         </div>
-                        <div className={cx('controlBar-loadingBar')}>
+                        <div className={cx('body')}>
 
-                        </div>
-                    </div>
-                    <div className={cx('body')}>
+                            {/* Khi chưa có perk */}
+                            {
+                                listPerks.length > 0 &&
+                                <div>
+                                    <div className={cx('entreSection')}>
+                                        <div className={cx('entreField-header')}>
+                                            Perks
+                                        </div>
+                                        <div className={cx('entreField-subHeader')}>
+                                            Perks are incentives offered to backers in exchange for their support. There are
+                                            different types of perks
+                                            you create. Learn more about perks in the help center.
+                                        </div>
 
-                        {/* Khi chưa có perk */}
-                        {
-                            isHasPerk &&
-                            <div>
-                                <div className={cx('entreSection')}>
-                                    <div className={cx('entreField-header')}>
-                                        Perks
                                     </div>
-                                    <div className={cx('entreField-subHeader')}>
-                                        Perks are incentives offered to backers in exchange for their support. There are
-                                        different types of perks
-                                        you create. Learn more about perks in the help center.
-                                    </div>
-
-                                </div>
-                                <div className={cx('perkTable-action')}>
-                                    <div>
-                                        <span ><strong style={{display: 'inline-block', minWidth: '12px'}}>{numberSelected}</strong> perks selected</span>
-                                        <div style={{ display: 'inline-block', marginLeft: '24px', position: 'relative' }}>
-                                            <a onClick={(e) => { e.preventDefault(); setOpenDropdownBulkAction(prev => !prev) }} href="#" className={cx('btn', 'btn-ok', {
-                                                disabled: !enableBulkAction
-                                            })} >BULK ACTION <FaAngleDown style={{ fontSize: '18px', marginLeft: '4px' }} />
-                                            </a>
+                                    <div className={cx('perkTable-action')}>
+                                        <div>
+                                            <span ><strong style={{ display: 'inline-block', minWidth: '12px' }}>{numberSelected}</strong> perks selected</span>
+                                            <div style={{ display: 'inline-block', marginLeft: '24px', position: 'relative' }}>
+                                                <a onClick={(e) => { e.preventDefault(); setOpenDropdownBulkAction(prev => !prev) }} href="#" className={cx('btn', 'btn-ok', {
+                                                    disabled: !enableBulkAction
+                                                })} >BULK ACTION <FaAngleDown style={{ fontSize: '18px', marginLeft: '4px' }} />
+                                                </a>
 
 
-                                            {
-                                                isOpenDropdownBulkAction &&
-                                                <div className={cx('dropdown')} style={{ left: '16px' }}>
-                                                    <div className={cx('action')}>
-                                                        Set Up Add-ons
+                                                {
+                                                    isOpenDropdownBulkAction &&
+                                                    <div className={cx('dropdown')} style={{ left: '16px' }}>
+                                                        <div className={cx('action')}>
+                                                            Set Up Add-ons
+                                                        </div>
+
+                                                        <div className={cx('action', 'action-delete')}>
+                                                            Delete perk
+                                                        </div>
                                                     </div>
-                                                    
-                                                    <div className={cx('action','action-delete')}>
-                                                        Delete perk
-                                                    </div>
-                                                </div>
-                                            }
+                                                }
 
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <div style={{ display: 'inline-block', marginLeft: '24px' }}>
+                                                <Link to={`/campaigns/${id}/edit/perks/new`} className={cx('btn', 'btn-ok')} >CREATE NEW PERK</Link>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <div>
-                                        <div style={{ display: 'inline-block', marginLeft: '24px' }}>
-                                            <Link to="/campaigns/:id/edit/perks/new" className={cx('btn', 'btn-ok')} >CREATE NEW PERK</Link>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div style={{ marginTop: '40px' }}>
-                                    <PerkTable onPerkTableChange={handlePerkChange} />
-                                </div>
-
-                            </div>
-                        }
-                        {
-                            !isHasPerk &&
-                            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <div style={{ width: '580px', textAlign: 'center' }}>
-                                    <div style={{ fontSize: '24px', fontWeight: '600', marginTop: '32px' }}>You haven't created any perks yet </div>
-                                    <div style={{ marginTop: '12px' }}>
-                                        <span>Perks are incentives offered to backers in exchange for their support. You may edit your perk details until the perk is claimed. Visit the Help Center to learn about different kinds of perks you can offer.</span>
-                                    </div>
-                                    <img src={images.no_perk} style={{ width: '600', height: '270px', objectFit: 'cover', marginTop: '32px' }} />
-
-                                    <div style={{ marginTop: '40px' }}>Let's get started</div>
-                                    <div style={{ fontSize: '14px', color: '#a8a8a8' }}>Create your perks here.</div>
-                                    <img src={images.arrow} style={{ width: '40px', height: '60px', objectFit: 'cover', marginTop: '32px' }} />
-
                                     <div style={{ marginTop: '40px' }}>
-                                        <a href="/campaigns/:id/edit/perks/new" className={cx('btn', 'btn-ok')} style={{ fontSize: '16px' }} >CREATE NEW PERK </a>
+                                        <PerkTable onPerkTableChange={handlePerkChange} />
+                                    </div>
+
+                                </div>
+                            }
+                            {
+                                listPerks.length === 0 &&
+                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <div style={{ width: '800px', textAlign: 'center' }}>
+                                        <div style={{ fontSize: '24px', fontWeight: '600', marginTop: '32px' }}>Bạn chưa tạo bất kỳ đặc quyền nào </div>
+                                        <div style={{ marginTop: '12px' }}>
+                                            <span>Đặc quyền là những ưu đãi được cung cấp cho những người ủng hộ để đổi lấy sự hỗ trợ của họ. Chúng tôi nhận thấy rằng các chiến dịch cung cấp đặc quyền kiếm được nhiều tiền hơn 143% so với những chiến dịch không cung cấp đặc quyền. Đặc quyền giúp bạn thu hút lượng khán giả lớn hơn, khiến mọi người cảm thấy được đánh giá cao hơn vì những đóng góp của họ và giúp bạn quảng bá về chiến dịch của mình.</span>
+                                        </div>
+                                        <img src={images.no_perk} style={{ width: '600', height: '270px', objectFit: 'cover', marginTop: '32px' }} />
+
+                                        <div style={{ marginTop: '40px' }}>Bắt đầu nào!</div>
+                                        <div style={{ fontSize: '14px', color: '#a8a8a8' }}>Tạo đặc quyền của bạn ở đây.</div>
+                                        <img src={images.arrow} style={{ width: '40px', height: '60px', objectFit: 'cover', marginTop: '32px' }} />
+
+                                        <div style={{ marginTop: '40px' }}>
+                                            <Link to={`/campaigns/${id}/edit/perks/new`} className={cx('btn', 'btn-ok')} style={{ fontSize: '16px' }} >TẠO ĐẶC QUYỀN </Link>
+                                        </div>
+
+
                                     </div>
 
 
                                 </div>
-
-
-                            </div>
-                        }
+                            }
 
 
 
-                        {/* Footer */}
-                        {
-                            !isHasPerk &&
-                            <div style={{ marginTop: '60px', marginBottom: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                <a href="#" className={cx('btn', 'btn-ok')} >CONTINUE</a>
-                            </div>
-                        }
+                            {/* Footer */}
+                            {
+                                listPerks.length === 0 &&
+                                <div style={{ marginTop: '60px', marginBottom: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
+                                    <a href="#" className={cx('btn', 'btn-ok')} >TIẾP TỤC</a>
+                                </div>
+                            }
 
-                        {
-                            isHasPerk &&
-                            <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                <a href="#" className={cx('btn', 'btn-ok')} >SAVE & CONTINUE</a>
-                            </div>
-                        }
+                            {
+                                listPerks.length > 0 &&
+                                <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
+                                    <a href="#" className={cx('btn', 'btn-ok')} >SAVE & CONTINUE</a>
+                                </div>
+                            }
+                        </div>
                     </div>
+
                 </div>
-
-                <Footer />
-
-
             </div>
-
+            <Footer />
         </div>
     );
 }
