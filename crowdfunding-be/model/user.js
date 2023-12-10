@@ -17,7 +17,8 @@ export default mongoose.model('User',
         facebookLink: String,
         email: String,
         password: String,
-        isVerifiedEmail: Boolean,
+        isVerifiedEmail: { type: Boolean, default: false },
+        
         isVerifiedUser: Boolean,
         infoVerify: {
             fullName: String,
@@ -28,6 +29,9 @@ export default mongoose.model('User',
             identifyCode: String,
             identifyCardImage: String,
         },
-        isAdmin: Boolean,
+        isAdmin: {
+            type: Boolean,
+            default: false
+        },
     })
 )

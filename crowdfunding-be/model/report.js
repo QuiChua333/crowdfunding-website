@@ -7,6 +7,9 @@ export default mongoose.model('Report',
             ref: 'Campaign'
         },
         text: String,
+        title: String,
+        date: Date,
+        isResponsed: Boolean,
         images: [String]
     })
 )

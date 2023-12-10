@@ -4,7 +4,7 @@ const cx = classNames.bind(styles)
 function UserManagement() {
     return (
         <div className={cx('wrapper')}>
-        
+        quản lý đàn em cho tốt vào
         </div>
     );
 }
