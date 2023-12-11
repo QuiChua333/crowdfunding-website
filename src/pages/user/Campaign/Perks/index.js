@@ -28,13 +28,9 @@ function PerksCampaign() {
     const { id } = useParams();
     const dispatch = useDispatch();
     const [campagin, setCampaign] = useState({})
-    const [listPerks, setListPerks] = useState([]);
-    const [enableBulkAction, setBulkAction] = useState(false);
+    const [listPerks, setListPerks] = useState({});
     const [numberSelected, setNumberSelected] = useState(0)
-    const [isOpenDropdownBulkAction, setOpenDropdownBulkAction] = useState(false)
     const handlePerkChange = (listPerk) => {
-        const check = listPerk.some(item => item.isChecked === true);
-        setBulkAction(check)
         const num = listPerk.reduce((acc, item) => {
             if (item.isChecked) return acc + 1;
             else return acc + 0;
@@ -62,7 +58,7 @@ function PerksCampaign() {
             const res = await axios.get(`${baseURL}/perk/getPerksByCampaignId/${id}`)
             setListPerks(res.data.data)
         } catch (error) {
-
+            setListPerks([])
         }
     }
     useEffect(() => {
@@ -101,59 +97,45 @@ function PerksCampaign() {
 
                             {/* Khi chưa có perk */}
                             {
-                                listPerks.length > 0 &&
+                                listPerks?.length > 0 &&
                                 <div>
                                     <div className={cx('entreSection')}>
                                         <div className={cx('entreField-header')}>
-                                            Perks
+                                            Đặc quyền
                                         </div>
                                         <div className={cx('entreField-subHeader')}>
-                                            Perks are incentives offered to backers in exchange for their support. There are
-                                            different types of perks
-                                            you create. Learn more about perks in the help center.
+                                        Đặc quyền là những ưu đãi được cung cấp cho những người ủng hộ để đổi lấy sự hỗ trợ của họ. Có nhiều loại đặc quyền khác nhau mà bạn có thể tạo.
                                         </div>
 
                                     </div>
                                     <div className={cx('perkTable-action')}>
-                                        <div>
-                                            <span ><strong style={{ display: 'inline-block', minWidth: '12px' }}>{numberSelected}</strong> perks selected</span>
+                                        {
+                                       
+                                            <div style={{opacity: numberSelected===0 && '0'}}>
+                                            <span ><strong style={{ display: 'inline-block', minWidth: '12px' }}>{numberSelected}</strong> đặc quyền được chọn</span>
                                             <div style={{ display: 'inline-block', marginLeft: '24px', position: 'relative' }}>
-                                                <a onClick={(e) => { e.preventDefault(); setOpenDropdownBulkAction(prev => !prev) }} href="#" className={cx('btn', 'btn-ok', {
-                                                    disabled: !enableBulkAction
-                                                })} >BULK ACTION <FaAngleDown style={{ fontSize: '18px', marginLeft: '4px' }} />
+                                                <a className={cx('btn', 'btn-ok')}>Xóa
                                                 </a>
 
 
-                                                {
-                                                    isOpenDropdownBulkAction &&
-                                                    <div className={cx('dropdown')} style={{ left: '16px' }}>
-                                                        <div className={cx('action')}>
-                                                            Set Up Add-ons
-                                                        </div>
-
-                                                        <div className={cx('action', 'action-delete')}>
-                                                            Delete perk
-                                                        </div>
-                                                    </div>
-                                                }
-
                                             </div>
                                         </div>
+                                        }
 
                                         <div>
                                             <div style={{ display: 'inline-block', marginLeft: '24px' }}>
-                                                <Link to={`/campaigns/${id}/edit/perks/new`} className={cx('btn', 'btn-ok')} >CREATE NEW PERK</Link>
+                                                <Link to={`/campaigns/${id}/edit/perks/new`} className={cx('btn', 'btn-ok')} >TẠO ĐẶC QUYỀN</Link>
                                             </div>
                                         </div>
                                     </div>
                                     <div style={{ marginTop: '40px' }}>
-                                        <PerkTable onPerkTableChange={handlePerkChange} />
+                                        <PerkTable onPerkTableChange={handlePerkChange} listPerks={listPerks} />
                                     </div>
 
                                 </div>
                             }
                             {
-                                listPerks.length === 0 &&
+                                listPerks?.length === 0 &&
                                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                                     <div style={{ width: '800px', textAlign: 'center' }}>
                                         <div style={{ fontSize: '24px', fontWeight: '600', marginTop: '32px' }}>Bạn chưa tạo bất kỳ đặc quyền nào </div>
@@ -181,16 +163,16 @@ function PerksCampaign() {
 
                             {/* Footer */}
                             {
-                                listPerks.length === 0 &&
+                                listPerks?.length === 0 &&
                                 <div style={{ marginTop: '60px', marginBottom: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
                                     <a href="#" className={cx('btn', 'btn-ok')} >TIẾP TỤC</a>
                                 </div>
                             }
 
                             {
-                                listPerks.length > 0 &&
+                                listPerks?.length > 0 &&
                                 <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                    <a href="#" className={cx('btn', 'btn-ok')} >SAVE & CONTINUE</a>
+                                    <a href="#" className={cx('btn', 'btn-ok')} >TIẾP TỤC</a>
                                 </div>
                             }
                         </div>

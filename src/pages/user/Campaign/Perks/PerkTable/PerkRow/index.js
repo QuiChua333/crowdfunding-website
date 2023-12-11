@@ -11,16 +11,16 @@ import { Link } from "react-router-dom";
 
 
 const cx = classNames.bind(styles)
-function PerkRow({ index , perk, setChecked }) {
+function PerkRow({ index, perk, setChecked }) {
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null)
     const navigate = useNavigate();
-    const handleClickChecked = (e,index) => {
+    const handleClickChecked = (e, index) => {
         e.stopPropagation()
-        setChecked(index,!perk.isChecked)
+        setChecked(index, !perk.isChecked)
     }
     const handleClickPerk = () => {
-        navigate('/campaigns/:id/edit/perks/new')
+        navigate(`/campaigns/${perk.campaign}/edit/perks/${perk._id}`)
     }
 
     useEffect(() => {
@@ -34,40 +34,47 @@ function PerkRow({ index , perk, setChecked }) {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [docElement]);
-    
+
 
     return (
-        
-            <tr onClick={handleClickPerk}>
-                  {/* <Link to='/campaigns/:id/edit/perks/new' style={{position: 'relative', zIndex: '10'}}></Link> */}
-                <td className={cx('checkbox')}>
-                    <span onClick={(e) => handleClickChecked(e,index)}>
-                        {
-                            !perk.isChecked ? <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} /> : <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
-                        }
-                    </span>
-                </td>
-                <td className={cx('title')}>{perk.title}</td>
-                <td className={cx('price')}>$ {perk.price}</td>
-                <td className={cx('type')}>
-                    {perk.type &&
-                        <span className={cx('featured')}>
-                            FEATURED
-                        </span>
+
+        <tr onClick={handleClickPerk}>
+            {/* <Link to='/campaigns/:id/edit/perks/new' style={{position: 'relative', zIndex: '10'}}></Link> */}
+            <td className={cx('checkbox')}>
+                <span onClick={(e) => handleClickChecked(e, index)}>
+                    {
+                        !perk.isChecked ? <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} /> : <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
                     }
-                </td>
-                <td className={cx('quantity')}>{perk.qtyClaimed}</td>
-                <td className={cx('est')}>{perk.est}</td>
-                <td className={cx('action')}>
-                    <div className={cx('action-doc')} onClick={(e) => {e.stopPropagation();setOpenDropDown(prev => !prev)}} ref={docElement}>
-                        <PiDotsThreeBold style={{ fontSize: '20px', color: '#7a69b3' }} />
-                        <div className={cx('dropdown-wrapper')} style={{ display: openDropDown && 'block' }}>
-                            <DropDown />
-                        </div>
+                </span>
+            </td>
+            <td className={cx('title')}>{perk.title}
+                {!perk.isVisible &&
+                    <>
+                        <br />
+                        <span>Ẩn</span>
+                    </>
+                }
+            </td>
+            <td className={cx('price')}>{perk.price} VNĐ</td>
+            <td className={cx('type')}>
+                {perk.isFeatured &&
+                    <span className={cx('featured')}>
+                        FEATURED
+                    </span>
+                }
+            </td>
+            <td className={cx('quantity')}>{perk.claimed + '/' + perk.quantity}</td>
+            <td className={cx('est')}>{perk.estDelivery}</td>
+            <td className={cx('action')}>
+                <div className={cx('action-doc')} onClick={(e) => { e.stopPropagation(); setOpenDropDown(prev => !prev) }} ref={docElement}>
+                    <PiDotsThreeBold style={{ fontSize: '20px', color: '#7a69b3' }} />
+                    <div className={cx('dropdown-wrapper')} style={{ display: openDropDown && 'block' }}>
+                        <DropDown perk={perk}/>
                     </div>
-                </td>
-            </tr>
-     
+                </div>
+            </td>
+        </tr>
+
     );
 }
 

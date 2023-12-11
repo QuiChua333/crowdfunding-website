@@ -2,12 +2,18 @@ import mongoose from "mongoose"
 import { Schema, ObjectId } from "mongoose"
 export default mongoose.model('Perk',
     new Schema({
-        name: String,
+        title: String,
         price: Number,
-        isFeatured: Boolean,
+        isFeatured: {
+            type: Boolean,
+            default: false
+        },
         quantity: Number,
-        claimed: Number,
-        estDelivery: Date,
+        claimed: {
+            type: Number,
+            default: 0,
+        },
+        estDelivery: String,
         isVisible: Boolean,
         items: [{
             item: {
@@ -17,7 +23,10 @@ export default mongoose.model('Perk',
             quantity: Number
         }],
         description: String,
-        image: String,
+        image: {
+            url: String,
+            public_id: String,
+        },
         isShipping: Boolean,
         listShippingFee: [
             {

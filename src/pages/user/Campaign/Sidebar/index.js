@@ -87,7 +87,7 @@ function SidebarCampaign({current, status, title, cardImage, id}) {
                             })}>
                                 <Link to={`/campaigns/${id}/edit/items/table`} className={cx('navItem-link')}>
                                     <div>
-                                        4. Items
+                                        4. Vật phẩm
                                     </div>
                                 </Link>
                             </div>

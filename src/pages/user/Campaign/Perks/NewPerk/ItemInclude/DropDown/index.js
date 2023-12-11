@@ -21,7 +21,7 @@ function DropDown({ listItemInclude, onClickItem, index, setOpenModalItem, setOp
                }
 
                <div style={{padding: '20px 0', backgroundColor: '#f5f5f5', display: 'flex', justifyContent: 'center'}}>
-                    <div onClick={() => {setOptionEdit({type:'update', index: index});setOpenModalItem(true)}} className={cx('btn','btn-ok')}>CREATE NEW ITEM</div>
+                    <div onClick={() => {setOptionEdit({type:'add', index: index});setOpenModalItem(true)}} className={cx('btn','btn-ok')}>CREATE NEW ITEM</div>
                </div>
 
           </div>

@@ -8,48 +8,15 @@ import { useEffect, useState } from "react";
 
 const cx = classNames.bind(styles)
 
-function PerkTable({onPerkTableChange}) {
-    const listPerkDefault = [
-        {
-            title: 'Bộ trang phục thể thao',
-            price: 50,
-            type: 'A',
-            qtyClaimed: '20/24',
-            est: 'May 2024',
-            isChecked: false
-        },
-        {
-            title: 'Bộ trang phục thể thao',
-            price: 50,
-            type: '',
-            qtyClaimed: '20/24',
-            est: 'May 2024',
-            isChecked: false
-        },
-        {
-            title: 'Bộ trang phục thể thao',
-            price: 50,
-            type: '',
-            qtyClaimed: '20/24',
-            est: 'May 2024',
-            isChecked: false
-        },
-        {
-            title: 'Bộ trang phục thể thao',
-            price: 50,
-            type: '',
-            qtyClaimed: '20/24',
-            est: 'May 2024',
-            isChecked: false
-        }
-    ]
-    const [listPerk,setListPerk] = useState([...listPerkDefault]);
+function PerkTable({onPerkTableChange, listPerks}) {
+   
+    const [listPerkState,setListPerkState] = useState([...listPerks].map(item => ({...item, isChecked: false})));
     const [isCheckAll,setCheckAll] = useState(false) 
 
     
     const handleClickCheckALl = () => {
         setCheckAll(prev => !prev);
-        setListPerk(prev => {
+        setListPerkState(prev => {
             const nextState = [...prev].map((item,index) => {
                     return {...item, isChecked: !isCheckAll}
             })
@@ -57,7 +24,7 @@ function PerkTable({onPerkTableChange}) {
         })
     }
     const handleSetChecked = (indexChange,checked) => {
-        setListPerk(prev => {
+        setListPerkState(prev => {
             const nextState = [...prev].map((item,index) => {
                 if (index===indexChange) {
                     return {...item, isChecked: checked}
@@ -68,13 +35,13 @@ function PerkTable({onPerkTableChange}) {
         })
     }
     useEffect(()=> {
-        const checkAll = listPerk.every(item => item.isChecked === true);
+        const checkAll = listPerkState.every(item => item.isChecked === true);
         setCheckAll(checkAll)
   
-        onPerkTableChange([...listPerk])
+        onPerkTableChange([...listPerkState])
 
-    },[listPerk])
-    
+    },[listPerkState])
+
     return (
         <div className={cx('wrapper')}>
             <table>
@@ -87,17 +54,17 @@ function PerkTable({onPerkTableChange}) {
                                 }
                             </span>
                         </th>
-                        <th className={cx('title')}>TITLE</th>
-                        <th className={cx('price')}>PRICE</th>
-                        <th className={cx('type')}>TYPE</th>
-                        <th className={cx('quantity')}>QTY CLAIMED</th>
-                        <th className={cx('est')}>EST. DELIVERY</th>
+                        <th className={cx('title')}>Tiêu đề</th>
+                        <th className={cx('price')}>Trị giá</th>
+                        <th className={cx('type')}>Loại</th>
+                        <th className={cx('quantity')}>Số lượng yêu cầu</th>
+                        <th className={cx('est')}>Ngày giao dự kiến</th>
                         <th className={cx('action')}></th>
                     </tr>
                 </thead>
                 <tbody>
                     {
-                        listPerk.map((item, index) => {
+                        listPerkState.map((item, index) => {
                             return <PerkRow key={index} perk={item} index={index} setChecked={handleSetChecked}/>
                         })
                     }

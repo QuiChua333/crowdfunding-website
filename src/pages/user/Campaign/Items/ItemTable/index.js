@@ -7,7 +7,7 @@ import ItemRow from "./ItemRow";
 
 const cx = classNames.bind(styles)
 
-function ItemTable() {
+function ItemTable({listItems}) {
     const listItemDefault = [
         {
             itemName: 'Bộ trang phục thể thao',
@@ -61,15 +61,15 @@ function ItemTable() {
                 <thead>
                     <tr>
                        
-                        <th className={cx('name')}>Item Name</th>
-                        <th className={cx('option')}>Item Options</th>
-                        <th className={cx('associated')}>Associated Perks</th>
+                        <th className={cx('name')}>Tên vật phẩm</th>
+                        <th className={cx('option')}>Các tùy chọn</th>
+                        <th className={cx('associated')}>Các đặc quyền liên quan</th>
                        
                     </tr>
                 </thead>
                 <tbody>
                     {
-                        listItem.map((item, index) => {
+                        listItems?.map((item, index) => {
                             return <ItemRow key={index} item={item} index={index}/>
                         })
                     }

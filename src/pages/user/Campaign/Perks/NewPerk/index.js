@@ -17,7 +17,8 @@ import baseURL from "~/utils/baseURL";
 // import { FaAngleDown } from "react-icons/fa";
 // import { AiFillQuestionCircle } from "react-icons/ai";
 // import { useState } from "react";
-
+import { setLoading } from "~/redux/slides/GlobalApp";
+import { useDispatch } from "react-redux";
 
 
 
@@ -34,7 +35,9 @@ const cx = classNames.bind(styles);
 
 function NewPerk() {
     const { id, idPerk } = useParams();
+    const dispatch = useDispatch();
     const [perkState, setPerkState] = useState({})
+    const [perk, setPerk] = useState({})
     const [campagin, setCampaign] = useState({})
     const [listLocationShip, setListLocationShip] = useState([])
     const [listLocationShipOrigin, setListLocationShipOrigin] = useState([])
@@ -70,7 +73,7 @@ function NewPerk() {
         try {
             if (idPerk === 'new') {
                 setPerkState({
-                    name: '',
+                    title: '',
                     price: '',
                     isVisible: true,
                     items: [],
@@ -88,12 +91,29 @@ function NewPerk() {
             else {
                 const res = await axios.get(`${baseURL}/perk/getPerkById/${idPerk}`)
                 setPerkState({
-                    name: res.data.data.name || '',
+                    id: res.data.data._id,
+                    title: res.data.data.title || '',
                     price: res.data.data.price || '',
-                    isVisible: res.data.data.isVisible || true,
-                    items: res.data.data.items || [],
-                    description: res.data.data.items || '',
-                    perkImage: res.data.data.perkImage || {
+                    isVisible: res.data.data.isVisible || false,
+                    items: res.data.data.items.map(item => ({name: item.item.name, quantity: item.quantity, id: item.item._id })) || [],
+                    description: res.data.data.description || '',
+                    perkImage: res.data.data.image || {
+                        url: '',
+                        public_id: ''
+                    },
+                    quantity: res.data.data.quantity || '',
+                    estDelivery: res.data.data.estDelivery || '',
+                    isShipping: res.data.data.isShipping || false,
+                    listShippingFee: res.data.data.listShippingFee || []
+                })
+                setPerk({
+                    id: res.data.data._id,
+                    title: res.data.data.title || '',
+                    price: res.data.data.price || '',
+                    isVisible: res.data.data.isVisible || false,
+                    items: res.data.data.items.map(item => ({name: item.item.name, quantity: item.quantity, id: item.item._id })) || [],
+                    description: res.data.data.description || '',
+                    perkImage: res.data.data.image || {
                         url: '',
                         public_id: ''
                     },
@@ -105,7 +125,7 @@ function NewPerk() {
             }
         } catch (error) {
             if (error.message === 'Not exists perk') {
-                console.log(error.message + 'not not')
+                console.log(error.message)
             }
             else {
                 console.log(error.message)
@@ -139,7 +159,7 @@ function NewPerk() {
     }
     useEffect(() => {
         if (listItemsAvailable.length > 0) {
-            if (perkState.items.length === 0) {
+            if (perkState.items?.length === 0) {
                 setPerkState(prev => ({
                     ...prev,
                     items: [{ name: '', quantity: 1 }]
@@ -216,7 +236,7 @@ function NewPerk() {
         setListItemsAvailable(prev => [...prev, { ...item, quantity: null }]);
     }
     const handleClickAddItem = () => {
-        if (perkState.items.length === 0) {
+        if (perkState.items?.length === 0) {
             setOptionEdit({ type: 'add' })
             setShowModal(true)
         }
@@ -229,12 +249,23 @@ function NewPerk() {
     }
 
 
-    const handlePreviewImage = (event) => {
-        if (event.target.files[0]) {
-            const file = event.target.files[0]
-            file.preview = URL.createObjectURL(file)
-            setSelectedImage(file)
+    const handleChangePerkImage = (e) => {
+        if (e.target.files[0]) {
+            const file = e.target.files[0]
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                let res = reader.result;
+                setPerkState(prev => {
+                    return { ...prev, perkImage: { ...prev.perkImage, url: res } }
+                })
+            }
         }
+    }
+    const handleRemovePerkImage = () => {
+        setPerkState(prev => {
+            return { ...prev, perkImage: { ...prev.perkImage, url: '' } }
+        })
     }
     const handleClickAddShip = () => {
         setPerkState(prev => ({
@@ -313,7 +344,30 @@ function NewPerk() {
             items: [...prev.items].filter((item, index2) => index2 !== index)
         }))
     }
-
+    const handleClickSavePerk = async () => {
+        if (idPerk === 'new') {
+            const body = { ...perkState, image: perkState.perkImage, items: perkState.items.map(item => ({item: item.id, quantity: item.quantity})) };
+            dispatch(setLoading(true))
+            try {
+                const res = await axios.post(`${baseURL}/perk/addPerk`, {perk: body, campaignId: id})
+                dispatch(setLoading(false))
+                window.location.href = `/campaigns/${id}/edit/perks/table`
+            } catch (error) {
+                console.log(error.message)
+            }
+        }
+        else {
+            const body = { ...perkState, image: perkState.perkImage, items: perkState.items.map(item => ({item: item.id, quantity: item.quantity})) };
+            dispatch(setLoading(true))
+            try {
+                const res = await axios.patch(`${baseURL}/perk/editPerk/${perkState.id}`, body)
+                dispatch(setLoading(false))
+                window.location.href = `/campaigns/${id}/edit/perks/table`
+            } catch (error) {
+                console.log(error.message)
+            }
+        }
+    }
 
 
 
@@ -339,11 +393,11 @@ function NewPerk() {
                         <div className={cx('controlBar')}>
                             <div className={cx('controlBar-container')}>
                                 <div className={cx('controlBar-content')}>
-                                    Đặc quyền / Tạo đặc quyền
+                                    Đặc quyền / {idPerk==='new' ? 'Tạo đặc quyền' : perk.title}
                                 </div>
                                 <div className={cx('controlBar-controls')}>
-                                    <Link to="/campaigns/:id/edit/perks/table" className={cx('btn', 'btn-cancel')}>Cancel</Link>
-                                    <a href="#" className={cx('btn', 'btn-ok')}>Save</a>
+                                    <Link to={`/campaigns/${id}/edit/perks/table`} className={cx('btn', 'btn-cancel')}>Cancel</Link>
+                                    <a onClick={handleClickSavePerk} className={cx('btn', 'btn-ok')}>Save</a>
                                 </div>
                             </div>
                             <div className={cx('controlBar-loadingBar')}>
@@ -426,7 +480,7 @@ function NewPerk() {
                                                     {
                                                         perkState.items.map((item, index) => {
                                                             return (
-                                                                <ItemInclude key={index} index={index} onChangeItem={handleChangeItemInclude} removeItem={handleRemoveItemInclude} listItemsAvailable={listItemsAvailable} itemData={item} lengthListItem={perkState.items.length} setOpenModalItem={setShowModal} setOptionEdit={setOptionEdit} listItemChoosen={listItemChoosen} />
+                                                                <ItemInclude key={index} index={index} onChangeItem={handleChangeItemInclude} removeItem={handleRemoveItemInclude} listItemsAvailable={listItemsAvailable} itemData={item} lengthListItem={perkState.items?.length} setOpenModalItem={setShowModal} setOptionEdit={setOptionEdit} listItemChoosen={listItemChoosen} />
                                                             )
 
                                                         })
@@ -468,7 +522,7 @@ function NewPerk() {
                                         <div onClick={() => { perkImageElement.current.click(); }} className={cx('entreField-input-image')} style={{ width: '330px', height: '220px' }} ref={inputPerkImageWrapperElement} >
 
                                             {
-                                                !selectedImage &&
+                                                !perkState.perkImage?.url &&
                                                 <div className={cx('tertiaryAction')} >
                                                     <span className={cx('tertiaryAction-icon')}>
                                                         <HiCamera style={{ color: '#7A69B3', fontSize: '18px' }} />
@@ -481,12 +535,12 @@ function NewPerk() {
                                             }
 
                                             {
-                                                selectedImage &&
+                                                perkState.perkImage?.url &&
                                                 <div>
-                                                    <img style={{ position: 'relative' }} width="330" height="220" crop="fill" src={selectedImage.preview} />
+                                                    <img style={{ position: 'relative', objectFit: 'cover' }} width="330" height="220" src={perkState.perkImage?.url} />
                                                     <div className={cx('editFile')}>
                                                         <span className={cx('editFile-icon')}><MdEdit style={{ color: '#7a69b3', fontSize: '18px' }} /></span>
-                                                        <span onClick={(e) => { e.stopPropagation(); perkImageElement.current.value = null; setSelectedImage(null) }} className={cx('editFile-icon')}><IoCloseSharp style={{ color: '#7a69b3', fontSize: '22px' }} /></span>
+                                                        <span onClick={(e) => { e.stopPropagation(); perkImageElement.current.value = null; handleRemovePerkImage() }} className={cx('editFile-icon')}><IoCloseSharp style={{ color: '#7a69b3', fontSize: '22px' }} /></span>
                                                     </div>
                                                 </div>
                                             }
@@ -494,7 +548,7 @@ function NewPerk() {
 
                                         </div>
 
-                                        <input onChange={handlePreviewImage} className={cx('entreImage-file')} ref={perkImageElement} name="file" type="file" accept="image/jpg, image/jpeg, image/png" />
+                                        <input onChange={handleChangePerkImage} className={cx('entreImage-file')} ref={perkImageElement} name="file" type="file" accept="image/jpg, image/jpeg, image/png" />
                                     </div>
                                 </div>
 

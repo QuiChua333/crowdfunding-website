@@ -33,7 +33,7 @@ const publicRoutes = [
     { path: '/campaigns/:id/edit/perks/table', component : PerksCampaign, layout: null},
     { path: '/campaigns/:id/edit/perks/:idPerk', component : NewPerk, layout: null},
     { path: '/campaigns/:id/edit/items/table', component : ItemsCampaign, layout: null},
-    { path: '/campaigns/:id/edit/items/new', component : NewItem, layout: null},
+    { path: '/campaigns/:id/edit/items/:idItem', component : NewItem, layout: null},
     { path: '/campaigns/:id/edit/team', component : TeamCampaign, layout: null},
     { path: '/campaigns/:id/edit/funding', component : FundingCampaign, layout: null},
     { path: '/campaigns/:id/edit/settings', component :SettingCampaign , layout: null},

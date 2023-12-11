@@ -29,7 +29,7 @@
         border: 1px solid #c8c8c8;
         background-color: #fff;
         &:hover {
-            background-color: #fafafa;
+            background-color: #eee5f2;
         }
     }
 
@@ -45,10 +45,16 @@
         padding-left: 12px;
     }
 
+    td.title span {
+        color: rgb(106, 106, 106);
+        font-size: 12px;
+    }
+
     th.price, td.price {
-        width: 100px;
+        width: 200px;
         padding-left: 12px;
     }
+    
 
     th.type, td.type {
         width: 140px;
@@ -56,17 +62,20 @@
     }
 
     th.quantity, td.quantity {
-        width: 220px;
+        width: 160px;
         padding-left: 12px;
+    }
+    td.quantity {
+        padding-left: 30px;
     }
 
     th.est, td.est {
-        width: 220px;
+        width: 180px;
         padding-left: 12px;
     }
 
     th.action, td.action {
-        width: 140px;
+        width: 100px;
         padding-left: 12px;
         padding-right: 8px;
         text-align: right;

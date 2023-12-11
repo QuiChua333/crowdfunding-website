@@ -27,7 +27,7 @@ function ModalItem({ setShowModal, addNewItem, optionEdit, updateItem }) {
 
     const handleClickNoOption = () => {
         setChooseOption(false)
-        setListOption(null)
+        setListOption([])
     }
     const handleClickAddOption = () => {
         setListOption(prev => [...prev, { name: '', values: [] }])
