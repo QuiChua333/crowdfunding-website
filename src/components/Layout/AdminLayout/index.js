@@ -18,9 +18,7 @@ function AdminLayout({ children }) {
                     </div>
                     <Footer />
                 </div>
-
             </div>
-      
         </div>
     );
 }
