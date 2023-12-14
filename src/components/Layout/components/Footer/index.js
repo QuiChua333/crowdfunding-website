@@ -1,65 +1,83 @@
-import React from 'react'
-import images from '~/assets/images'
+import React from 'react';
 import classNames from 'classnames/bind';
 import styles from './Footer.module.scss';
-import { FaMobileScreenButton, FaLocationDot, FaFacebook, FaTwitter, FaYoutube, FaInstagram} from "react-icons/fa6";
-import { FiMail } from 'react-icons/fi'
+import { MdEmail } from 'react-icons/md';
+import { FaSquareFacebook } from 'react-icons/fa6';
+import { BsYoutube } from 'react-icons/bs';
+import { RiInstagramFill } from 'react-icons/ri';
+import { IoLogoLinkedin } from 'react-icons/io5';
+import { FaSpotify } from 'react-icons/fa6';
+import { FaTwitter } from 'react-icons/fa';
+
 const cx = classNames.bind(styles);
 
-
 function Footer() {
-  return (
-    <div className={cx('container-footer')}>
-      <div className={cx('content-1')}>
-          <img className={cx('img-logo')} src={images.logo_web} alt="logo"/>
-          <p className={cx('title-web')}>Give Fund</p>
-          <p className={cx('desc')}>Nền tảng gây quỹ cộng đồng trực tuyến tiện lợi, tin cậy và minh bạch.</p>
-      </div>
-      <div className={cx('content-2')}>
+    return (
+        <div className={cx('wrapper')}>
+            <div className={cx('layout-1')}>
+                <div className={cx('layout-1-left')}>
+                    <div className={cx('item-layout-1')}>
+                        <span className={cx('title')}>KHÁM PHÁ</span>
+                        <div className={cx('container-content')}>
+                            <span>Chúng ta làm những gì?</span>
+                            <span>Việc gây quỹ</span>
+                            <span>Đóng góp</span>
+                        </div>
+                    </div>
 
-        <div className={cx('content-col-1')}>
-          <a href="">
-            <h3>Giới thiệu</h3>
-          </a>
-          <a href="">
-            <h3>Điều khoản - Điều kiện</h3>
-          </a>
-          <a href="">
-            <h3>Chính sách cá nhân</h3>
-          </a>
-          <a href="">
-            <h3>Về chúng tôi</h3>
-          </a>
+                    <div className={cx('item-layout-1')}>
+                        <span className={cx('title')}>VỀ CHÚNG TÔI</span>
+                        <div className={cx('container-content')}>
+                            <span>Thông tin chung</span>
+                            <span>Tin cậy & An toàn</span>
+                            <span>Hỗ trợ & Giúp đỡ</span>
+                            <span>Liên hệ</span>
+                            <span>Nghề nghiệp</span>
+                            <span>Chính sách</span>
+                        </div>
+                    </div>
+
+                    <div className={cx('item-layout-1')}>
+                        <span className={cx('title')}>DOANH NGHIỆP</span>
+                        <div className={cx('container-content')}>
+                            <span>Hoạt động như thế nào ?</span>
+                            <span>Trung tâm giáo dục</span>
+                            <span>Danh mục chuyên gia</span>
+                            <span>Những khoản phí</span>
+                            <span>Những đối tác</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={cx('layout-1-right')}>
+                    <MdEmail className={cx('icon-mail')}/>
+                    <b>Tìm nó đầu tiên trên GIVEFUN</b>
+                    <span>Khám phá những sản phẩm mới và thông minh trong bản tin GIVEFUN</span>
+                    <div className={cx('btn-signup')}>ĐĂNG KÝ</div>
+                </div>
+            </div>
+
+            <div className={cx('layout-2')}>
+                <div style={{display: 'flex', height: '40px'}}>
+                    <FaSquareFacebook className={cx('icon-contact')}/>
+                    <BsYoutube className={cx('icon-contact')}/>
+                    <RiInstagramFill className={cx('icon-contact')}/>
+                    <IoLogoLinkedin className={cx('icon-contact')}/>
+                    <FaSpotify className={cx('icon-contact')}/>
+                    <FaTwitter className={cx('icon-contact')}/>
+                </div>
+                <div className={cx('separate')}></div>
+                <div className={cx('container-text')}>
+                    <span>Điều khoản sử dụng</span>
+                    <span>Chính sách cá nhân</span>
+                    <span>Chính sách Cookie</span>
+                    <span>Chúng tôi luôn đảm bảo bảo mật thông tin của bạn</span>
+                    <span>Khả năng tiếp cận</span>
+                    <span>&copy; 2023 GiveFun, Inc. All Right Reserved</span>
+                </div>
+            </div>
         </div>
-
-        <div className={cx('content-col-2')}>
-          <div className={cx('content-row')}>
-            <p><FaMobileScreenButton/> Hotline: </p>
-            <p className={cx('ms-3 fst-italic')}>0379361211</p>
-          </div>
-
-          <div className={cx('content-row')}>    
-            <p><FiMail/> Email: </p>
-            <p className={cx('ms-3 fst-italic')}>hotro@givefund.com</p>
-          </div>
-          
-          <div className={cx('content-row')}>           
-            <p><FaLocationDot /> Vị trí: </p>
-            <p className={cx('ms-3 fst-italic')}>Số 999, Hoàng Văn Thống, Biên Hòa, TPHCM</p>
-          </div>
-          
-          <p>&copy; givefund.vn - All Rights Reserved</p>
-        </div>
-
-        <div className={cx('content-col-3')}>
-          <a href=""><FaFacebook className={cx('me-4 text-white')}/></a>
-          <a href=""><FaTwitter className={cx('me-2 text-white')}/></a>
-          <a href=""><FaYoutube className={cx('ms-2 text-white')}/></a>
-          <a href=""><FaInstagram className={cx('ms-4 text-white')}/></a>
-        </div>
-      </div>
-    </div>
-  )
+    );
 }
 
-export default Footer
+export default Footer;
