@@ -39,7 +39,7 @@ function ComplaintRow({ index , item, setChecked }) {
                         }
                     </span>
                 </td>
-                <td>{item.title}</td>
+                <td style={{textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', maxWidth: '300px'}}>{item.title}</td>
                 <td>
                     <div style={{display: 'flex', justifyContent: 'center'}}>
                         <img className={cx('avatar')} src={item.user.avatar} alt="avt"/>

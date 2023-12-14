@@ -11,8 +11,8 @@ function ComplaintTable({}) {
     const listComplaintDefault = [
         {
             id: '1',
-            title: '1 TÔI GẶP MỘT SỐ VẤN ĐỀ KHI CHUYỂN KHOẢN CẦN ĐƯỢC HỖ TRỢ',
-            date: '20/12/2023',
+            title: '1 TÔI GẶP MỘT SỐ VẤN ĐỀ KHI CHUYỂN KHOẢN CẦN ĐƯỢC HỖ TRỢ 1 TÔI GẶP MỘT SỐ VẤN ĐỀ KHI CHUYỂN KHOẢN CẦN ĐƯỢC HỖ TRỢ',
+            date: '21/12/2023',
             content: 'Vào ngày tôi có ủng hộ một dự án, nhưng khi chuyển khoản thì tui gặp vấn đề.',
             images: [
                 'https://png.pngtree.com/thumb_back/fw800/background/20230523/pngtree-sad-pictures-for-desktop-hd-backgrounds-image_2690576.jpg',

@@ -11,15 +11,16 @@ function AdminLayout({ children }) {
                 <div>
                     <AdminSidebar setTitle={setTitle} />
                 </div>
-                <div style={{ flex: '1', minHeight: '100vh'}}>
+                <div style={{ flex: '1', minHeight: '100vh',display: 'flex', flexDirection: 'column'}}>
                         <AdminHeader title={title} />
-                    <div className='content' style={{ padding: '30px 50px 30px 50px' }}>
+                    <div className='content' style={{ padding: '30px 50px 30px 50px', flex: '1' }}>
                         {children}
                     </div>
+                    <Footer />
                 </div>
 
             </div>
-            <Footer />
+      
         </div>
     );
 }
