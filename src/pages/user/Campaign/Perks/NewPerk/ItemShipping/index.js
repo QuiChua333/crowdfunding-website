@@ -70,8 +70,8 @@ function ItemShipping({ index, onChangeItem, removeItem, listLocationShip, lengt
             {
                 lengthListItemShiping > 1 &&
                 <div class='col'>
-                    <div onClick={() => removeItem(index)} style={{ cursor: 'pointer', marginTop: '16px' }}>
-                        <span style={{ padding: '5px 8px', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginLeft: '12px' }}><IoCloseSharp /></span>
+                    <div onClick={() => removeItem(index)} style={{ cursor: 'pointer', marginTop: '12px' }}>
+                        <span style={{  width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eee5f2', color: '#7a69b3', borderRadius: '50%', marginLeft: '12px' }}><IoCloseSharp /></span>
                     </div>
                 </div>
             }

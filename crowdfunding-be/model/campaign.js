@@ -41,7 +41,18 @@ export default mongoose.model('Campaign',
                     ref: 'User'
                 },
                 role: String,
-                canEdit: Boolean,
+                canEdit: {
+                    type: Boolean,
+                    default: false,
+                },
+                isAccepted: {
+                    type: Boolean,
+                    default: false
+                },
+                isOwner: {
+                    type: Boolean,
+                    default: false
+                }
             }
         ]
         

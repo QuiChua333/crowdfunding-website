@@ -163,12 +163,91 @@ const verifyEmailRegister = async (req, res) => {
         res.status(400).json({ message: 'Invalid link' });
     }
 };
+const getInfoUser = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const user = await User.findById(id).exec();
+        delete user._doc.password
+        res.status(200).json({
+            message: 'Get info user successfully',
+            data: user
+        })
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
+const getUserByEmail = async (req, res) => {
+    try {
+        const {email} = req.params;
+        const user = await User.findOne({email}).exec();
+        if (user) delete user._doc.password
+        res.status(200).json({
+            message: 'Get user successfully',
+            data: user
+        })
+        
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
 
+const editUser = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const {
+            infoVerify
+        } = req.body
+        const user = await User.findById(id).exec();
+        if (infoVerify) {
+           
+            if (infoVerify.identifyCardImage.url !== '') {
+                if (!infoVerify.identifyCardImage?.url.startsWith('http')) {
+                    if (user.infoVerify?.identifyCardImage?.url) {
+                        await cloudinary.uploader.destroy(user.infoVerify?.identifyCardImage?.url?.public_id)
+                    }
+                    const result = await cloudinary.uploader.upload(infoVerify.identifyCardImage?.url, {
+                        folder: process.env.CLOUDINARY_FOLDER_NAME
+                    })
+                    user.infoVerify.identifyCardImage = {
+                        url: result.secure_url,
+                        public_id: result.public_id,
+                    }
+                }
+
+            }
+
+            else {
+                user.infoVerify.identifyCardImage = {
+                    url: '',
+                    public_id: '',
+                }
+            }
+        }
+        user.infoVerify = infoVerify ?? user.infoVerify
+        await user.save();
+        res.status(200).json({
+            message: 'Update user successfully',
+            data: user
+        })  
+        
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
 export default {
     registerUser,
     verifyEmailRegister,
     loginUser,
     forgotPassword,
     verifyLinkForgotPassword,
-    updateNewPassword
+    updateNewPassword,
+    getInfoUser,
+    getUserByEmail,
+    editUser
 };

@@ -27,7 +27,7 @@ function ItemRow({ index, item }) {
 
             <td className={cx('name')}>{item.name}</td>
             <td className={cx('option')}>{options} </td>
-            <td className={cx('associated')}>{item.listAssociatedPerks.join(', ')}</td>
+            <td className={cx('associated')}>{item.listAssociatedPerks.join(', ') || '—'} </td>
 
         </tr>
 

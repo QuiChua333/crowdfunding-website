@@ -2,10 +2,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { RingLoader, HashLoader, PacmanLoader } from 'react-spinners';
+import CustomMessageBox from '~/components/CustomMessageBox';
 function CustomLayout({ children }) {
     const isLoading = useSelector((state) => state.globalApp.loading)
+    const messageBox = useSelector(state => state.globalApp.messageBox)
     return (
         <div>
+            {
+                messageBox.isShow &&
+                <CustomMessageBox title={messageBox.title} content={messageBox.content} contentOK={messageBox.contentOK} contentCancel={messageBox.contentCancel} />
+            }
             <HashLoader
                 color={'#5dd5ab'}
                 loading={isLoading}

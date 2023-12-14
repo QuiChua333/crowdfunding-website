@@ -101,11 +101,12 @@ const editPerk = async (req, res) => {
         perk.isShipping = isShipping ?? perk.isShipping
         perk.listShippingFee = listShippingFee ?? perk.listShippingFee
         if (image) {
-            if (perk.image && perk.image.url) {
-                await cloudinary.uploader.destroy(perk.image.public_id)
-            }
+           
             if (image.url!=='') {
                 if (!image.url.startsWith('http')) {
+                    if (perk.image && perk.image.url) {
+                        await cloudinary.uploader.destroy(perk.image.public_id)
+                    }
                     const result = await cloudinary.uploader.upload(image.url, {
                         folder: process.env.CLOUDINARY_FOLDER_NAME
                     })

@@ -89,9 +89,9 @@ function PerksCampaign() {
                                     <a href="#" className={cx('btn', 'btn-ok')}>Review & Launch</a>
                                 </div>
                             </div>
-                            <div className={cx('controlBar-loadingBar')}>
+                            {/* <div className={cx('controlBar-loadingBar')}>
 
-                            </div>
+                            </div> */}
                         </div>
                         <div className={cx('body')}>
 

@@ -85,9 +85,52 @@ const addItem = async (req, res) => {
     }
 }
 
+const editItem = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const {
+            name,
+            options,
+            isHasOption
+        } = req.body
+        const item = await Item.findById(id).exec();
+        item.name = name?? item.name
+        item.options = options?? item.options
+        item.isHasOption = isHasOption?? item.isHasOption
+        await item.save();
+        res.status(200).json({
+            message: 'Edit item successfully',
+            data: item
+        })
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
+const deleteItem = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const item = await Item.findById(id).exec();
+        if (item) {
+            await item.deleteOne();
+            res.status(200).json({
+                message: 'Delete item  successfully',
+            })
+        }
+        else throw new Error('Item is not exists')
+        
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
 export default {
     getItemsByCampaign,
     addItem,
     getItemsByCampaignContainPerk,
-    getItemByIdContainPerk
+    getItemByIdContainPerk,
+    editItem,
+    deleteItem
 }

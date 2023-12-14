@@ -9,38 +9,43 @@ import { HiCamera } from "react-icons/hi";
 import { MdEdit } from "react-icons/md";
 import { IoCloseSharp } from "react-icons/io5";
 import { useRef, useEffect, useState } from "react";
-
+import { TiCancel } from "react-icons/ti";
 
 
 
 
 import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import baseURL from "~/utils/baseURL";
-
-
+import MessageBox from "~/utils/MessageBox";
+import { useDispatch, useSelector } from "react-redux";
+import { setMessageBox } from "~/redux/slides/GlobalApp";
 
 const cx = classNames.bind(styles);
 
 
 function NewItem() {
     const { id, idItem } = useParams();
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
     const [campagin, setCampaign] = useState({})
     const [itemState, setItemState] = useState({})
     const [item, setItem] = useState({})
     const [chooseOption, setChooseOption] = useState(null);
     const [listOption, setListOption] = useState(null)
     const [showBtnAddOption, setShowBtnAddOption] = useState(true)
+    const [showErrorDelete, setShowErrorDelete] = useState(false)
+    const messageBox = useSelector(state => state.globalApp.messageBox)
     const handleClickOption = () => {
         setChooseOption(true)
-        if (idItem==='new') {
-            setItemState(prev => ({ ...prev, options: [{ name: '', values: [] }] }))
+        if (idItem === 'new') {
+            setItemState(prev => ({ ...prev, options: [{ name: '', values: [] }], isHasOption: true }))
         }
         else {
-            if (!itemState.isHasOption) {
-                setItemState(prev => ({ ...prev, options: [{ name: '', values: [] }] }))
+            if (!item.isHasOption) {
+                setItemState(prev => ({ ...prev, options: [{ name: '', values: [] }], isHasOption: true }))
             }
         }
 
@@ -49,38 +54,38 @@ function NewItem() {
 
     const handleClickNoOption = () => {
         setChooseOption(false)
-        if (idItem==='new') {
-            setItemState(prev => ({ ...prev, options: [] }))
+        if (idItem === 'new') {
+            setItemState(prev => ({ ...prev, options: [], isHasOption: false }))
+        }
+        else {
+            setItemState(prev => ({ ...prev, options: [...item.options], isHasOption: false }))
         }
     }
     const handleClickAddOption = () => {
-        setListOption(prev => [...prev, { name: '', values: [] }])
+        setItemState(prev => ({ ...prev, options: [...prev.options, { name: '', values: [] }] }))
     }
 
     const handleClickClose = (index) => {
-        setListOption(prev => {
-            const nextState = [...prev];
-            nextState.splice(index, 1);
-            return nextState;
-        })
+        setItemState(prev => ({ ...prev, options: [...prev.options].filter((item, index2) => index2 !== index) }))
     }
 
     const handleClickRemoveMiniValue = (indexA, indexB) => {
-
-        setListOption(prev => {
-            const nextState = prev.map((item, index) => {
-                if (index === indexA) {
-                    // item.value.splice(indexB,1);
-                    return {
-                        ...item,
-                        value: item.value.filter((item, index2) => {
-                            return index2 !== indexB
-                        })
+        setItemState(prev => {
+            return {
+                ...prev,
+                options: [...prev.options].map((item, index) => {
+                    if (index === indexA) {
+                        return {
+                            ...item,
+                            values: item.values.filter((item, index2) => {
+                                return index2 !== indexB
+                            })
+                        }
                     }
-                }
-                else return item;
-            })
-            return nextState;
+                    else return item;
+                })
+
+            }
         })
     }
 
@@ -88,14 +93,17 @@ function NewItem() {
         if (e.key === 'Enter' || e.keyCode === 13) {
             if (e.target.value.trim() !== "") {
                 const newValue = e.target.value;
-                setListOption(prev => {
-                    const nextState = prev.map((item, index) => {
-                        if (index === indexChange) {
-                            return { ...item, value: [...item.value, newValue] }
-                        } else return item;
-                    })
+                setItemState(prev => {
                     e.target.value = '';
-                    return nextState;
+                    return {
+                        ...prev,
+                        options: [...prev.options].map((item, index) => {
+                            if (index === indexChange) {
+                                return { ...item, values: [...item.values, newValue] }
+                            } else return item;
+                        })
+
+                    }
                 })
             }
         }
@@ -103,20 +111,83 @@ function NewItem() {
 
     const handleChangeInputTagName = (e, indexChange) => {
         const name = e.target.value;
-        setListOption(prev => {
-            const nextState = prev.map((item, index) => {
-                if (index === indexChange) {
-                    return { ...item, name: name }
-                } else return item;
-            })
-            return nextState;
+        setItemState(prev => {
+            return {
+                ...prev,
+                options: [...prev.options].map((item, index) => {
+                    if (index === indexChange) {
+                        return { ...item, name: name }
+                    } else return item;
+                })
+            }
+
         })
     }
 
-    const handleClickSaveItem = () => {
-        // const newItem = {itemName, listOption};
-        // addNewItem(newItem);
-        // setShowModal(false)
+    const handleClickSaveItem = async () => {
+        if (idItem === 'new') {
+            try {
+                const res = await axios.post(`${baseURL}/item/addItem`, { ...itemState, campaign: id })
+                navigate(`/campaigns/${id}/edit/items/table`)
+            } catch (error) {
+                console.log(error.message)
+            }
+        }
+        else {
+            try {
+                const res = await axios.patch(`${baseURL}/item/editItem/${itemState.id}`, { ...itemState })
+                navigate(`/campaigns/${id}/edit/items/table`)
+            } catch (error) {
+                console.log(error.message)
+            }
+        }
+    }
+    const handleClickDeleteItem = () => {
+        dispatch(setMessageBox({
+            title: 'Xóa vật phẩm?',
+            content: 'Thao tác này sẽ xóa hoàn toàn mục này khỏi chiến dịch của bạn và không thể hoàn tác được.',
+            contentOK: 'XÁC NHẬN',
+            contentCancel: 'HỦY',
+            isShow: true,
+            type: 'deleteItem'
+        }))
+        // if (itemState.isHasAssociatedPerks) {
+        //     setShowErrorDelete(true)
+        //     return;
+        // }
+        // else {
+        //     try {
+        //         const res = await axios.delete(`${baseURL}/item/deleteItem/${itemState.id}`)
+        //         navigate(`/campaigns/${id}/edit/items/table`)
+        //     } catch (error) {
+        //         console.log(error.message)
+        //     }
+        // }
+
+
+    }
+    const deleteItem = async () => {
+        try {
+            const res = await axios.delete(`${baseURL}/item/deleteItem/${itemState.id}`)
+            navigate(`/campaigns/${id}/edit/items/table`)
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+    useEffect(() => {
+        if (messageBox.type === 'deleteItem') {
+            if (messageBox.result === true) {
+                deleteItem()
+            }
+        }
+    }, [messageBox.result])
+    const handleChangeInputItemName = (e) => {
+        setItemState(prev => {
+            return {
+                ...prev,
+                name: e.target.value
+            }
+        })
     }
 
     useEffect(() => {
@@ -185,7 +256,7 @@ function NewItem() {
     }, [])
     useEffect(() => {
         console.log(itemState)
-    },[itemState])
+    }, [itemState])
     return (
         <>
             <div className={cx('wrapper')}>
@@ -206,14 +277,23 @@ function NewItem() {
                                     Vật phẩm / Tạo mới vật phẩm
                                 </div>
                                 <div className={cx('controlBar-controls')}>
-                                    <Link to="/campaigns/:id/edit/perks/table" className={cx('btn', 'btn-cancel')}>Hủy</Link>
-                                    <a href="#" className={cx('btn', 'btn-cancel')}>Xóa</a>
-                                    <a href="#" className={cx('btn', 'btn-ok')}>Lưu</a>
+                                    {
+                                        idItem !== 'new' &&
+                                        <a onClick={handleClickDeleteItem} className={cx('btn', 'btn-cancel')}>Xóa</a>
+                                    }
+                                    <Link to={`/campaigns/${id}/edit/items/table`} className={cx('btn', 'btn-cancel')}>Hủy</Link>
+                                    <a onClick={handleClickSaveItem} className={cx('btn', 'btn-ok')}>Lưu</a>
                                 </div>
                             </div>
-                            <div className={cx('controlBar-loadingBar')}>
+                            {/* <div className={cx('controlBar-loadingBar')}>
 
-                            </div>
+                            </div> */}
+                            {
+                                showErrorDelete &&
+                                <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#ff324b', paddingLeft: '40px', height: '80px' }}>
+                                    <span style={{ color: '#fff' }}><TiCancel style={{ color: '#fff', fontSize: '48px' }} />  Bạn không thể xóa vật phẩm này vì nó được bao gồm trong một đặc quyền</span>
+                                </div>
+                            }
                         </div>
                         <div className={cx('body')}>
                             <div className={cx('entreSection')}>
@@ -231,7 +311,7 @@ function NewItem() {
                                     <div className={cx('entreField-subLabel')}>
                                         Đặt tên cho mục này. Tên mặt hàng sẽ hiển thị với những người ủng hộ, vì vậy hãy đặt tên đó một cách rõ ràng.
                                     </div>
-                                    <input type="text" className={cx('itext-field')} value={itemState?.name}/>
+                                    <input type="text" className={cx('itext-field')} value={itemState?.name} onChange={handleChangeInputItemName} />
                                 </div>
 
                                 <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', textAlign: 'right' }}>
@@ -251,7 +331,7 @@ function NewItem() {
 
                                     <div style={{ marginTop: '32px' }}>
                                         <label className={cx('inputRadioGroup-radio')} >
-                                            <input onClick={handleClickNoOption} type="radio" value={'VSBL'} name="itemOptions"  checked={!chooseOption} />
+                                            <input onClick={handleClickNoOption} type="radio" value={'VSBL'} name="itemOptions" checked={!chooseOption} />
                                             <span className={cx('inputRadioGroup-radio-button')}></span>
                                             <span className={cx('inputRadioGroup-radio-label')}>
                                                 <span>Không, tôi không cung cấp các lựa chọn cho mặt hàng này.</span>
@@ -259,7 +339,7 @@ function NewItem() {
                                         </label>
 
                                         <label onClick={handleClickOption} className={cx('inputRadioGroup-radio')} >
-                                            <input type="radio" value={'INVS'} name="itemOptions" checked={chooseOption}/>
+                                            <input type="radio" value={'INVS'} name="itemOptions" checked={chooseOption} />
                                             <span className={cx('inputRadioGroup-radio-button')}></span>
                                             <span className={cx('inputRadioGroup-radio-label')}>
                                                 <span>Có, tôi đang cung cấp các lựa chọn cho mặt hàng này.</span>

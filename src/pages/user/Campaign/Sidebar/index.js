@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 
 
 import styles from './Sidebar.module.scss'
-import { current } from "@reduxjs/toolkit";
-import { useSelector } from "react-redux";
 
 const cx = classNames.bind(styles);
 
@@ -105,7 +103,7 @@ function SidebarCampaign({current, status, title, cardImage, id}) {
                             })}>
                                 <Link to={`/campaigns/${id}/edit/funding`} className={cx('navItem-link')}>
                                     <div>
-                                        6. Funding
+                                        6. Gây quỹ
                                     </div>
                                 </Link>
                             </div>
@@ -114,7 +112,7 @@ function SidebarCampaign({current, status, title, cardImage, id}) {
                             })}>
                                 <Link to={`/campaigns/${id}/edit/settings`} className={cx('navItem-link')}>
                                     <div>
-                                        7. SETTINGS
+                                        7. CÀI ĐẶT
                                     </div>
                                 </Link>
                             </div>

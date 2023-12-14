@@ -287,7 +287,7 @@ function NewPerk() {
                 })
             }))
         }
-        else if (lengthListShippingFee === 2) {
+        else if (lengthListShippingFee >= 2) {
             setListLocationShip(['Các tỉnh thành còn lại', ...listLocationShipOrigin])
             setPerkState(prev => ({
                 ...prev,
@@ -400,9 +400,9 @@ function NewPerk() {
                                     <a onClick={handleClickSavePerk} className={cx('btn', 'btn-ok')}>Save</a>
                                 </div>
                             </div>
-                            <div className={cx('controlBar-loadingBar')}>
+                            {/* <div className={cx('controlBar-loadingBar')}>
 
-                            </div>
+                            </div> */}
                         </div>
                         <div className={cx('body')}>
                             <div className={cx('entreSection')}>
