@@ -84,6 +84,7 @@ const editPerk = async (req, res) => {
             estDelivery,
             isVisible,
             items,
+            isFeatured,
             description,
             image,
             isShipping,
@@ -97,6 +98,7 @@ const editPerk = async (req, res) => {
         perk.estDelivery = estDelivery ?? perk.estDelivery
         perk.isVisible = isVisible ?? perk.isVisible
         perk.items = items ?? perk.items
+        perk.isFeatured = isFeatured ?? perk.isFeatured
         perk.description = description ?? perk.description
         perk.isShipping = isShipping ?? perk.isShipping
         perk.listShippingFee = listShippingFee ?? perk.listShippingFee

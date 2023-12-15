@@ -21,6 +21,7 @@ import baseURL from "~/utils/baseURL";
 import { setLoading } from "~/redux/slides/GlobalApp";
 import { useDispatch } from "react-redux";
 import CustomUploadCKEAdapter from "~/utils/CustomUploadCKEAdapter";
+import Footer from "~/components/Layout/components/Footer";
 
 ClassicEditor
     .create( document.querySelector( '#editor' ), {
@@ -211,14 +212,9 @@ function ContentCampaign() {
                             <div className={cx('controlBar-content')}>
                                 Chiến dịch / Nội dung
                             </div>
-                            <div className={cx('controlBar-controls')}>
-                                <a href="#" className={cx('btn', 'btn-cancel')}>Save Campaign</a>
-                                <a href="#" className={cx('btn', 'btn-ok')}>Review & Launch</a>
-                            </div>
+                           
                         </div>
-                        {/* <div className={cx('controlBar-loadingBar')}>
 
-                        </div> */}
                     </div>
 
                     <div className={cx('body')}>
@@ -474,6 +470,7 @@ function ContentCampaign() {
 
                     </div>
                 </div>
+                <Footer />
             </div>
         </div>
     );

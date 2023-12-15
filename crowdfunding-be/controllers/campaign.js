@@ -13,6 +13,7 @@ const editCampaign = async (req, res) => {
             duration,
             videoUrl,
             story,
+            isIndemand,
             goal,
             faqs,
             cardImage,
@@ -28,6 +29,7 @@ const editCampaign = async (req, res) => {
         campaign.field = field ?? campaign.field
         campaign.faqs = faqs ?? campaign.faqs
         campaign.videoUrl = videoUrl ?? campaign.videoUrl
+        campaign.isIndemand = isIndemand ?? campaign.isIndemand
         campaign.story = story ?? campaign.story
         campaign.goal = goal ?? campaign.goal
         campaign.momoNumber = momoNumber ?? campaign.momoNumber
@@ -245,13 +247,16 @@ const handleAcceptInvitationCampaign = async (req, res) => {
 
         const user = await User.findById(userId).exec();
         const campaign = await Campaign.findById(campaignId).exec();
+        debugger
         if (!user) {
             throw new Error('Invalid link')
         }
+        debugger
         if (!campaign) {
             throw new Error('Invalid link')
         }
-        const bool = campaign.team.some(item => item._doc.user.toString() === user._id);
+        debugger
+        const bool = campaign.team.some(item => item._doc.user.toString() === user._id.toString());
         if (!bool) throw new Error('Invalid link')
         // const member = {
         //     user: user._id,
@@ -267,6 +272,7 @@ const handleAcceptInvitationCampaign = async (req, res) => {
             message: 'Accept successfully',
         })
     } catch (error) {
+        debugger
         res.status(400).json({
             message: error.message
         })

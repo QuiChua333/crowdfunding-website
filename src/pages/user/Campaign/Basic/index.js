@@ -15,6 +15,7 @@ import axios from "axios";
 import baseURL from "~/utils/baseURL";
 import { setLoading } from "~/redux/slides/GlobalApp";
 import { useDispatch } from "react-redux";
+import Footer from "~/components/Layout/components/Footer";
 
 
 const cx = classNames.bind(styles);
@@ -153,14 +154,9 @@ function BasicCampaign() {
                             <div className={cx('controlBar-content')}>
                                 Chiến dịch / Cơ bản
                             </div>
-                            <div className={cx('controlBar-controls')}>
-                                <a href="#" className={cx('btn','btn-cancel')}>Save Campaign</a>
-                                <a href="#" className={cx('btn','btn-ok')}>Review & Launch</a>
-                            </div>
+                           
                         </div>
-                        {/* <div className={cx('controlBar-loadingBar')}>
-
-                        </div> */}
+                     
                     </div>
                     <div className={cx('body')}>
                         <div className={cx('entreSection')}>
@@ -291,6 +287,7 @@ function BasicCampaign() {
 
                     </div>
                 </div>
+                <Footer />
             </div>
         </div>
     );

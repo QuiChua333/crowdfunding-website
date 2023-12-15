@@ -1,21 +1,26 @@
 import classNames from "classnames/bind";
 
 import styles from './DropDown.module.scss'
+import { Link, useNavigate } from "react-router-dom";
 const cx = classNames.bind(styles)
 
-function DropDown({ menu, onClickItem, index, perk }) {
+function DropDown({ menu, onClickItem, index, perk, changeFeatured }) {
      const handleClickItem = (item) => {
           onClickItem(item, index)
      }
+     const handleClickFeatured = () => {
+          changeFeatured(!perk.isFeatured)
+     }
+     const navigate = useNavigate()
      return (
           <div className={cx('wrapper')}>
 
                {
-                    perk.isVisible && <div className={cx('action')}>
+                    perk.isVisible && !perk.isFeatured && <div onClick={handleClickFeatured} className={cx('action')}>
                          Đặt thành nổi bật
                     </div>
                }
-               <div className={cx('action')}>
+               <div onClick={() => navigate(`/campaigns/${perk.campaign}/edit/perks/${perk._id}`)} className={cx('action')}>
                     Chỉnh sửa đặc quyền
                </div>
                {

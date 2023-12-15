@@ -187,14 +187,9 @@ function TeamCampaign() {
                                 <div className={cx('controlBar-content')}>
                                     Chiến dịch / Team
                                 </div>
-                                <div className={cx('controlBar-controls')}>
-                                    <a href="#" className={cx('btn', 'btn-cancel')}>Save Campaign</a>
-                                    <a href="#" className={cx('btn', 'btn-ok')}>Review & Launch</a>
-                                </div>
+                               
                             </div>
-                            {/* <div className={cx('controlBar-loadingBar')}>
-
-                            </div> */}
+        
                             {
                                 showErrorDelete &&
                                 <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#ff324b', paddingLeft: '40px', height: '80px' }}>
@@ -262,10 +257,11 @@ function TeamCampaign() {
 
                         </div>
                     </div>
+                    <Footer />
 
                 </div>
             </div>
-            <Footer />
+   
         </>
     );
 }

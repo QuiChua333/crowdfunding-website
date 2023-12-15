@@ -8,10 +8,13 @@ import DropDown from "../DropDown";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-
-
+import { useDispatch } from "react-redux";
+import { setLoading } from "~/redux/slides/GlobalApp";
+import axios from "axios";
+import baseURL from "~/utils/baseURL";
 const cx = classNames.bind(styles)
-function PerkRow({ index, perk, setChecked }) {
+function PerkRow({ index, perk, setChecked, getPerksByCampaignId }) {
+    const dispatch = useDispatch()
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null)
     const navigate = useNavigate();
@@ -35,7 +38,18 @@ function PerkRow({ index, perk, setChecked }) {
         };
     }, [docElement]);
 
-
+    const changeFeatured = async (isFeatured) => {
+        console.log(isFeatured)
+        const body = { isFeatured };
+        dispatch(setLoading(true))
+        try {
+            const res = await axios.patch(`${baseURL}/perk/editPerk/${perk._id}`, body)
+            dispatch(setLoading(false))
+            getPerksByCampaignId()
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
     return (
 
         <tr onClick={handleClickPerk}>
@@ -69,7 +83,7 @@ function PerkRow({ index, perk, setChecked }) {
                 <div className={cx('action-doc')} onClick={(e) => { e.stopPropagation(); setOpenDropDown(prev => !prev) }} ref={docElement}>
                     <PiDotsThreeBold style={{ fontSize: '20px', color: '#7a69b3' }} />
                     <div className={cx('dropdown-wrapper')} style={{ display: openDropDown && 'block' }}>
-                        <DropDown perk={perk}/>
+                        <DropDown perk={perk} changeFeatured={changeFeatured}/>
                     </div>
                 </div>
             </td>

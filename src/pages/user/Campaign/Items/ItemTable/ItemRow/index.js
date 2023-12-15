@@ -11,9 +11,9 @@ function ItemRow({ index, item }) {
     const navigate = useNavigate();
     console.log(item)
     const [options, setOptions] = useState(() => {
-        const str = item.options.map(i => {
+        const str = item.options?.map(i => {
             return (i.name + ' (' + i.values.join(', ') + ')')
-        }).join(', ');
+        }).join(', ') || ''
         return str;
     });
     const handleClickItem = () => {

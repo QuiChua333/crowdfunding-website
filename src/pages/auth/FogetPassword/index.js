@@ -64,7 +64,7 @@ function ForgetPassword() {
                     <input
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        type="email"
+                        type="text"
                         placeholder="Địa chỉ email"
                         name="email"
                         className={cx('inputInfo')}

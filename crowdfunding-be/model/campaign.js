@@ -17,6 +17,10 @@ export default mongoose.model('Campaign',
         startDate: Date,
         duration: Number,
         videoUrl: String,
+        isIndemand: {
+            type: Boolean,
+            default: false
+        },
         imageDetailPage: {
             url: String,
             public_id: String,

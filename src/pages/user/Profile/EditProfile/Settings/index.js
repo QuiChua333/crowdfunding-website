@@ -13,12 +13,19 @@ function EditSetting() {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('navbar')}>
-                <a className={cx('nav-item')}>
-                    <span><MdOutlineRemoveRedEye style={{ fontSize: '24px', marginRight: '8px' }} />View Profile</span>
-                </a>
-                <a className={cx('nav-item', 'active')}>
-                    <span> <FaRegEdit style={{ fontSize: '24px', marginRight: '8px' }} />Edit Profile & Settings</span>
-                </a>
+                <Link to={'/individuals/:id/profile'} className={cx('nav-item')}>
+                    <span>
+                        <MdOutlineRemoveRedEye style={{ fontSize: '24px', marginRight: '8px' }} />
+                        View Profile
+                    </span>
+                </Link>
+                <Link to={`/individuals/:id/edit/profile`} className={cx('nav-item', 'active')}>
+                    <span>
+                        {' '}
+                        <FaRegEdit style={{ fontSize: '24px', marginRight: '8px' }} />
+                        Edit Profile & Settings
+                    </span>
+                </Link>
             </div>
 
             <div className={cx('body')}>
@@ -31,7 +38,7 @@ function EditSetting() {
                         </Link>
                         <Link to='/individuals/:id/edit/settings' className={cx('tab', 'active')}>
                             Settings
-                        </Link> 
+                        </Link>
                     </div>
                     <div className={cx('section-info')} style={{ marginTop: '32px' }}>
                         <h1 className={cx('section-title')}>
@@ -72,7 +79,7 @@ function EditSetting() {
                                             <span style={{ fontSize: '14px', fontWeight: '400' }}>quichua333@gmail.com</span>
                                             <span onClick={() => setUpdatePasswordEmail(true)} className={cx('edit')}>edit</span>
                                         </div>
-                                        <div className={cx('btn')} style={{marginTop: '16px'}}>
+                                        <div className={cx('btn')} style={{ marginTop: '16px' }}>
                                             Verify Email
                                         </div>
                                     </>

@@ -17,12 +17,15 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import baseURL from "~/utils/baseURL";
-
+import { useDispatch } from "react-redux";
+import { setLoading } from "~/redux/slides/GlobalApp";
 const cx = classNames.bind(styles);
 
 function SettingCampaign() {
-    const [isCheckRoleEditing, setCheckRoleEditng] = useState(false);
     const { id } = useParams();
+    const dispatch = useDispatch(); 
+    const [campaginState, setCampaignState] = useState({})
+
     const [campagin, setCampaign] = useState({})
 
     const getCampaign = async () => {
@@ -33,8 +36,10 @@ function SettingCampaign() {
                 title: res.data.data.title || '',
                 cardImage: res.data.data.cardImage || { url: '', public_id: '' },
                 status: res.data.data.status,
+                isIndemand: res.data.data.isIndemand || false,
             }
             setCampaign({ ...infoBasic })
+            setCampaignState({ ...infoBasic })
 
 
         } catch (error) {
@@ -44,10 +49,26 @@ function SettingCampaign() {
     useEffect(() => {
         getCampaign()
     }, [])
+    const handleClickSaveContinue = async () => {
+        const body = { ...campaginState }
+        const id = body.id;
+        delete body.id
+        delete body.status
+        delete body.title
+        delete body.cardImage
+        dispatch(setLoading(true))
+        try {
+            const res = await axios.patch(`${baseURL}/campaign/editCampaign/${id}`, body)
+            dispatch(setLoading(false))
+
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
     return (
        <>
             <div className={cx('wrapper')}>
-                 <SidebarCampaign current={6}
+                 <SidebarCampaign current={7}
                         status={campagin.status}
                         title={campagin.title}
                         cardImage={campagin.cardImage?.url}
@@ -63,14 +84,9 @@ function SettingCampaign() {
                                 <div className={cx('controlBar-content')}>
                                     Chiến dịch / Cài đặt
                                 </div>
-                                <div className={cx('controlBar-controls')}>
-                                    <a href="#" className={cx('btn', 'btn-cancel')}>Save Campaign</a>
-                                    <a href="#" className={cx('btn', 'btn-ok')}>Review & Launch</a>
-                                </div>
+                               
                             </div>
-                            <div className={cx('controlBar-loadingBar')}>
-    
-                            </div>
+                   
                         </div>
                         <div className={cx('body')}>
     
@@ -100,18 +116,21 @@ function SettingCampaign() {
                                 </div>
     
                                 <div className={cx('entreField')}>
-                                    <label onClick={() => setCheckRoleEditng(prev => !prev)} style={{ display: 'flex', alignItems: 'center', margin: '16px 0', marginLeft: '-2px' }}>
+                                    <label onClick={() => setCampaignState(prev => ({...prev, isIndemand: !prev.isIndemand}))} style={{ display: 'flex', alignItems: 'center', margin: '16px 0', marginLeft: '-2px' }}>
                                         <span >
                                             {
-                                                !isCheckRoleEditing ? <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} /> : <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
+                                                !campaginState.isIndemand ? <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} /> : <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
                                             }
                                         </span>
                                         <span style={{ marginLeft: '8px' }}>Chọn InDemand</span>
                                     </label>
                                 </div>
+                                <div className={cx('entreField')}>
+                                    <a onClick={handleClickSaveContinue} className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >LƯU CHIẾN DỊCH</a>
+                                </div>
     
                                 <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                    <a href="#" className={cx('btn', 'btn-ok')} >TỔNG QUAN & RA MẮT CHIẾN DỊCH</a>
+                                    <a  className={cx('btn', 'btn-ok')} >PHÁT HÀNH CHIẾN DỊCH</a>
                                 </div>
     
                             </div>
@@ -120,10 +139,13 @@ function SettingCampaign() {
     
                         </div>
                     </div>
+                    <Footer />
                 </div>
+
     
             </div>
-            <Footer />
+      
+          
        </>
     );
 }

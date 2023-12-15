@@ -403,11 +403,11 @@ function NewItem() {
 
                         </div>
                     </div>
-
+                    <Footer />
                 </div>
 
             </div>
-            <Footer />
+   
         </>
     );
 }

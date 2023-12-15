@@ -54,6 +54,7 @@ function PerksCampaign() {
         }
     }
     const getPerksByCampaignId = async () => {
+        console.log('nổi bật')
         try {
             const res = await axios.get(`${baseURL}/perk/getPerksByCampaignId/${id}`)
             setListPerks(res.data.data)
@@ -61,6 +62,7 @@ function PerksCampaign() {
             setListPerks([])
         }
     }
+    
     useEffect(() => {
         getCampaign()
         getPerksByCampaignId()
@@ -84,14 +86,9 @@ function PerksCampaign() {
                                 <div className={cx('controlBar-content')}>
                                     Chiến dịch / Đặc quyền
                                 </div>
-                                <div className={cx('controlBar-controls')}>
-                                    <a href="#" className={cx('btn', 'btn-cancel')}>Save Campaign</a>
-                                    <a href="#" className={cx('btn', 'btn-ok')}>Review & Launch</a>
-                                </div>
+                                
                             </div>
-                            {/* <div className={cx('controlBar-loadingBar')}>
-
-                            </div> */}
+             
                         </div>
                         <div className={cx('body')}>
 
@@ -129,7 +126,7 @@ function PerksCampaign() {
                                         </div>
                                     </div>
                                     <div style={{ marginTop: '40px' }}>
-                                        <PerkTable onPerkTableChange={handlePerkChange} listPerks={listPerks} />
+                                        <PerkTable onPerkTableChange={handlePerkChange} listPerks={listPerks} getPerksByCampaignId={getPerksByCampaignId} />
                                     </div>
 
                                 </div>
@@ -177,10 +174,10 @@ function PerksCampaign() {
                             }
                         </div>
                     </div>
-
+                    <Footer />
                 </div>
             </div>
-            <Footer />
+ 
         </div>
     );
 }

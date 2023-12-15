@@ -15,19 +15,19 @@ function Contributes() {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('navbar')}>
-                <a className={cx('nav-item', 'active')}>
+                <Link to={'/individuals/:id/profile'} className={cx('nav-item', 'active')}>
                     <span>
                         <MdOutlineRemoveRedEye style={{ fontSize: '24px', marginRight: '8px' }} />
                         View Profile
                     </span>
-                </a>
-                <a className={cx('nav-item')}>
+                </Link>
+                <Link to={`/individuals/:id/edit/profile`} className={cx('nav-item')}>
                     <span>
                         {' '}
                         <FaRegEdit style={{ fontSize: '24px', marginRight: '8px' }} />
                         Edit Profile & Settings
                     </span>
-                </a>
+                </Link>
             </div>
 
             <div className={cx('body')}>

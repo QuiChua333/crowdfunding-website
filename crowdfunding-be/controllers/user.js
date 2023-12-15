@@ -2,6 +2,7 @@ import { User } from '../model/index.js';
 import bcrypt from 'bcrypt';
 import sendEmail from '../utils/sendEmail.js';
 import jwt from 'jsonwebtoken';
+import cloudinary from "../utils/cloudinary.js"
 
 const registerUser = async (req, res) => {
     try {
@@ -48,9 +49,9 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ message: 'This account is not registered' });
         }
         const validPassword = await bcrypt.compare(
-			password,
-			user.password
-		);
+            password,
+            user.password
+        );
         if (!validPassword) {
             return res.status(401).json({ message: "Invalid Email or Password" });
         }
@@ -70,11 +71,11 @@ const loginUser = async (req, res) => {
             return res.status(200).json({ message: "An Email sent to your account please verify" });
         }
 
-        const accessToken = generateAccessToken({email: user.email});
-        const refreshToken = generateRefreshToken({email: user.email});
+        const accessToken = generateAccessToken({ email: user.email });
+        const refreshToken = generateRefreshToken({ email: user.email });
         user.refreshToken = refreshToken;
         await user.save();
-        return res.status(200).json({ data: {accessToken,refreshToken, isAdmin: user.isAdmin}, message: "Logged in successfully" });
+        return res.status(200).json({ data: { accessToken, refreshToken, isAdmin: user.isAdmin }, message: "Logged in successfully" });
     } catch (error) {
         return res.status(400).json({
             message: error.message,
@@ -84,8 +85,8 @@ const loginUser = async (req, res) => {
 
 const forgotPassword = async (req, res) => {
     try {
-        const {email} = req.body;
-        let emailUser = await User.findOne({email}).exec();
+        const { email } = req.body;
+        let emailUser = await User.findOne({ email }).exec();
         if (!emailUser) {
             return res.status(401).json({ message: 'This email is not existed or registered !' });
         }
@@ -125,12 +126,12 @@ const verifyLinkForgotPassword = async (req, res) => {
 
 const updateNewPassword = async (req, res) => {
     try {
-        const {newPassword, id} = req.body;
+        const { newPassword, id } = req.body;
         const user = await User.findById(id).exec();
         const hashedPassword = await bcrypt.hash(newPassword, parseInt(process.env.ROUNDS));
         user.password = hashedPassword;
         await user.save();
-        return res.status(200).json({ message: "Password updated successfully"});
+        return res.status(200).json({ message: "Password updated successfully" });
     } catch (error) {
         return res.status(400).json({
             message: error.message,
@@ -139,12 +140,12 @@ const updateNewPassword = async (req, res) => {
 }
 
 const generateAccessToken = (payload) => {
-    return jwt.sign(payload,process.env.JWT_SECRET_ACCESS_TOKEN,{
+    return jwt.sign(payload, process.env.JWT_SECRET_ACCESS_TOKEN, {
         expiresIn: process.env.EXPIRED_ACCESS_TOKEN
     });
 }
 const generateRefreshToken = (payload) => {
-    return jwt.sign(payload,process.env.JWT_SECRET_REFRESH_TOKEN,{
+    return jwt.sign(payload, process.env.JWT_SECRET_REFRESH_TOKEN, {
         expiresIn: process.env.EXPIRED_REFRESH_TOKEN
     });
 }
@@ -165,7 +166,7 @@ const verifyEmailRegister = async (req, res) => {
 };
 const getInfoUser = async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const user = await User.findById(id).exec();
         delete user._doc.password
         res.status(200).json({
@@ -180,14 +181,14 @@ const getInfoUser = async (req, res) => {
 }
 const getUserByEmail = async (req, res) => {
     try {
-        const {email} = req.params;
-        const user = await User.findOne({email}).exec();
+        const { email } = req.params;
+        const user = await User.findOne({ email }).exec();
         if (user) delete user._doc.password
         res.status(200).json({
             message: 'Get user successfully',
             data: user
         })
-        
+
     } catch (error) {
         res.status(400).json({
             message: error.message
@@ -197,43 +198,106 @@ const getUserByEmail = async (req, res) => {
 
 const editUser = async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const {
             infoVerify
         } = req.body
         const user = await User.findById(id).exec();
         if (infoVerify) {
-           
+
+            user.infoVerify.fullName = infoVerify.fullName ?? user.infoVerify.fullName
+            user.infoVerify.phoneNumber = infoVerify.phoneNumber ?? user.infoVerify.phoneNumber
+            user.infoVerify.birthday = infoVerify.birthday ?? user.infoVerify.birthday
+            user.infoVerify.detailAddress = infoVerify.detailAddress ?? user.infoVerify.detailAddress
+            user.infoVerify.identifyCode = infoVerify.identifyCode ?? user.infoVerify.identifyCode
+            user.infoVerify.status = infoVerify.status ?? (user.infoVerify.status || 'Chờ xác minh')
+            user.infoVerify.times = user.infoVerify.times ? user.infoVerify.times + 1 : 1
+            debugger
             if (infoVerify.identifyCardImage.url !== '') {
+                debugger
                 if (!infoVerify.identifyCardImage?.url.startsWith('http')) {
                     if (user.infoVerify?.identifyCardImage?.url) {
-                        await cloudinary.uploader.destroy(user.infoVerify?.identifyCardImage?.url?.public_id)
+                        await cloudinary.uploader.destroy(user.infoVerify?.identifyCardImage?.public_id)
                     }
                     const result = await cloudinary.uploader.upload(infoVerify.identifyCardImage?.url, {
                         folder: process.env.CLOUDINARY_FOLDER_NAME
                     })
+
                     user.infoVerify.identifyCardImage = {
                         url: result.secure_url,
                         public_id: result.public_id,
                     }
                 }
 
-            }
 
+            }
             else {
-                user.infoVerify.identifyCardImage = {
-                    url: '',
-                    public_id: '',
+                user.infoVerify = {
+                    ...user.infoVerify._doc,
+                    identifyCardImage: {
+                        url: '',
+                        public_id: '',
+                    },
                 }
             }
+
+
         }
-        user.infoVerify = infoVerify ?? user.infoVerify
         await user.save();
+        delete user._doc.password
         res.status(200).json({
             message: 'Update user successfully',
             data: user
-        })  
-        
+        })
+    }
+
+    catch (error) {
+        debugger
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
+
+const getLinkVerifyUser = async (req, res) => {
+    try {
+        const userId = '65791a1ee9e7577cf296f899';
+        const tokenLink = jwt.sign({
+            userId: userId
+        },
+            process.env.JWT_SECRET_LINK_VERIFY_USER,
+            {
+                expiresIn: '10m'
+            }
+        )
+        const url = `${process.env.FRONT_END_URL}givefun/verify-user/${tokenLink}`;
+        res.status(200).json({
+            message: 'Get user successfully',
+            data: url
+        })
+
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
+const checkLinkVerifyUser = async (req, res) => {
+    try {
+        const { tokenLink } = req.params;
+        const { userId } = jwt.verify(tokenLink, process.env.JWT_SECRET_LINK_VERIFY_USER);
+        const user = await User.findById(userId).exec();
+        if (!user) {
+            res.status(400).json({
+                message: 'Invalid link',
+            })
+        }
+        delete user._doc.password
+        res.status(200).json({
+            message: 'Successfully',
+            data: user
+        })
+
     } catch (error) {
         res.status(400).json({
             message: error.message
@@ -249,5 +313,7 @@ export default {
     updateNewPassword,
     getInfoUser,
     getUserByEmail,
-    editUser
+    editUser,
+    getLinkVerifyUser,
+    checkLinkVerifyUser
 };

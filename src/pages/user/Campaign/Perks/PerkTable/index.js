@@ -8,12 +8,14 @@ import { useEffect, useState } from "react";
 
 const cx = classNames.bind(styles)
 
-function PerkTable({onPerkTableChange, listPerks}) {
+function PerkTable({onPerkTableChange, listPerks, getPerksByCampaignId}) {
    
     const [listPerkState,setListPerkState] = useState([...listPerks].map(item => ({...item, isChecked: false})));
     const [isCheckAll,setCheckAll] = useState(false) 
 
-    
+    useEffect(() => {
+        setListPerkState([...listPerks].map(item => ({...item, isChecked: false})))
+    },[listPerks])
     const handleClickCheckALl = () => {
         setCheckAll(prev => !prev);
         setListPerkState(prev => {
@@ -65,7 +67,7 @@ function PerkTable({onPerkTableChange, listPerks}) {
                 <tbody>
                     {
                         listPerkState.map((item, index) => {
-                            return <PerkRow key={index} perk={item} index={index} setChecked={handleSetChecked}/>
+                            return <PerkRow key={index} perk={item} index={index} setChecked={handleSetChecked} getPerksByCampaignId={getPerksByCampaignId} />
                         })
                     }
                 </tbody>

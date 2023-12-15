@@ -29,12 +29,19 @@ function EditProfile() {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('navbar')}>
-                <a className={cx('nav-item')}>
-                    <span><MdOutlineRemoveRedEye style={{ fontSize: '24px', marginRight: '8px' }} />View Profile</span>
-                </a>
-                <a className={cx('nav-item', 'active')}>
-                    <span> <FaRegEdit style={{ fontSize: '24px', marginRight: '8px' }} />Edit Profile & Settings</span>
-                </a>
+                <Link to={'/individuals/:id/profile'} className={cx('nav-item')}>
+                    <span>
+                        <MdOutlineRemoveRedEye style={{ fontSize: '24px', marginRight: '8px' }} />
+                        View Profile
+                    </span>
+                </Link>
+                <Link to={`/individuals/:id/edit/profile`} className={cx('nav-item', 'active')}>
+                    <span>
+                        {' '}
+                        <FaRegEdit style={{ fontSize: '24px', marginRight: '8px' }} />
+                        Edit Profile & Settings
+                    </span>
+                </Link>
             </div>
 
             <div className={cx('body')}>
@@ -47,7 +54,7 @@ function EditProfile() {
                         </Link>
                         <Link to='/individuals/:id/edit/settings' className={cx('tab')}>
                             Settings
-                        </Link> 
+                        </Link>
                     </div>
 
                     <div className={cx('section-info')} style={{ marginTop: '32px' }}>
@@ -85,7 +92,7 @@ function EditProfile() {
 
                     <div className={cx('section-info')} style={{ marginTop: '32px' }}>
                         <h1 className={cx('section-title')}>
-                            Your Story 
+                            Your Story
                         </h1>
 
                         <div style={{ marginTop: '24px' }}>
@@ -118,14 +125,14 @@ function EditProfile() {
                             </div>
                             <div className={cx('field')} style={{ maxWidth: '800px', marginTop: '40px' }}>
                                 <label className={cx('field-label')}>Avatar</label>
-                                <div className={cx('img-wrapper')} style={{width: '150px', height:'150px'}}>
+                                <div className={cx('img-wrapper')} style={{ width: '150px', height: '150px' }}>
                                     <img src={profileAvt || defaultAvatar}>
                                     </img>
 
                                     <input ref={elementInputProfileAvt} type="file" onChange={(e) => handlePreviewProfileAvt(e)} accept="image/jpg, image/jpeg, image/png" />
                                 </div>
                                 <div onClick={() => elementInputProfileAvt.current.click()} className={cx('btn')} style={{ marginTop: '32px' }}>{profileAvt ? 'Change Image' : 'Add Image'}</div>
-                                
+
                             </div>
 
                         </div>

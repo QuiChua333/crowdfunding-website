@@ -172,5 +172,17 @@
                 background-color: #717bef;
             }
         }
+
+        .verified {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: rgb(11, 199, 11);;
+            color: #fff;
+            border-radius: 8px;
+        }
+
+        .wait {
+            color: #717bef;
+        }
     }
 }

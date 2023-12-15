@@ -22,7 +22,10 @@ export default mongoose.model('User',
         password: String,
         isVerifiedEmail: { type: Boolean, default: false },
         
-        isVerifiedUser: Boolean,
+        isVerifiedUser: {
+            type: Boolean,
+            default: false
+        },
         infoVerify: {
             fullName: String,
             phoneNumber: String,
@@ -33,6 +36,8 @@ export default mongoose.model('User',
                 url: String,
                 public_id: String
             },
+            status: String,
+            times: Number
         },
         isAdmin: {
             type: Boolean,

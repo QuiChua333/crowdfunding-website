@@ -90,12 +90,13 @@ function NewPerk() {
             }
             else {
                 const res = await axios.get(`${baseURL}/perk/getPerkById/${idPerk}`)
+                console.log(res.data.data)
                 setPerkState({
                     id: res.data.data._id,
                     title: res.data.data.title || '',
                     price: res.data.data.price || '',
                     isVisible: res.data.data.isVisible || false,
-                    items: res.data.data.items.map(item => ({name: item.item.name, quantity: item.quantity, id: item.item._id })) || [],
+                    items: res.data.data.items.map(item => ({ name: item.item.name, quantity: item.quantity, id: item.item._id })) || [],
                     description: res.data.data.description || '',
                     perkImage: res.data.data.image || {
                         url: '',
@@ -111,7 +112,7 @@ function NewPerk() {
                     title: res.data.data.title || '',
                     price: res.data.data.price || '',
                     isVisible: res.data.data.isVisible || false,
-                    items: res.data.data.items.map(item => ({name: item.item.name, quantity: item.quantity, id: item.item._id })) || [],
+                    items: res.data.data.items.map(item => ({ name: item.item.name, quantity: item.quantity, id: item.item._id })) || [],
                     description: res.data.data.description || '',
                     perkImage: res.data.data.image || {
                         url: '',
@@ -346,10 +347,10 @@ function NewPerk() {
     }
     const handleClickSavePerk = async () => {
         if (idPerk === 'new') {
-            const body = { ...perkState, image: perkState.perkImage, items: perkState.items.map(item => ({item: item.id, quantity: item.quantity})) };
+            const body = { ...perkState, image: perkState.perkImage, items: perkState.items.map(item => ({ item: item.id, quantity: item.quantity })) };
             dispatch(setLoading(true))
             try {
-                const res = await axios.post(`${baseURL}/perk/addPerk`, {perk: body, campaignId: id})
+                const res = await axios.post(`${baseURL}/perk/addPerk`, { perk: body, campaignId: id })
                 dispatch(setLoading(false))
                 window.location.href = `/campaigns/${id}/edit/perks/table`
             } catch (error) {
@@ -357,7 +358,7 @@ function NewPerk() {
             }
         }
         else {
-            const body = { ...perkState, image: perkState.perkImage, items: perkState.items.map(item => ({item: item.id, quantity: item.quantity})) };
+            const body = { ...perkState, image: perkState.perkImage, items: perkState.items.map(item => ({ item: item.id, quantity: item.quantity })) };
             dispatch(setLoading(true))
             try {
                 const res = await axios.patch(`${baseURL}/perk/editPerk/${perkState.id}`, body)
@@ -393,11 +394,11 @@ function NewPerk() {
                         <div className={cx('controlBar')}>
                             <div className={cx('controlBar-container')}>
                                 <div className={cx('controlBar-content')}>
-                                    Đặc quyền / {idPerk==='new' ? 'Tạo đặc quyền' : perk.title}
+                                    Đặc quyền / {idPerk === 'new' ? 'Tạo đặc quyền' : perk.title}
                                 </div>
                                 <div className={cx('controlBar-controls')}>
-                                    <Link to={`/campaigns/${id}/edit/perks/table`} className={cx('btn', 'btn-cancel')}>Cancel</Link>
-                                    <a onClick={handleClickSavePerk} className={cx('btn', 'btn-ok')}>Save</a>
+                                    <Link to={`/campaigns/${id}/edit/perks/table`} className={cx('btn', 'btn-cancel')}>Hủy</Link>
+                                    <a onClick={handleClickSavePerk} className={cx('btn', 'btn-ok')}>Lưu</a>
                                 </div>
                             </div>
                             {/* <div className={cx('controlBar-loadingBar')}>
@@ -639,7 +640,7 @@ function NewPerk() {
                             </div>
                         </div>
                     </div>
-
+                    <Footer />
 
 
 
@@ -650,7 +651,7 @@ function NewPerk() {
 
 
             </div>
-            <Footer />
+
         </>
     );
 }
