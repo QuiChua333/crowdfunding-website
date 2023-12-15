@@ -142,7 +142,7 @@ function NewItem() {
             }
         }
     }
-    const handleClickDeleteItem = () => {
+    const handleClickDeleteItem =  () => {
         dispatch(setMessageBox({
             title: 'Xóa vật phẩm?',
             content: 'Thao tác này sẽ xóa hoàn toàn mục này khỏi chiến dịch của bạn và không thể hoàn tác được.',
@@ -151,18 +151,7 @@ function NewItem() {
             isShow: true,
             type: 'deleteItem'
         }))
-        // if (itemState.isHasAssociatedPerks) {
-        //     setShowErrorDelete(true)
-        //     return;
-        // }
-        // else {
-        //     try {
-        //         const res = await axios.delete(`${baseURL}/item/deleteItem/${itemState.id}`)
-        //         navigate(`/campaigns/${id}/edit/items/table`)
-        //     } catch (error) {
-        //         console.log(error.message)
-        //     }
-        // }
+        
 
 
     }
@@ -177,7 +166,13 @@ function NewItem() {
     useEffect(() => {
         if (messageBox.type === 'deleteItem') {
             if (messageBox.result === true) {
-                deleteItem()
+                if (itemState.isHasAssociatedPerks) {
+                    setShowErrorDelete(true)
+                    return;
+                }
+                else {
+                    deleteItem()
+                }
             }
         }
     }, [messageBox.result])
@@ -274,7 +269,7 @@ function NewItem() {
                         <div className={cx('controlBar')}>
                             <div className={cx('controlBar-container')}>
                                 <div className={cx('controlBar-content')}>
-                                    Vật phẩm / Tạo mới vật phẩm
+                                    Vật phẩm / {idItem === 'new' ? 'Tạo mới vật phẩm' : item.name}
                                 </div>
                                 <div className={cx('controlBar-controls')}>
                                     {
