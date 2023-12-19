@@ -124,11 +124,11 @@ function SignUp() {
             <div className={cx('signup_form_container')}>
                 <div className={cx('left')}>
                     <h2>Chào mừng bạn quay lại</h2>
-                    <Link to="/login">
+                    <a href="/login">
                         <button type="button" className={cx('white_btn')}>
                             Đăng nhập
                         </button>
-                    </Link>
+                    </a>
                 </div>
                 <div className={cx('right')}>
                     <form className={cx('form_container')} onSubmit={handleSubmit}>

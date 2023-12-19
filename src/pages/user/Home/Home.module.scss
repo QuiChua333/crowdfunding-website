@@ -1,7 +1,6 @@
 
 .wrapper {
-    
-    height: 3000px;
+
 }
 
 .inner {
@@ -133,7 +132,9 @@
 
 .carsousel-wrapper {
     position:relative;
-
+    .carousel {
+        padding: 0 4px;
+    }
     .button-group {
         position: absolute;
         top: -60px;

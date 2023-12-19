@@ -68,13 +68,13 @@ function Login() {
                 const { data: res } = await axios.post(url, data);
                 localStorage.setItem("accessToken", res.data.accessToken);
                 localStorage.setItem("refreshToken", res.data.refreshToken);
-                if ( res.data.isAdmin) {
+                if (res.data.isAdmin) {
                     window.location.href = "/admin/campaigns";
                 }
                 else {
                     window.location.href = "/";
                 }
-                
+
             } catch (error) {
                 if (
                     error.response &&
@@ -135,11 +135,11 @@ function Login() {
                 </div>
                 <div className={cx('right')}>
                     <h2>Bạn chưa có tài khoản ?</h2>
-                    <Link to="/sign-up">
+                    <a href="/sign-up">
                         <button type="button" className={cx('white_btn')}>
                             Đăng ký
                         </button>
-                    </Link>
+                    </a>
                 </div>
             </div>
         </div>

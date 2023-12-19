@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 function HeaderOnlyLayout({ children }) {
     return (
         <div >
-            <HeaderPage isFixed={false}/>
+            <HeaderPage />
             <div className='Container'> 
                 {children}
             </div>

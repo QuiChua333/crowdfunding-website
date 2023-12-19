@@ -2,9 +2,9 @@
 .wrapper {
     user-select: none;
     width: 100%;
-    padding: 24px 0 0 0;
+    padding: 24px 0 12px 0;
     font-family: var( --sub-font);
-    position: fixed;
+    position: relative;
     display: flex;
     align-self: flex-start;
     z-index: 10;

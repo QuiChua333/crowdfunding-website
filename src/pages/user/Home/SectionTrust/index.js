@@ -36,13 +36,6 @@ function SectionTrust() {
                 setOpacitySpan1(opacity3)
                 setOpacitySpan2(opacity4)
                 setOpacitySpan3(opacity5)
-                // setOpacityTitle(opacity - 0.1)
-                // setOpacitySpan1(opacity - 0.2)
-                // setOpacitySpan2(opacity - 0.3)
-                // setOpacitySpan3(opacity - 0.4)
-                // let opacity2 = 1 - revealTopTitle/(windowHeight);
-                // // let opacity2 = opacity-1 + (1-);
-                // setOpacityTitle(opacity2)
                 
                
             }
@@ -57,12 +50,12 @@ function SectionTrust() {
     return (
         <div className={cx('wrapper', { active: active})} ref={element}>
             <div className={cx('content')}> 
-                <h2 style={{opacity: `${opacityH2}`, transition: 'all 0.2s ease', alignItems: 'center'}}><img src={images.logo} style={{marginBottom: '4px'}}/> Trust  &  Safety</h2>
-                <p className={cx('title')} ref={elementTitle} style={{opacity: `${opacityTitle}`, transition: 'all 0.2s ease'}}>We have your back.</p>
+                <h2 style={{opacity: `${opacityH2}`, transition: 'all 0.2s ease', alignItems: 'center'}}><img src={images.logo} style={{marginBottom: '4px'}}/> Tin cậy  &  An toàn</h2>
+                <p className={cx('title')} ref={elementTitle} style={{opacity: `${opacityTitle}`, transition: 'all 0.2s ease'}}>Chúng tôi ở phía sau bạn.</p>
                 <p className={cx('body')}>
-                    <span ref={elementSpan1} style={{opacity: `${opacitySpan1}`, transition: 'all 0.2s ease'}}>With a global team dedicated to trust and safety, </span>
-                    <span style={{opacity: `${opacitySpan2}`, transition: 'all 0.2s ease'}}>we’ve successfully managed fundraisers worldwide for more than a decade. </span>
-                    <span style={{opacity: `${opacitySpan3}`, transition: 'all 0.2s ease'}}>Don’t worry about a thing, we’ve got you covered.</span>
+                    <span ref={elementSpan1} style={{opacity: `${opacitySpan1}`, transition: 'all 0.2s ease'}}>Với đội ngũ toàn cầu tận tâm vì sự tin cậy và an toàn, </span>
+                    <span style={{opacity: `${opacitySpan2}`, transition: 'all 0.2s ease'}}>chúng tôi đã quản lý thành công các hoạt động gây quỹ trên toàn thế giới trong hơn một thập kỷ. </span>
+                    <span style={{opacity: `${opacitySpan3}`, transition: 'all 0.2s ease'}}>Đừng lo lắng về bất cứ điều gì, chúng tôi sẽ giúp bạn.</span>
                 </p>
             </div>
             

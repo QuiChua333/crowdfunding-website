@@ -83,37 +83,38 @@ function Home() {
                         <ProjectCardItem />
                     </div> */}
                     <div  className={cx('carsousel-wrapper')} style={{ marginTop: '28px' }} >
-                    <Carousel  responsive={responsive} arrows={false} renderButtonGroupOutside={true}  customButtonGroup={<ButtonGroup />}>
-                        <ProjectCardItem />
-                        <ProjectCardItem />
-                        <ProjectCardItem />
-                        <ProjectCardItem />
-                        <ProjectCardItem />
-                        <ProjectCardItem />
+                    <Carousel itemClass={cx('carousel')} responsive={responsive} arrows={false} renderButtonGroupOutside={true}  customButtonGroup={<ButtonGroup />}>
+                        <div style={{marginLeft: '16px'}}><ProjectCardItem /></div>
+                        <div style={{marginLeft: '16px'}}><ProjectCardItem /></div>
+                        <div style={{marginLeft: '16px'}}><ProjectCardItem /></div>
+                        <div style={{marginLeft: '16px'}}><ProjectCardItem /></div>
+                        <div style={{marginLeft: '16px'}}><ProjectCardItem /></div>
+                        <div style={{marginLeft: '16px'}}><ProjectCardItem /></div>
+                        
                     </Carousel>
                     </div>
                 </div>
                 <div className={cx('category-interest')} style={{ marginTop: '100px' }}>
                     <h2 className={cx('title')}>
-                        Which categories interest you?
+                        Những lĩnh vực nào bạn đang quan tâm?
                     </h2>
 
                     <p className={cx('content')}>
-                        Discover projects just for you and get great recommendations when you select your interests.
+                    Khám phá các dự án dành riêng cho bạn và nhận được những đề xuất tuyệt vời khi bạn chọn sở thích của mình.
                     </p>
 
                     <p className={cx('content')}>
-                        Or explore our top categories
+                    Hoặc khám phá các danh mục hàng đầu của chúng tôi
                     </p>
 
-                    <div className="d-flex flex-wrap" style={{ width: '100%' }}>
+                    <div className="d-flex flex-wrap" style={{ width: '100%', marginTop: '16px' }}>
                         <Link to="/" className={cx('column')}>
                             <div className={cx('categoryIcon')}>
                                 <img src={images.home} />
                             </div>
 
                             <div className={cx('categoryText')} >
-                                HOME
+                                VẬT DỤNG TRONG NHÀ
                             </div>
                         </Link>
 
@@ -123,7 +124,7 @@ function Home() {
                             </div>
 
                             <div className={cx('categoryText')} >
-                                Phones & Accessories
+                            ĐIỆN THOẠI & PHỤ KIỆN
 
                             </div>
                         </Link>
@@ -134,7 +135,7 @@ function Home() {
                             </div>
 
                             <div className={cx('categoryText')} >
-                                Travel & Outdoors
+                                DU LỊCH & HOẠT ĐỘNG NGOÀI TRỜI
 
                             </div>
                         </Link>
@@ -145,7 +146,7 @@ function Home() {
                             </div>
 
                             <div className={cx('categoryText')} >
-                                Health & Fitness
+                                SỨC KHỎE & THỂ HÌNH
 
                             </div>
                         </Link>
@@ -156,7 +157,7 @@ function Home() {
                             </div>
 
                             <div className={cx('categoryText')} >
-                                Audio
+                                ÂM THANH
 
                             </div>
                         </Link>
@@ -167,7 +168,7 @@ function Home() {
                             </div>
 
                             <div className={cx('categoryText')} >
-                                Film
+                                PHIM
 
                             </div>
                         </Link>
@@ -176,15 +177,15 @@ function Home() {
                 <div className={cx('backTheProjectSection-imageWrapper')} style={{ marginTop: '60px' }}>
                     <div className={cx('backTheProjectSection-iamge')}>
                         <h2 className={cx('title')}>
-                            Back the project, take the ride
+                            Cơ hội mới, thành công mới
                         </h2>
 
                         <p className={cx('content')}>
-                            Indiegogo is your destination for clever innovations in tech, design, and more, often with special perks and pricing for early adopters. Back a campaign, share your ideas and feedback with the project team - and join the risks and rewards of bringing new products to life.
+                        Give Fun là điểm đén của bạn để khám phá những đổi mới tinh tế trong công nghệ, thiết kế và nhiều lĩnh vực khác, thường đi kèm với ưu đãi đặc biệt và giá ưu đãi cho những người ủng hộ sớm. Hãy ủng hộ một dự án, chia sẻ ý kiến và phản hồi của bạn với nhóm dự án - và tham gia vào rủi ro và phúc lợi của việc mang sản phẩm mới vào cuộc sống.
                         </p>
 
                         <Link className={cx('link')} to="/">
-                            <p>Learn about crowdfunding <AiOutlineRight /></p>
+                            <p>Tìm hiểu thêm về Give Fun <AiOutlineRight /></p>
                         </Link>
                     </div>
                 </div>

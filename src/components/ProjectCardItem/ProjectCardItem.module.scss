@@ -1,12 +1,10 @@
 .wrapper {
-    width: 275px;
-    height: 550px;
+ 
   
 
     border-radius: 2px;
     cursor: pointer;
     transition: all .3s cubic-bezier(.16,.8,.45,1);
-    position: relative;
     background-color: #fff;
     border: 1px solid #ddd;
 
@@ -72,8 +70,7 @@
 
 
 .card-image img{
-    width: 273.5px;
-    height: 278px;
+    width: 100%;
     object-fit: cover;
 }
 
