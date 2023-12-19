@@ -72,10 +72,8 @@ const loginUser = async (req, res) => {
         }
 
         const accessToken = generateAccessToken({ email: user.email });
-        const refreshToken = generateRefreshToken({ email: user.email });
-        user.refreshToken = refreshToken;
         await user.save();
-        return res.status(200).json({ data: { accessToken, refreshToken, isAdmin: user.isAdmin }, message: "Logged in successfully" });
+        return res.status(200).json({ data: { accessToken, isAdmin: user.isAdmin }, message: "Logged in successfully" });
     } catch (error) {
         return res.status(400).json({
             message: error.message,

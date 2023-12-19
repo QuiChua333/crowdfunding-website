@@ -60,14 +60,12 @@ function Login() {
         if (flagEmail && flagPassword) {
             // Xử lý submit ở đây
             try {
-                const url = "http://localhost:5000/user/login";
                 const data = {
                     email,
                     password: pass
                 }
-                const { data: res } = await axios.post(url, data);
+                const { data: res } = await axios.post(`${process.env.REACT_APP_URL_BACKEND}/user/login`, data);
                 localStorage.setItem("accessToken", res.data.accessToken);
-                localStorage.setItem("refreshToken", res.data.refreshToken);
                 if (res.data.isAdmin) {
                     window.location.href = "/admin/campaigns";
                 }
