@@ -8,7 +8,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ItemTable from "./ItemTable";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import customAxios from '~/utils/customAxios'
+
 import baseURL from "~/utils/baseURL";
 
 const cx = classNames.bind(styles);
@@ -21,7 +22,7 @@ function ItemsCampaign() {
     const [listItems,setListItems] = useState()
     const getCampaign = async () => {
         try {
-            const res = await axios.get(`${baseURL}/campaign/getCampaignById/${id}`)
+            const res = await customAxios.get(`${baseURL}/campaign/getCampaignById/${id}`)
             let infoBasic = {
                 id: res.data.data._id,
                 title: res.data.data.title || '',
@@ -37,7 +38,7 @@ function ItemsCampaign() {
     }
     const getItemsByCampaignContainPerk = async () => {
         try {
-            const res = await axios.get(`${baseURL}/item/getItemsByCampaignContainPerk/${id}`)
+            const res = await customAxios.get(`${baseURL}/item/getItemsByCampaignContainPerk/${id}`)
 
             setListItems(res.data.data || [])
         } catch (error) {
@@ -105,18 +106,18 @@ function ItemsCampaign() {
                                 listItems?.length === 0 &&
                                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                                     <div style={{ width: '580px', textAlign: 'center' }}>
-                                        <div style={{ fontSize: '24px', fontWeight: '400', marginTop: '32px' }}>See all your items and manage them here. </div>
+                                        <div style={{ fontSize: '24px', fontWeight: '400', marginTop: '32px' }}>Xem tất cả các vật phẩm của bạn và quản lý chúng ở đây. </div>
                                         <div style={{ marginTop: '12px' }}>
-                                            <span>Items are what you offer to backers when they claim perks.</span>
+                                            <span>Vật phẩm là những gì bạn cung cấp cho người ủng hộ khi họ yêu cầu đặc quyền.</span>
                                         </div>
                                         <img src={images.no_item} style={{ width: '600', height: '200px', objectFit: 'cover', marginTop: '32px' }} />
 
-                                        <div style={{ marginTop: '40px' }}>You don't have any items yet.</div>
-                                        <div style={{ fontSize: '14px', color: '#a8a8a8' }}>Go to the perks page to create a perk first and then include items.</div>
+                                        <div style={{ marginTop: '40px' }}>Bạn chưa có bất kỳ vật phẩm nào.</div>
+                                        <div style={{ fontSize: '14px', color: '#a8a8a8' }}>Hãy chuyển đến trang đặc quyền để tạo đặc quyền trước rồi thêm các vật phẩm vào.</div>
                                         <img src={images.arrow} style={{ width: '40px', height: '60px', objectFit: 'cover', marginTop: '32px' }} />
 
                                         <div style={{ marginTop: '40px' }}>
-                                            <a href="/campaigns/:id/edit/perks/table" className={cx('btn', 'btn-ok')} style={{ fontSize: '16px' }} >GO TO PERKS PAGE </a>
+                                            <a href="/campaigns/:id/edit/perks/table" className={cx('btn', 'btn-ok')} style={{ fontSize: '16px' }} >ĐI ĐẾN TRANG ĐẶC QUYỀN </a>
                                         </div>
 
 

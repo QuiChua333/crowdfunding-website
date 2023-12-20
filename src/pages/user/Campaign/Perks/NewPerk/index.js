@@ -12,7 +12,8 @@ import { MdEdit } from "react-icons/md";
 import { IoCloseSharp } from "react-icons/io5";
 import { useRef, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import customAxios from '~/utils/customAxios'
+
 import baseURL from "~/utils/baseURL";
 // import { FaAngleDown } from "react-icons/fa";
 // import { AiFillQuestionCircle } from "react-icons/ai";
@@ -55,7 +56,7 @@ function NewPerk() {
 
     const getCampaign = async () => {
         try {
-            const res = await axios.get(`${baseURL}/campaign/getCampaignById/${id}`)
+            const res = await customAxios.get(`${baseURL}/campaign/getCampaignById/${id}`)
             let infoBasic = {
                 id: res.data.data._id,
                 title: res.data.data.title || '',
@@ -89,7 +90,7 @@ function NewPerk() {
                 })
             }
             else {
-                const res = await axios.get(`${baseURL}/perk/getPerkById/${idPerk}`)
+                const res = await customAxios.get(`${baseURL}/perk/getPerkById/${idPerk}`)
                 console.log(res.data.data)
                 setPerkState({
                     id: res.data.data._id,
@@ -135,7 +136,7 @@ function NewPerk() {
     }
     const getListLocationShip = async () => {
         try {
-            const res = await axios.get('https://provinces.open-api.vn/api/p');
+            const res = await customAxios.get('https://provinces.open-api.vn/api/p');
             setListLocationShip(res.data.map(item => item.name));
             setListLocationShipOrigin(res.data.map(item => item.name));
         } catch (error) {
@@ -144,7 +145,7 @@ function NewPerk() {
     }
     const getItemsByCampaign = async () => {
         try {
-            const res = await axios.get(`${baseURL}/item/getItemsByCampaign/${id}`)
+            const res = await customAxios.get(`${baseURL}/item/getItemsByCampaign/${id}`)
 
             setListItemsAvailable(res.data.data.map(item => {
                 return {
@@ -223,7 +224,7 @@ function NewPerk() {
         // setListItem(prev => [...prev, { ...item, quantity: 1 }])
         // setListItemsAvailable(prev => [...prev, { ...item }]);
         try {
-            const res = await axios.post(`${baseURL}/item/addItem`, { ...item, campaign: id })
+            const res = await customAxios.post(`${baseURL}/item/addItem`, { ...item, campaign: id })
             getItemsByCampaign();
             setShowModal(false)
         } catch (error) {
@@ -350,7 +351,7 @@ function NewPerk() {
             const body = { ...perkState, image: perkState.perkImage, items: perkState.items.map(item => ({ item: item.id, quantity: item.quantity })) };
             dispatch(setLoading(true))
             try {
-                const res = await axios.post(`${baseURL}/perk/addPerk`, { perk: body, campaignId: id })
+                const res = await customAxios.post(`${baseURL}/perk/addPerk`, { perk: body, campaignId: id })
                 dispatch(setLoading(false))
                 window.location.href = `/campaigns/${id}/edit/perks/table`
             } catch (error) {
@@ -361,7 +362,7 @@ function NewPerk() {
             const body = { ...perkState, image: perkState.perkImage, items: perkState.items.map(item => ({ item: item.id, quantity: item.quantity })) };
             dispatch(setLoading(true))
             try {
-                const res = await axios.patch(`${baseURL}/perk/editPerk/${perkState.id}`, body)
+                const res = await customAxios.patch(`${baseURL}/perk/editPerk/${perkState.id}`, body)
                 dispatch(setLoading(false))
                 window.location.href = `/campaigns/${id}/edit/perks/table`
             } catch (error) {

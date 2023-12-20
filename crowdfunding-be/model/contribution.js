@@ -6,6 +6,10 @@ export default mongoose.model('Contribution',
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         },
+        campaign: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Campaign'
+        },
         shippingInfo: {
             fullName: String,
             province: String,

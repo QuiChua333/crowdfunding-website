@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from '../../Profile.module.scss';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import Search from '~/pages/admin/components/Search/index.js';
 const cx = classNames.bind(styles);
 
 function Contributes() {
+    const { id } = useParams()
     const [textSearch, setTextSearch] = useState('');
     useEffect(() => {
         console.log(textSearch);
@@ -15,17 +16,17 @@ function Contributes() {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('navbar')}>
-                <Link to={'/individuals/:id/profile'} className={cx('nav-item', 'active')}>
+                <Link to={`/individuals/${id}/profile`} className={cx('nav-item', 'active')}>
                     <span>
                         <MdOutlineRemoveRedEye style={{ fontSize: '24px', marginRight: '8px' }} />
-                        View Profile
+                        Xem hồ sơ
                     </span>
                 </Link>
-                <Link to={`/individuals/:id/edit/profile`} className={cx('nav-item')}>
+                <Link to={`/individuals/${id}/edit/profile`} className={cx('nav-item')}>
                     <span>
                         {' '}
                         <FaRegEdit style={{ fontSize: '24px', marginRight: '8px' }} />
-                        Edit Profile & Settings
+                        Chỉnh sửa hồ sơ & Cài đặt
                     </span>
                 </Link>
             </div>
@@ -35,14 +36,14 @@ function Contributes() {
 
                 <div className={cx('content')}>
                     <div className={cx('tabpanel')}>
-                        <Link to="/individuals/:id/profile" className={cx('tab')}>
-                            Profile
+                        <Link to={`/individuals/${id}/profile`} className={cx('tab')}>
+                            Hồ sơ
                         </Link>
-                        <Link to="/individuals/:id/campaigns" className={cx('tab')}>
-                            Campaigns
+                        <Link to={`/individuals/${id}/campaigns`} className={cx('tab')}>
+                            Chiến dịch
                         </Link>
-                        <Link to="/individuals/:id/contributions" className={cx('tab', 'active')}>
-                            Contributions
+                        <Link to={`/individuals/${id}/contributions`} className={cx('tab','active')}>
+                            Đóng góp
                         </Link>
                     </div>
 

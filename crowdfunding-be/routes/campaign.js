@@ -1,17 +1,20 @@
 import express from 'express'
 import { CampaignController } from "../controllers/index.js";
+import checkToken from '../middlewares/auth.js'
 const router = express.Router();
 
 
 router.get('/getCampaignById/:id',CampaignController.getCampaignById)
-router.patch('/CKEUpload',CampaignController.CKEUpload)
-router.patch('/editCampaign/:id',CampaignController.editCampaign)
-router.patch('/changeCardImage/:id',CampaignController.changeCardImage)
-router.post('/createNewCampaign',CampaignController.createNewCampaign)
+router.patch('/CKEUpload',checkToken,CampaignController.CKEUpload)
+router.patch('/editCampaign/:id',checkToken,CampaignController.editCampaign)
+router.patch('/launchCampaign/:id',checkToken,CampaignController.launchCampaign)
+router.patch('/changeCardImage/:id',checkToken,CampaignController.changeCardImage)
+router.post('/createNewCampaign',checkToken,CampaignController.createNewCampaign)
 router.get('/getTeamMember/:id',CampaignController.getTeamMember)
-router.post('/sendInvitation',CampaignController.sendInvitation)
+router.post('/sendInvitation',checkToken,CampaignController.sendInvitation)
 router.get('/team/:tokenLinkInvitation',CampaignController.handleAcceptInvitationCampaign)
-router.delete('/:id/deleteMember/:memberId',CampaignController.deleteMember)
+router.delete('/:id/deleteMember/:memberId',checkToken,CampaignController.deleteMember)
+router.get('/getCampaignsOfUserId/:id',CampaignController.getCampaignsOfUserId)
 
 
 

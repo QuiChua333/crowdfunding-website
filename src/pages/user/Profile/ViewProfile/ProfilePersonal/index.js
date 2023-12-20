@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from '../../Profile.module.scss';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import defaultAvatar from '~/assets/images/defaultAvt.png';
@@ -11,6 +11,8 @@ import { FaFacebook } from "react-icons/fa";
 const cx = classNames.bind(styles);
 
 function ProfilePersonal() {
+    const { id } = useParams()
+
     const [showModalCampaigns, setShowModalCampaigns] = useState(false);
     const [showModalComments, setShowModalComments] = useState(false);
     const [showModalContributes, setShowModalContributes] = useState(false);
@@ -37,17 +39,17 @@ function ProfilePersonal() {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('navbar')}>
-                <Link to={'/individuals/:id/profile'} className={cx('nav-item', 'active')}>
+                <Link to={`/individuals/${id}/profile`} className={cx('nav-item', 'active')}>
                     <span>
                         <MdOutlineRemoveRedEye style={{ fontSize: '24px', marginRight: '8px' }} />
-                        View Profile
+                        Xem hồ sơ
                     </span>
                 </Link>
-                <Link to={`/individuals/:id/edit/profile`} className={cx('nav-item')}>
+                <Link to={`/individuals/${id}/edit/profile`} className={cx('nav-item')}>
                     <span>
                         {' '}
                         <FaRegEdit style={{ fontSize: '24px', marginRight: '8px' }} />
-                        Edit Profile & Settings
+                        Chỉnh sửa hồ sơ & Cài đặt
                     </span>
                 </Link>
             </div>
@@ -57,14 +59,14 @@ function ProfilePersonal() {
 
                 <div className={cx('content')}>
                     <div className={cx('tabpanel')}>
-                        <Link to="/individuals/:id/profile" className={cx('tab', 'active')}>
-                            Profile
+                        <Link to={`/individuals/${id}/profile`} className={cx('tab', 'active')}>
+                            Hồ sơ
                         </Link>
-                        <Link to="/individuals/:id/campaigns" className={cx('tab')}>
-                            Campaigns
+                        <Link to={`/individuals/${id}/campaigns`} className={cx('tab')}>
+                            Chiến dịch
                         </Link>
-                        <Link to="/individuals/:id/contributions" className={cx('tab')}>
-                            Contributions
+                        <Link to={`/individuals/${id}/contributions`} className={cx('tab')}>
+                            Đóng góp
                         </Link>
                     </div>
 
@@ -130,21 +132,21 @@ function ProfilePersonal() {
                                     )}
                                 </div>
                             </div>
-                            <div style={{height: '1.5px', backgroundColor: '#ccc', marginTop: '25px'}}></div>
-                            <div style={{marginTop: '30px'}}>
+                            <div style={{ height: '1.5px', backgroundColor: '#ccc', marginTop: '25px' }}></div>
+                            <div style={{ marginTop: '30px' }}>
                                 <span className={cx('title-profile')}>Xác minh</span>
-                                <div style={{display: 'flex', flexDirection: 'column', border: '10px solid #E1E1E1', marginTop: '10px'}}>
-                                    <div style={{display: 'flex', alignItems: 'center', color: '#6a6a6a', margin: '5px 10px'}}>
-                                        <IoMdMail style={{fontSize: '20px'}}/>
-                                        <span style={{marginLeft: '10px', fontWeight: '500'}}>Email Verified</span>
+                                <div style={{ display: 'flex', flexDirection: 'column', border: '10px solid #E1E1E1', marginTop: '10px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', color: '#6a6a6a', margin: '5px 10px' }}>
+                                        <IoMdMail style={{ fontSize: '20px' }} />
+                                        <span style={{ marginLeft: '10px', fontWeight: '500' }}>Email Verified</span>
                                     </div>
-                                    <div style={{display: 'flex', alignItems: 'center', color: '#6a6a6a', margin: '5px 10px'}}>
-                                        <FaFacebook style={{fontSize: '20px'}}/>
-                                        <span style={{marginLeft: '10px', fontWeight: '500'}}>516 friends</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', color: '#6a6a6a', margin: '5px 10px' }}>
+                                        <FaFacebook style={{ fontSize: '20px' }} />
+                                        <span style={{ marginLeft: '10px', fontWeight: '500' }}>516 friends</span>
                                     </div>
                                 </div>
                             </div>
-                            
+
 
                         </div>
                     </div>

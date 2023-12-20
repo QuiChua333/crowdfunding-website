@@ -17,7 +17,8 @@ import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scs
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import customAxios from '~/utils/customAxios'
+
 import baseURL from "~/utils/baseURL";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "~/redux/slides/GlobalApp";
@@ -36,7 +37,7 @@ function TeamCampaign() {
     const [memberId, setMemberId] = useState('')
     const getCampaign = async () => {
         try {
-            const res = await axios.get(`${baseURL}/campaign/getCampaignById/${id}`)
+            const res = await customAxios.get(`${baseURL}/campaign/getCampaignById/${id}`)
             let infoBasic = {
                 id: res.data.data._id,
                 title: res.data.data.title || '',
@@ -52,7 +53,7 @@ function TeamCampaign() {
     }
     const getTeamMember = async () => {
         try {
-            const res = await axios.get(`${baseURL}/campaign/getTeamMember/${id}`)
+            const res = await customAxios.get(`${baseURL}/campaign/getTeamMember/${id}`)
             setMembers(res.data.data)
 
 
@@ -73,7 +74,7 @@ function TeamCampaign() {
         setShowErrorDelete(false)
         dispatch(setLoading(true))
         try {
-            const res = await axios.get(`${baseURL}/user/getUserByEmail/${email}`)
+            const res = await customAxios.get(`${baseURL}/user/getUserByEmail/${email}`)
             if (!res.data.data) {
                 setContentError('Email người dùng này không tồn tại trong hệ thống')
                 setShowErrorDelete(true)
@@ -89,7 +90,7 @@ function TeamCampaign() {
 
                 return;
             }
-            const res2 = await axios.post(`${baseURL}/campaign/sendInvitation`, {
+            const res2 = await customAxios.post(`${baseURL}/campaign/sendInvitation`, {
                 campaignId: id,
                 email,
                 canEdit: isCheckRoleEditing,
@@ -118,7 +119,7 @@ function TeamCampaign() {
     }
     const deleteMember = async (memberId) => {
         try {
-            const res = await axios.delete(`${baseURL}/campaign/${id}/deleteMember/${memberId}`)
+            const res = await customAxios.delete(`${baseURL}/campaign/${id}/deleteMember/${memberId}`)
             getTeamMember();
         } catch (error) {
             console.log(error.message)
@@ -159,7 +160,7 @@ function TeamCampaign() {
     const handleClickSaveTeam = async () => {
         dispatch(setLoading(true))
         try {
-            const res = await axios.patch(`${baseURL}/campaign/editCampaign/${id}`, {
+            const res = await customAxios.patch(`${baseURL}/campaign/editCampaign/${id}`, {
                 team: [...members].map(item => ({...item, user: item.user._id}))
             })
         dispatch(setLoading(false))

@@ -4,10 +4,12 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
 import defaultAvatar from '~/assets/images/defaultAvt.png'
 import { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const cx = classNames.bind(styles);
 function EditProfile() {
+    const { id } = useParams()
+
     const elementInputProfileImage = useRef(null);
     const elementInputProfileAvt = useRef(null);
     const [profileImage, setProfileImage] = useState('');
@@ -29,17 +31,17 @@ function EditProfile() {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('navbar')}>
-                <Link to={'/individuals/:id/profile'} className={cx('nav-item')}>
+                <Link to={`/individuals/${id}/profile`} className={cx('nav-item')}>
                     <span>
                         <MdOutlineRemoveRedEye style={{ fontSize: '24px', marginRight: '8px' }} />
-                        View Profile
+                        Xem hồ sơ
                     </span>
                 </Link>
-                <Link to={`/individuals/:id/edit/profile`} className={cx('nav-item', 'active')}>
+                <Link to={`/individuals/${id}/edit/profile`} className={cx('nav-item', 'active')}>
                     <span>
                         {' '}
                         <FaRegEdit style={{ fontSize: '24px', marginRight: '8px' }} />
-                        Edit Profile & Settings
+                        Chỉnh sửa hồ sơ & Cài đặt
                     </span>
                 </Link>
             </div>
@@ -49,11 +51,11 @@ function EditProfile() {
 
                 <div className={cx('content')}>
                     <div className={cx('tabpanel')}>
-                        <Link to='/individuals/:id/edit/profile' className={cx('tab', 'active')}>
-                            Profile
+                        <Link to={`/individuals/${id}/edit/profile`} className={cx('tab', 'active')}>
+                            Hồ sơ
                         </Link>
-                        <Link to='/individuals/:id/edit/settings' className={cx('tab')}>
-                            Settings
+                        <Link to={`/individuals/${id}/edit/settings`} className={cx('tab')}>
+                            Cài đặt
                         </Link>
                     </div>
 

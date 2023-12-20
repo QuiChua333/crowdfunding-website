@@ -2,14 +2,18 @@ import classNames from 'classnames/bind';
 import { AiOutlineSearch, AiOutlineClose } from "react-icons/ai";
 import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaAngleDown } from "react-icons/fa6";
+import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import styles from './HeaderHome.module.scss'
 import DropDown from './Dropdown';
-import axios from "axios";
 import baseURL from "~/utils/baseURL";
+import customAxios from '~/utils/customAxios'
+import { useDispatch } from 'react-redux';
+import { setCurrentUser } from '~/redux/slides/User';
 const cx = classNames.bind(styles);
 // Component dùng chung
 function Header2() {
+    const dispatch = useDispatch()
+    const [showDropdownUser, setShowDropdownUser] = useState(false)
     const [header, setHeader] = useState(false);
     const [activeExplore, setActiveExplore] = useState(false)
     useEffect(() => {
@@ -26,18 +30,47 @@ function Header2() {
             window.removeEventListener('scroll', changeBackgroundHeader);
         }
     }, []);
+    const boxFilterElement = useRef();
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (boxFilterElement.current && !boxFilterElement.current.contains(event.target)) {
+                setShowDropdownUser(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [boxFilterElement]);
     const [listFieldGrouByCategory, setListFieldGrouByCategory] = useState([])
     const getListCategory = async () => {
         try {
-            const res = await axios.get(`${baseURL}/field/getFieldGroupByCategory`)
+            const res = await customAxios.get(`${baseURL}/field/getFieldGroupByCategory`)
             setListFieldGrouByCategory(res.data.data)
+        } catch (error) {
+
+        }
+    }
+    const [user, setUser] = useState({})
+    const getUser = async () => {
+        try {
+            const res = await customAxios.get(`${baseURL}/user/getInfoCurrentUser`)
+            setUser(res.data.data)
+            dispatch(setCurrentUser(res.data.data))
         } catch (error) {
 
         }
     }
     useEffect(() => {
         getListCategory()
+        const token = localStorage.getItem('accessToken') || false
+        if (token) {
+            getUser()
+        }
     }, [])
+    useEffect(() => {
+        console.log(user)
+    }, [user])
     return (
         <header className={cx('wrapper', {
             'active': header,
@@ -51,10 +84,10 @@ function Header2() {
                     </div>
 
 
-                    <ul className={cx('nav-list')}>
-                        <li onClick={() => setActiveExplore(prev => !prev)} className={cx('explore')}><a>Khám phá <FaAngleDown className={cx('icon', { active: activeExplore })} /></a></li>
-                        <li><a href='#'>Về chúng tôi</a></li>
-                    </ul>
+                    <div className={cx('nav-list')}>
+                        <div onClick={() => setActiveExplore(prev => !prev)} className={cx('explore')}><a>Khám phá <FaAngleDown className={cx('icon', { active: activeExplore })} /></a></div>
+                        <div><a href='#'>Về chúng tôi</a></div>
+                    </div>
 
                 </div>
 
@@ -62,12 +95,35 @@ function Header2() {
                     <Link to='/' className={cx('icon-logo')}>GIVE - FUN</Link>
                 </div>
                 <div className={cx('group')}>
-                    <ul className={cx('nav-list')}>
-                        <li><a href='/start-a-campaign'>Tạo chiến dịch</a></li>
-                        <li className={cx('sign-in')}><a href='/login'>Đăng nhập</a></li>
-                        <li><a href='/sign-up'>Đăng ký</a></li>
+                  
+                    <div className={cx('nav-list')}>
+                        <div className={cx('create-campaign')}><a href='/start-a-campaign'>Tạo chiến dịch</a></div>
+                        {
+                            !user._id &&
+                            <>
+                                <div className={cx('sign-in')}><a href='/login'>Đăng nhập</a></div>
+                                <div><a href='/sign-up'>Đăng ký</a></div>
+                            </>
+                        }
+                        {
+                            user._id &&
+                            <div className={cx('user-section')} onClick={() => setShowDropdownUser(prev => !prev)} ref={boxFilterElement}>
+                                <img className={cx('user-avatar')} src={user.avatar.url} />
+                                <span className={cx('user-name')}>{user.fullName}  <FaAngleDown  className={cx('icon', { active: showDropdownUser })}  /></span>
+                                {
+                                    showDropdownUser &&
+                                    <div className={cx('dropdownBoxFilter')}>
+                                        <span>Chiến dịch của tôi</span>
+                                        <span>Đóng góp của tôi</span>
+                                        <span>Hồ sơ</span>
+                                        <span>Cài đặt</span>
+                                        <span>Đăng xuất</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
 
-                    </ul>
                 </div>
 
 

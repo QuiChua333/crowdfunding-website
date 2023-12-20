@@ -4,7 +4,6 @@ import styles from './Login.module.scss';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-
 const cx = classNames.bind(styles);
 
 function Login() {
@@ -66,8 +65,9 @@ function Login() {
                 }
                 const { data: res } = await axios.post(`${process.env.REACT_APP_URL_BACKEND}/user/login`, data);
                 localStorage.setItem("accessToken", res.data.accessToken);
+                localStorage.setItem("refreshToken", res.data.refreshToken);
                 if (res.data.isAdmin) {
-                    window.location.href = "/admin/campaigns";
+                    window.location.href = "/admin";
                 }
                 else {
                     window.location.href = "/";

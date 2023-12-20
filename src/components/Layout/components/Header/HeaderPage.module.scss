@@ -128,6 +128,7 @@
 }
 
 .nav-list {
+    align-items: center;
     display: flex;
     list-style: none;
     gap: 20px;
@@ -136,8 +137,62 @@
     margin-left: 20px;
     margin-right: 20px;
 }
+.user-section {
+    position: relative;
+    cursor: pointer;
+    margin-left: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
-.nav-list li a {
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    .user-name {
+        font-weight: 600;
+        max-width: 180px;
+        // display: block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        &:hover {
+            color: #34ca96;
+        }
+        .icon {
+            font-size: 14px;
+            margin-left: 2px;
+            transition: 0.08s linear transform;
+            &.active {
+                transform: rotate(-180deg);
+            }
+        }
+    }
+
+    .dropdownBoxFilter {
+        position: absolute;
+        left: 0;
+        top: calc(100% + 14px);
+        width: 100%;
+        z-index: 120;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.18);
+        animation: fadeIn  0.3s linear;
+        span {
+            display: block;
+            font-size: 14px;
+            padding: 12px;
+            &:hover {
+                color: #34ca96;
+            }
+        }
+    }
+}
+
+.nav-list div a {
     color: var(--text-color);
     font-weight: 600;
     position: relative;
@@ -145,17 +200,26 @@
     &::before {
         position: absolute;
         bottom: -2px;
-        content: "";
+        content: '';
         width: 0;
         background-color: #4d9559;
         height: 2px;
         right: 0;
-        transition: all .3s ease-in-out;
+        transition: all 0.3s ease-in-out;
     }
 }
 
-.nav-list li:hover a::before {
+.nav-list div:hover a::before {
     width: 100%;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 

@@ -5,6 +5,7 @@ import { HeaderPage } from "~/components/Layout/components/Header";
 import Footer from "~/components/Layout/components/Footer";
 import { IoSquareOutline, IoCheckboxSharp } from "react-icons/io5";
 import { FaAngleDown } from "react-icons/fa";
+import customAxios from '~/utils/customAxios'
 
 import images from "~/assets/images";
 
@@ -15,7 +16,7 @@ import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scs
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+
 import baseURL from "~/utils/baseURL";
 import { useDispatch } from "react-redux";
 import { setLoading } from "~/redux/slides/GlobalApp";
@@ -30,7 +31,7 @@ function SettingCampaign() {
 
     const getCampaign = async () => {
         try {
-            const res = await axios.get(`${baseURL}/campaign/getCampaignById/${id}`)
+            const res = await customAxios.get(`${baseURL}/campaign/getCampaignById/${id}`)
             let infoBasic = {
                 id: res.data.data._id,
                 title: res.data.data.title || '',
@@ -58,8 +59,19 @@ function SettingCampaign() {
         delete body.cardImage
         dispatch(setLoading(true))
         try {
-            const res = await axios.patch(`${baseURL}/campaign/editCampaign/${id}`, body)
+            const res = await customAxios.patch(`${baseURL}/campaign/editCampaign/${id}`, body)
             dispatch(setLoading(false))
+
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+    const handleClickLaunchCampaign = async () => {
+        dispatch(setLoading(true))
+        try {
+            const res = await customAxios.patch(`${baseURL}/campaign/launchCampaign/${id}`)
+            dispatch(setLoading(false))
+            window.location.href = `/individuals/${res.data.data.owner}/campaigns`
 
         } catch (error) {
             console.log(error.message)
@@ -130,7 +142,7 @@ function SettingCampaign() {
                                 </div>
     
                                 <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                    <a  className={cx('btn', 'btn-ok')} >PHÁT HÀNH CHIẾN DỊCH</a>
+                                    <a onClick={handleClickLaunchCampaign} className={cx('btn', 'btn-ok')} >PHÁT HÀNH CHIẾN DỊCH</a>
                                 </div>
     
                             </div>

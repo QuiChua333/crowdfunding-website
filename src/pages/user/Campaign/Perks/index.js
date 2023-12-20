@@ -15,7 +15,8 @@ import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scs
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import customAxios from '~/utils/customAxios'
+
 import baseURL from "~/utils/baseURL";
 import { setLoading } from "~/redux/slides/GlobalApp";
 import { useDispatch } from "react-redux";
@@ -39,7 +40,7 @@ function PerksCampaign() {
     }
     const getCampaign = async () => {
         try {
-            const res = await axios.get(`${baseURL}/campaign/getCampaignById/${id}`)
+            const res = await customAxios.get(`${baseURL}/campaign/getCampaignById/${id}`)
             let infoBasic = {
                 id: res.data.data._id,
                 title: res.data.data.title || '',
@@ -56,7 +57,7 @@ function PerksCampaign() {
     const getPerksByCampaignId = async () => {
         console.log('nổi bật')
         try {
-            const res = await axios.get(`${baseURL}/perk/getPerksByCampaignId/${id}`)
+            const res = await customAxios.get(`${baseURL}/perk/getPerksByCampaignId/${id}`)
             setListPerks(res.data.data)
         } catch (error) {
             setListPerks([])
@@ -169,7 +170,7 @@ function PerksCampaign() {
                             {
                                 listPerks?.length > 0 &&
                                 <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                    <a href="#" className={cx('btn', 'btn-ok')} >TIẾP TỤC</a>
+                                    <Link to={`/campaigns/${id}/edit/items/table`} className={cx('btn', 'btn-ok')} >TIẾP TỤC</Link>
                                 </div>
                             }
                         </div>

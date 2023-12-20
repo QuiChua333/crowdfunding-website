@@ -4,13 +4,14 @@ import prepost from '~/assets/images/why-image/prepost.png'
 import indemand from '~/assets/images/why-image/indemand.png'
 import baseURL from '~/utils/baseURL';
 import { FaArrowRightLong } from "react-icons/fa6";
-import axios from 'axios';
+import customAxios from '~/utils/customAxios'
+
 const cx = classNames.bind(styles);
 
 function PrefixCampaign() {
     const handleClickStartCampaign = async () => {
         try {
-            const res = await axios.post(`${baseURL}/campaign/createNewCampaign`) 
+            const res = await customAxios.post(`${baseURL}/campaign/createNewCampaign`) 
             window.location.href = `/campaigns/${res.data.data._id}/edit/basic`
         } catch (error) {
             console.log(error.message)

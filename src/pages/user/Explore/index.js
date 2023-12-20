@@ -2,7 +2,8 @@ import classNames from "classnames/bind";
 import { AiOutlineSearch, AiOutlineClose } from "react-icons/ai";
 import ProjectCardItem from "~/components/ProjectCardItem";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
-import axios from "axios";
+import customAxios from '~/utils/customAxios'
+
 import baseURL from "~/utils/baseURL";
 import styles from './Explore.module.scss'
 import { useEffect, useRef, useState } from "react";
@@ -35,7 +36,7 @@ function Explore() {
     })
     const getListCategory = async () => {
         try {
-            const res = await axios.get(`${baseURL}/field/getFieldGroupByCategory`)
+            const res = await customAxios.get(`${baseURL}/field/getFieldGroupByCategory`)
             setListFieldGrouByCategory([{ category: 'Tất cả', active: false }].concat(res.data.data.map(item => {
                 return {
                     ...item,

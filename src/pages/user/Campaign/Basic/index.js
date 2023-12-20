@@ -11,7 +11,7 @@ import { useState } from "react";
 import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
 import MenuDropDown from "../MenuDropDown";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import customAxios from '~/utils/customAxios'
 import baseURL from "~/utils/baseURL";
 import { setLoading } from "~/redux/slides/GlobalApp";
 import { useDispatch } from "react-redux";
@@ -66,7 +66,7 @@ function BasicCampaign() {
    
     const getListCategory = async () => {
         try {
-            const res = await axios.get(`${baseURL}/field/getFieldGroupByCategory`)
+            const res = await customAxios.get(`${baseURL}/field/getFieldGroupByCategory`)
             setListFieldGrouByCategory(res.data.data)
         } catch (error) {
             
@@ -74,7 +74,7 @@ function BasicCampaign() {
     }
     const getCampaign = async () => {
         try {
-            const res = await axios.get(`${baseURL}/campaign/getCampaignById/${id}`)
+            const res = await customAxios.get(`${baseURL}/campaign/getCampaignById/${id}`)
             let infoBasic = {
                 id: res.data.data._id,
                 title: res.data.data.title || '',
@@ -128,7 +128,7 @@ function BasicCampaign() {
         delete body.status
         dispatch(setLoading(true))
         try {
-            const res = await axios.patch(`${baseURL}/campaign/editCampaign/${id}`,body)
+            const res = await customAxios.patch(`${baseURL}/campaign/editCampaign/${id}`,body)
             dispatch(setLoading(false))
             window.location.href = `/campaigns/${id}/edit/story`
         } catch (error) {

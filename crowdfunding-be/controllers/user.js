@@ -71,9 +71,11 @@ const loginUser = async (req, res) => {
             return res.status(200).json({ message: "An Email sent to your account please verify" });
         }
 
-        const accessToken = generateAccessToken({ email: user.email });
+        const accessToken = generateAccessToken({ email: user.email, id: user._id });
+        const refreshToken = generateRefreshToken({ email: user.email, id: user._id });
+        user.refreshToken = refreshToken
         await user.save();
-        return res.status(200).json({ data: { accessToken, isAdmin: user.isAdmin }, message: "Logged in successfully" });
+        return res.status(200).json({ data: { accessToken,refreshToken ,isAdmin: user.isAdmin }, message: "Logged in successfully" });
     } catch (error) {
         return res.status(400).json({
             message: error.message,
@@ -162,6 +164,24 @@ const verifyEmailRegister = async (req, res) => {
         res.status(400).json({ message: 'Invalid link' });
     }
 };
+
+const getInfoCurrentUser = async (req, res) => {
+    try {
+        const userId  = req.userId;
+        debugger
+        const user = await User.findById(userId).exec();
+        delete user._doc.password
+        delete user._doc.refreshToken
+        res.status(200).json({
+            message: 'Get info user successfully',
+            data: user
+        })
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
 const getInfoUser = async (req, res) => {
     try {
         const { id } = req.params;
@@ -259,7 +279,7 @@ const editUser = async (req, res) => {
 
 const getLinkVerifyUser = async (req, res) => {
     try {
-        const userId = '65791a1ee9e7577cf296f899';
+        const userId = req.userId;
         const tokenLink = jwt.sign({
             userId: userId
         },
@@ -302,6 +322,28 @@ const checkLinkVerifyUser = async (req, res) => {
         })
     }
 }
+const refreshToken = async({refreshToken}) => {
+    try {
+        const payload = jwt.verify(refreshToken,process.env.JWT_SECRET_REFRESH_TOKEN);
+        const userId = payload.id;
+        const user = await User.findById(userId).exec()
+        if (user.refreshToken === refreshToken) {
+            const newAccessToken = generateAccessToken({email: user.email, id: user._id});
+            return {
+                accessToken: newAccessToken,
+                refreshToken: refreshToken
+            }
+        }
+        else throw new Error('Refresh token is invalid')
+
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+   
+            throw new Error('expired')
+        }
+        else throw new Error(error.message)
+    }
+}
 export default {
     registerUser,
     verifyEmailRegister,
@@ -313,5 +355,7 @@ export default {
     getUserByEmail,
     editUser,
     getLinkVerifyUser,
-    checkLinkVerifyUser
+    checkLinkVerifyUser,
+    refreshToken,
+    getInfoCurrentUser
 };

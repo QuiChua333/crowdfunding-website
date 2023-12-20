@@ -43,5 +43,9 @@ export default mongoose.model('User',
             type: Boolean,
             default: false
         },
+        refreshToken: {
+            type: String,
+            requried: true
+        }
     })
 )

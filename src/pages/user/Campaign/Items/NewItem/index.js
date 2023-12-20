@@ -17,7 +17,8 @@ import { TiCancel } from "react-icons/ti";
 import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
 import { Link, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import customAxios from '~/utils/customAxios'
+
 import baseURL from "~/utils/baseURL";
 import MessageBox from "~/utils/MessageBox";
 import { useDispatch, useSelector } from "react-redux";
@@ -127,7 +128,7 @@ function NewItem() {
     const handleClickSaveItem = async () => {
         if (idItem === 'new') {
             try {
-                const res = await axios.post(`${baseURL}/item/addItem`, { ...itemState, campaign: id })
+                const res = await customAxios.post(`${baseURL}/item/addItem`, { ...itemState, campaign: id })
                 navigate(`/campaigns/${id}/edit/items/table`)
             } catch (error) {
                 console.log(error.message)
@@ -135,7 +136,7 @@ function NewItem() {
         }
         else {
             try {
-                const res = await axios.patch(`${baseURL}/item/editItem/${itemState.id}`, { ...itemState })
+                const res = await customAxios.patch(`${baseURL}/item/editItem/${itemState.id}`, { ...itemState })
                 navigate(`/campaigns/${id}/edit/items/table`)
             } catch (error) {
                 console.log(error.message)
@@ -157,21 +158,24 @@ function NewItem() {
     }
     const deleteItem = async () => {
         try {
-            const res = await axios.delete(`${baseURL}/item/deleteItem/${itemState.id}`)
+            const res = await customAxios.delete(`${baseURL}/item/deleteItem/${itemState.id}`)
             navigate(`/campaigns/${id}/edit/items/table`)
         } catch (error) {
             console.log(error.message)
         }
     }
     useEffect(() => {
-        if (messageBox.type === 'deleteItem') {
-            if (messageBox.result === true) {
-                if (itemState.isHasAssociatedPerks) {
-                    setShowErrorDelete(true)
-                    return;
-                }
-                else {
-                    deleteItem()
+        if (messageBox.result) {
+            if (messageBox.type === 'deleteItem') {
+                if (messageBox.result === true) {
+                    if (itemState.isHasAssociatedPerks) {
+                        setShowErrorDelete(true)
+                        dispatch(setMessageBox({result: null, isShow: false}))
+                        return;
+                    }
+                    else {
+                        deleteItem()
+                    }
                 }
             }
         }
@@ -203,7 +207,7 @@ function NewItem() {
                 setChooseOption(false)
             }
             else {
-                const res = await axios.get(`${baseURL}/item/getItemByIdContainPerk/${idItem}/${id}`)
+                const res = await customAxios.get(`${baseURL}/item/getItemByIdContainPerk/${idItem}/${id}`)
                 setItemState({
                     id: res.data.data._id,
                     name: res.data.data.name || '',
@@ -231,7 +235,7 @@ function NewItem() {
     }
     const getCampaign = async () => {
         try {
-            const res = await axios.get(`${baseURL}/campaign/getCampaignById/${id}`)
+            const res = await customAxios.get(`${baseURL}/campaign/getCampaignById/${id}`)
             let infoBasic = {
                 id: res.data.data._id,
                 title: res.data.data.title || '',

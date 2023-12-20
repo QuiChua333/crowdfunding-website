@@ -21,7 +21,7 @@ function SidebarCampaign({current, status, title, cardImage, id}) {
                 style={{backgroundImage: `linear-gradient(rgba(42, 42, 42, 0.5) 0px, rgb(42, 42, 42) 100%),
                 url(${cardImage})`}}>
                     <div className={cx('campaignPhase')}>
-                        <span>{status === 'draft' && 'Bản nháp'}</span>
+                        <span>{status}</span>
                     </div>
 
                     <div className={cx('campaignTitle')}>
