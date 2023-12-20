@@ -12,6 +12,7 @@ router.get('/getTeamMember/:id',CampaignController.getTeamMember)
 router.post('/sendInvitation',CampaignController.sendInvitation)
 router.get('/team/:tokenLinkInvitation',CampaignController.handleAcceptInvitationCampaign)
 router.delete('/:id/deleteMember/:memberId',CampaignController.deleteMember)
+router.get('/getQuantityCampaignByUser/:id',CampaignController.getQuantityCampaingnPerUser)
 
 
 

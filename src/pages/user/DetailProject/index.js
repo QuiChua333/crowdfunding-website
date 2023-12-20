@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './DetailProject.module.scss';
+import axios from 'axios';
+import baseUrl from '../../../utils/baseURL';
+import defaultAvatar from '~/assets/images/defaultAvt.png';
+import formatMoney from '~/utils/formatMoney.js';
+import ProgressBar from '@ramonak/react-progress-bar';
+
 import {
     AiFillFacebook,
     AiFillTwitterSquare,
@@ -13,15 +19,32 @@ import ModalPerk from './ModalPerk';
 import Footer from '~/components/Layout/components/Footer';
 import PerkItem from '~/components/Layout/components/PerkItem';
 import ModalOptionPerk from './ModalOptionPerk';
+import { useParams } from 'react-router-dom';
+import formatPercent from '~/utils/formatPercent';
+import formatDate from '~/utils/formatDate';
 
 const cx = classNames.bind(styles);
 
 function DetailProject() {
+    const [ItemProject, setItemProject] = useState({});
+    const [listPerkByCampaignId, setListPerkByCampaignId] = useState([]);
+    const [quantityPeople, setQuantityPeople] = useState(0);
+    const [money, setMoney] = useState(0);
+    const [indexImage, setIndexImage] = useState(0);
+    const [isOpenModal, setIsOpenModal] = useState(false);
+    const [indexTabHeader, setIndexTabHeader] = useState(1);
+    const [isOpenModalOption, setIsOpenModalOption] = useState(false);
+    const [perkInModal, setPerkInModal] = useState(false);
+    const [itemPerkSelected, setItemPerkSelected] = useState({});
+    const [quantityCampaignOfUser, setQuantityCampaignOfUser] = useState(1);
+
+    const { id } = useParams();
 
     const project = {
         id: 'project1',
         nameProject: 'The LUMA Collection by GOMATIC X Peter McKinnon',
-        desProject: 'Where design meets the demands of modern photography. Where design meets the demands of modern photography.Where design meets the demands of modern photography. Where design meets the demands of modern photography.',
+        desProject:
+            'Where design meets the demands of modern photography. Where design meets the demands of modern photography.Where design meets the demands of modern photography. Where design meets the demands of modern photography.',
         author: {
             avatar: 'https://g0.iggcdn.com/assets/individuals/missing/thumbnail-deaf450c2d4183b9309b493f6a7b20d62f8d31617ec828d060df465abe92ef2a.png',
             name: 'Jacob Durham',
@@ -34,39 +57,7 @@ function DetailProject() {
         dayLeft: 24,
         listImageProject: [
             {
-                url: 'https://c1.iggcdn.com/indiegogo-media-prod-cld/image/upload/c_fill,w_695,g_auto,q_auto,dpr_1.3,f_auto,h_460/t5ltmektuea0yjyzl2ys',
-                isImage: true,
-            },
-            {
-                url: 'https://c4.iggcdn.com/indiegogo-media-prod-cld/image/upload/c_fill,w_695,g_auto,q_auto,dpr_1.3,f_auto,h_460/yqxxjgfrnpq7iiju8esh',
-                isImage: true,
-            },
-            {
-                url: 'https://c0.iggcdn.com/indiegogo-media-prod-cld/image/upload/c_fill,w_695,g_auto,q_auto,dpr_1.3,f_auto,h_460/wab1pxz7mlqcmfftzgye',
-                isImage: true,
-            },
-            {
-                url: 'https://www.youtube.com/embed/_wlAipsg4kg',
-                isImage: false,
-            },
-            {
-                url: 'https://c0.iggcdn.com/indiegogo-media-prod-cld/image/upload/c_fill,w_695,g_auto,q_auto,dpr_1.3,f_auto,h_460/ghsl6mhupu7yw8ubyddk',
-                isImage: true,
-            },
-            {
-                url: 'https://www.youtube.com/embed/_wlAipsg4kg',
-                isImage: false,
-            },
-            {
-                url: 'https://c0.iggcdn.com/indiegogo-media-prod-cld/image/upload/c_fill,w_695,g_auto,q_auto,dpr_1.3,f_auto,h_460/wab1pxz7mlqcmfftzgye',
-                isImage: true,
-            },
-            {
-                url: 'https://c0.iggcdn.com/indiegogo-media-prod-cld/image/upload/c_fill,w_695,g_auto,q_auto,dpr_1.3,f_auto,h_460/ylhzgkgngqd30nryfdjv',
-                isImage: true,
-            },
-            {
-                url: 'https://c0.iggcdn.com/indiegogo-media-prod-cld/image/upload/c_fill,w_695,g_auto,q_auto,dpr_1.3,f_auto,h_460/ghsl6mhupu7yw8ubyddk',
+                url: ItemProject.imageDetailPage?.url || '',
                 isImage: true,
             },
         ],
@@ -88,15 +79,15 @@ function DetailProject() {
                             {
                                 name: 'Size',
                                 itemsOption: ['X', 'XL', '2xL'],
-                            }
+                            },
                         ],
                         // optionsSelected: [{name: '', value: ''}]
-                    }
+                    },
                 ],
                 claimed: 10,
                 quantity: 10,
                 estimateShipping: 'December 2023',
-                idProject: 'project1'
+                idProject: 'project1',
             },
             {
                 id: 'perk2',
@@ -106,13 +97,13 @@ function DetailProject() {
                 des: 'Save $25 by ordering today on Indiegogo. SHIPPING, VAT & DUTIES: Please note that the shipping fee covers ALL applicable shipping, VAT, and duties. You will not need pay any fees upon arrival. WANT TO ADD MORE ITEMS? If youd like to add other bags to your order you can do so on the following page after selecting this perk.',
                 includeItems: [
                     {
-                        name: 'Camera Sling 12L',                  
-                    }
+                        name: 'Camera Sling 12L',
+                    },
                 ],
                 claimed: 8,
                 quantity: 19,
                 estimateShipping: 'October 2023',
-                idProject: 'project1'
+                idProject: 'project1',
             },
             {
                 id: 'perk3',
@@ -127,14 +118,14 @@ function DetailProject() {
                             {
                                 name: 'Color',
                                 itemsOption: ['Black', 'Stone', 'Sage', 'Rust'],
-                            }
-                        ]
-                    }
+                            },
+                        ],
+                    },
                 ],
                 claimed: 8,
                 quantity: 19,
                 estimateShipping: 'September 2023',
-                idProject: 'project1'
+                idProject: 'project1',
             },
             {
                 id: 'perk4',
@@ -149,8 +140,8 @@ function DetailProject() {
                             {
                                 name: 'Color',
                                 itemsOption: ['Black', 'Stone', 'Sage', 'Rust'],
-                            }
-                        ]
+                            },
+                        ],
                     },
                     {
                         name: 'Camera Sling 12L',
@@ -158,8 +149,8 @@ function DetailProject() {
                             {
                                 name: 'Color',
                                 itemsOption: ['Black', 'Stone', 'Sage', 'Rust'],
-                            }
-                        ]
+                            },
+                        ],
                     },
                     {
                         name: 'Camera Sling 18L',
@@ -167,55 +158,130 @@ function DetailProject() {
                             {
                                 name: 'Color',
                                 itemsOption: ['Black', 'Stone', 'Sage', 'Rust'],
-                            }
-                        ]
+                            },
+                        ],
                     },
                 ],
                 claimed: 7,
                 quantity: 19,
                 estimateShipping: 'July 2023',
-                idProject: 'project1'
+                idProject: 'project1',
             },
-        ]
-    }
-    const [ItemProject, setItemProject] = useState(project);
-    const [indexImage, setIndexImage] = useState(0);
-    const [isOpenModal, setIsOpenModal] = useState(false);
-    const [indexTabHeader, setIndexTabHeader] = useState(1);
-    const [isOpenModalOption, setIsOpenModalOption] = useState(false); 
-    const [perkInModal,setPerkInModal] = useState(false);
-    const [itemPerkSelected, setItemPerkSelected] = useState({})
+        ],
+    };
+
+    const getListPerksByCampaignId = async () => {
+        try {
+            const config = {};
+            const { data } = await axios.get(`${baseUrl}/perk/getPerksHasListItemsByCampaignId/${id}`, config);
+            setListPerkByCampaignId([...data.data]);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const getProjectById = async () => {
+        try {
+            const config = {};
+            const { data } = await axios.get(`${baseUrl}/campaign/getCampaignById/${id}`, config);
+            setItemProject({ ...data.data });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const getQuantityCampaignOfUser = async () => {
+        try {
+            const config = {};
+            const { data } = await axios.get(`${baseUrl}/campaign/getQuantityCampaignByUser/${id}`, config);
+            setQuantityCampaignOfUser(data.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const getQuantityPeople = async () => {
+        try {
+            const config = {};
+            const { data } = await axios.get(`${baseUrl}/contribution/getQuantityPeopleByCampaign/${id}`, config);
+            console.log(data);
+            setQuantityPeople(data.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const getMoney = async () => {
+        try {
+            const config = {};
+            const { data } = await axios.get(`${baseUrl}/contribution/getMoneyByCampaign/${id}`, config);
+            console.log(data);
+            setMoney(data.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     useEffect(() => {
-        setItemProject(project);
-    }, {});
+        getProjectById();
+        getQuantityCampaignOfUser();
+        getListPerksByCampaignId();
+        getDeadline();
+        getQuantityPeople();
+        getMoney();
+    }, []);
 
     const handleURLImage = (linkURL) => {
         var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
         var match = linkURL.match(regExp);
-        return (match&&match[7].length==11)? 'https://img.youtube.com/vi/' + match[7] + '/default.jpg' : false;
-    }
+        return match && match[7].length == 11 ? 'https://img.youtube.com/vi/' + match[7] + '/default.jpg' : false;
+    };
+
+    const formatMMDDYYYY = (tem) => {
+        var date = tem;
+        var datearray = date.split('/');
+        var newdate = datearray[1] + '/' + datearray[0] + '/' + datearray[2];
+        return newdate.toString();
+    };
+    const getDeadline = () => {
+        let date1 = new Date();
+        let date2 = ItemProject.startDate;
+
+        date1 = formatMMDDYYYY(formatDate(date1).toString());
+        date2 = formatMMDDYYYY(formatDate(date2).toString());
+
+        date1 = new Date(date1.toString());
+        date2 = new Date(date2.toString());
+
+        let quantityDate = date1.getTime() - date2.getTime();
+
+        let temp = Math.ceil(quantityDate / (1000 * 3600 * 24));
+
+        let res = ItemProject.duration - temp;
+
+        return res > 0 ? res : 0;
+    };
 
     return (
         <div className={cx('container-main')}>
             <div className={cx('container-1')}>
                 <div className={cx('container-left')}>
                     <div className={cx('container-list-big')}>
-                    {ItemProject.listImageProject[indexImage].isImage ? (<img
-                            style={{ width: '100%', height: '100%', borderRadius: '6px' }}
-                            src={ItemProject.listImageProject[indexImage].url}
-                            alt="sp"
-                        />) : (<iframe
-                            style={{ width: '100%', height: '100%', borderRadius: '6px' }}
-                            src={ItemProject.listImageProject[indexImage].url}
-                            alt="sp"
-                        />)}
-                        
+                        {project.listImageProject[indexImage].isImage ? (
+                            <img
+                                style={{ width: '100%', height: '100%', borderRadius: '6px' }}
+                                src={project.listImageProject[indexImage].url}
+                                alt="sp"
+                            />
+                        ) : (
+                            <iframe
+                                style={{ width: '100%', height: '100%', borderRadius: '6px' }}
+                                src={project.listImageProject[indexImage].url}
+                                alt="sp"
+                            />
+                        )}
                     </div>
                     <div className={cx('container-list-small')}>
                         <AiOutlineDoubleLeft
                             className={cx('icon-slider')}
                             style={{
-                                display: ItemProject.listImageProject.length < 6 && 'none',
+                                display: project.listImageProject.length < 6 && 'none',
                                 opacity: indexImage === 0 && '0.6',
                                 pointerEvents: indexImage === 0 && 'none',
                             }}
@@ -228,15 +294,15 @@ function DetailProject() {
                                     flexWrap: 'nowrap',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    width: ItemProject.listImageProject.length < 6 ? '100%' : '468px',
-                                    justifyContent: ItemProject.listImageProject.length > 6 ? 'flex-start' : 'center',
+                                    width: project.listImageProject.length < 6 ? '100%' : '468px',
+                                    justifyContent: project.listImageProject.length > 6 ? 'flex-start' : 'center',
                                     transform:
                                         indexImage - 5 > 0
                                             ? 'translateX(-' + (indexImage - 5) * 80 + 'px)'
                                             : 'translateX(0px)',
                                 }}
                             >
-                                {ItemProject.listImageProject.map((item, index) => {
+                                {project.listImageProject.map((item, index) => {
                                     return (
                                         <img
                                             key={index}
@@ -252,35 +318,37 @@ function DetailProject() {
                                             onClick={() => setIndexImage(index)}
                                             className={cx('noselect')}
                                         />
-                                    ) 
+                                    );
                                 })}
                             </div>
                         </div>
                         <AiOutlineDoubleRight
                             className={cx('icon-slider')}
                             style={{
-                                display: ItemProject.listImageProject.length < 6 && 'none',
-                                opacity: indexImage === ItemProject.listImageProject.length - 1 && '0.6',
-                                pointerEvents: indexImage === ItemProject.listImageProject.length - 1 && 'none',
+                                display: project.listImageProject.length < 6 && 'none',
+                                opacity: indexImage === project.listImageProject.length - 1 && '0.6',
+                                pointerEvents: indexImage === project.listImageProject.length - 1 && 'none',
                             }}
                             onClick={() => setIndexImage((prev) => prev + 1)}
                         />
                     </div>
                 </div>
                 <div className={cx('container-right')}>
-                    <p style={{ color: '#088366', fontSize: '18px', fontWeight: '600' }}>FUNDING</p>
-                    <p style={{ color: '#2a2a2a', fontSize: '30px', fontWeight: '600' }}>{ItemProject.nameProject}</p>
-                    <p style={{ color: '#2a2a2a', fontSize: '16px', marginTop: '20px' }}>{ItemProject.desProject}</p>
+                    <p style={{ color: '#088366', fontSize: '18px', fontWeight: '600' }}>Đang gây quỹ</p>
+                    <p style={{ color: '#2a2a2a', fontSize: '30px', fontWeight: '600' }}>{ItemProject?.title}</p>
+                    <p style={{ color: '#2a2a2a', fontSize: '16px', marginTop: '20px' }}>{ItemProject?.tagline}</p>
                     <div style={{ display: 'flex', marginLeft: '10px', marginTop: '20px' }}>
                         <img
                             style={{ width: '48px', height: '48px', borderRadius: '50%' }}
-                            src={ItemProject.author.avatar}
+                            src={ItemProject.owner?.avatar?.url || defaultAvatar}
                             alt="avt"
                         />
                         <div style={{ marginLeft: '12px' }}>
-                            <a href="" style={{ fontWeight: '600', fontSize: '18px' }}>{ItemProject.author.name}</a>
+                            <a href="" style={{ fontWeight: '600', fontSize: '18px' }}>
+                                {ItemProject.owner?.fullName}
+                            </a>
                             <div style={{ display: 'flex' }}>
-                                <span>{ItemProject.author.campaigns} Campaigns</span>
+                                <span>{quantityCampaignOfUser} Campaigns</span>
                                 <div
                                     style={{
                                         margin: '0 5px',
@@ -289,7 +357,9 @@ function DetailProject() {
                                         height: '20px',
                                     }}
                                 ></div>
-                                <span>{ItemProject.author.address}</span>
+                                <span>
+                                    {ItemProject.location?.city} | {ItemProject.location?.country}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -303,20 +373,25 @@ function DetailProject() {
                             }}
                         >
                             <b style={{ fontWeight: '500' }}>
-                                ${ItemProject.totalFund} <span style={{ fontWeight: '300', fontSize: '18px' }}>USD</span>
+                                {formatMoney(money)} <span style={{ fontWeight: '300', fontSize: '18px' }}></span>
                             </b>
                             <b style={{ fontWeight: '500', fontSize: '20px' }}>
-                            {ItemProject.backers} <span style={{ fontWeight: '300', fontSize: '18px' }}>backers</span>
+                                {quantityPeople}{' '}
+                                <span style={{ fontWeight: '300', fontSize: '18px' }}>người đóng góp</span>
                             </b>
                         </div>
-                        <div
-                            style={{
-                                height: '14px',
-                                backgroundColor: '#34ca96',
-                                borderRadius: '10px',
-                                margin: '6px 0',
-                            }}
-                        ></div>
+                        <ProgressBar
+                            margin="6px 0"
+                            labelAlignment="right"
+                            labelColor="#fff"
+                            width="100%"
+                            baseBgColor="#ccc"
+                            bgColor="#34ca96"
+                            borderRadius="10px"
+                            customLabel={formatPercent((money / ItemProject.goal) * 100)}
+                            maxCompleted={ItemProject.goal}
+                            completed={money}
+                        />
                         <div
                             style={{
                                 display: 'flex',
@@ -327,21 +402,29 @@ function DetailProject() {
                             }}
                         >
                             <span>
-                                {ItemProject.totalFund/ItemProject.targetMoney * 100}% of ${ItemProject.targetMoney} <b style={{ marginLeft: '6px', fontWeight: '500' }}>Flexible Goal</b>
+                                {formatPercent((money / ItemProject.goal) * 100) + " %"} của {formatMoney(ItemProject.goal)}
                             </span>
                             <b style={{ fontWeight: '500', fontSize: '20px' }}>
-                            {ItemProject.dayLeft} <span style={{ fontWeight: '300', fontSize: '18px' }}>days left</span>
+                                {getDeadline()}{' '}
+                                <span style={{ fontWeight: '300', fontSize: '18px' }}>ngày còn lại</span>
                             </b>
                         </div>
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                            <button className={cx('hover-btn')} type="button" onClick={() => {setPerkInModal(true);setIsOpenModal(true)}}>
-                                SEE OPTIONS
+                            <button
+                                className={cx('hover-btn')}
+                                type="button"
+                                onClick={() => {
+                                    setPerkInModal(true);
+                                    setIsOpenModal(true);
+                                }}
+                            >
+                                XEM QUÀ TẶNG
                             </button>
                             <button className={cx('hover-btn')} type="button" style={{ margin: '0 10px' }}>
-                                <AiOutlineHeart style={{ color: '#fff', fontSize: '20px' }} /> FOLLOW
+                                <AiOutlineHeart style={{ color: '#fff', fontSize: '20px' }} /> THEO DÕI
                             </button>
                         </div>
                         <div>
@@ -354,50 +437,119 @@ function DetailProject() {
             </div>
 
             <div style={{ position: 'relative', height: 'auto', display: 'flex', margin: '20px 130px' }}>
-                <div style={{ width: '70%', height: 'auto'}}>
-                    <div style={{height: 'auto', marginBottom: '16px', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '20px 0'}}>
-                        <span className={cx('item-tab-header', {'item-tab-header-clicked': indexTabHeader === 1})} onClick={() => setIndexTabHeader(1)}>STORY</span>
-                        <span className={cx('item-tab-header',{'item-tab-header-clicked': indexTabHeader === 2})} onClick={() => setIndexTabHeader(2)}>FAQ</span>
-                        <div className={cx('item-tab-header',{'item-tab-header-clicked': indexTabHeader === 3})} onClick={() => setIndexTabHeader(3)}>
+                <div style={{ width: '70%', height: 'auto' }}>
+                    <div
+                        style={{
+                            height: 'auto',
+                            marginBottom: '16px',
+                            display: 'flex',
+                            justifyContent: 'flex-start',
+                            alignItems: 'center',
+                            padding: '20px 0',
+                        }}
+                    >
+                        <span
+                            className={cx('item-tab-header', { 'item-tab-header-clicked': indexTabHeader === 1 })}
+                            onClick={() => setIndexTabHeader(1)}
+                        >
+                            STORY
+                        </span>
+                        <span
+                            className={cx('item-tab-header', { 'item-tab-header-clicked': indexTabHeader === 2 })}
+                            onClick={() => setIndexTabHeader(2)}
+                        >
+                            FAQ
+                        </span>
+                        <div
+                            className={cx('item-tab-header', { 'item-tab-header-clicked': indexTabHeader === 3 })}
+                            onClick={() => setIndexTabHeader(3)}
+                        >
                             <span>UPDATES</span>
-                            <span style={{fontSize: '9px', textAlign: 'center', backgroundColor: '#f5f5f5', padding: '2px 6px', borderRadius: '40%', marginLeft: '8px', fontWeight: '700'}}>1</span>
+                            <span
+                                style={{
+                                    fontSize: '9px',
+                                    textAlign: 'center',
+                                    backgroundColor: '#f5f5f5',
+                                    padding: '2px 6px',
+                                    borderRadius: '40%',
+                                    marginLeft: '8px',
+                                    fontWeight: '700',
+                                }}
+                            >
+                                1
+                            </span>
                         </div>
-                        <div className={cx('item-tab-header',{'item-tab-header-clicked': indexTabHeader === 4})} onClick={() => setIndexTabHeader(4)}>
+                        <div
+                            className={cx('item-tab-header', { 'item-tab-header-clicked': indexTabHeader === 4 })}
+                            onClick={() => setIndexTabHeader(4)}
+                        >
                             <span>DISCUSSION</span>
-                            <span style={{fontSize: '9px', textAlign: 'center', backgroundColor: '#f5f5f5', padding: '2px 6px', borderRadius: '40%', marginLeft: '8px', fontWeight: '700'}}>435</span>
+                            <span
+                                style={{
+                                    fontSize: '9px',
+                                    textAlign: 'center',
+                                    backgroundColor: '#f5f5f5',
+                                    padding: '2px 6px',
+                                    borderRadius: '40%',
+                                    marginLeft: '8px',
+                                    fontWeight: '700',
+                                }}
+                            >
+                                435
+                            </span>
                         </div>
                     </div>
 
-                    <div style={{height: '20000px', backgroundColor: 'red'}}>
-                        {
-                            indexTabHeader === 1 && <>1</>
-                        }
-                        {
-                            indexTabHeader === 2 && <>2</>
-                        }
-                        {
-                            indexTabHeader === 3 && <>3</>
-                        }
-                        {
-                            indexTabHeader === 4 && <>4</>
-                        }
+                    <div style={{ height: '20px', backgroundColor: 'red' }}>
+                        {indexTabHeader === 1 && <>1</>}
+                        {indexTabHeader === 2 && <>2</>}
+                        {indexTabHeader === 3 && <>3</>}
+                        {indexTabHeader === 4 && <>4</>}
                     </div>
                 </div>
-                    
-                <div style={{ width: '30%', height: 'auto', display: 'flex', flexDirection: 'column', padding: '20px' }}>
+
+                <div
+                    style={{ width: '30%', height: 'auto', display: 'flex', flexDirection: 'column', padding: '20px' }}
+                >
                     <div style={{ position: 'sticky', top: '20px' }}>
-                        <p style={{ fontSize: '19px', fontWeight: '500', marginLeft: '10px' }}>Select an option</p>
+                        <p style={{ fontSize: '19px', fontWeight: '500', marginLeft: '10px' }}>Chọn một quà tặng</p>
                         <div style={{ maxHeight: '920px', overflowY: 'scroll' }}>
-                            {ItemProject.listPerk.map((item, index) => {
-                                return <PerkItem setItemPerkSelected={setItemPerkSelected} index={index} item={item} key={index} isPage={true} setIsOpenModalOption={setIsOpenModalOption} closePerkModal={() => setIsOpenModal(false)} setPerkInModal={setPerkInModal} />;
+                            {listPerkByCampaignId.map((item, index) => {
+                                return (
+                                    <PerkItem
+                                        setItemPerkSelected={setItemPerkSelected}
+                                        index={index}
+                                        item={item}
+                                        key={index}
+                                        isPage={true}
+                                        setIsOpenModalOption={setIsOpenModalOption}
+                                        closePerkModal={() => setIsOpenModal(false)}
+                                        setPerkInModal={setPerkInModal}
+                                    />
+                                );
                             })}
                         </div>
                     </div>
                 </div>
             </div>
             <Footer />
-            {isOpenModalOption && <ModalOptionPerk itemPerk={itemPerkSelected} close={() => setIsOpenModalOption(false)} setIsOpenModal={setIsOpenModal} perkInModal={perkInModal}/>}
-            {isOpenModal && <ModalPerk setItemPerkSelected={setItemPerkSelected} listPerk={ItemProject.listPerk} close={() => setIsOpenModal(false)}  setIsOpenModalOption = {setIsOpenModalOption} setPerkInModal={setPerkInModal}/>}
+            {isOpenModalOption && (
+                <ModalOptionPerk
+                    itemPerk={itemPerkSelected}
+                    close={() => setIsOpenModalOption(false)}
+                    setIsOpenModal={setIsOpenModal}
+                    perkInModal={perkInModal}
+                />
+            )}
+            {isOpenModal && (
+                <ModalPerk
+                    setItemPerkSelected={setItemPerkSelected}
+                    listPerk={ItemProject.listPerk}
+                    close={() => setIsOpenModal(false)}
+                    setIsOpenModalOption={setIsOpenModalOption}
+                    setPerkInModal={setPerkInModal}
+                />
+            )}
         </div>
     );
 }

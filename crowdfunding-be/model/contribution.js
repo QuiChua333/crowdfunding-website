@@ -13,6 +13,10 @@ export default mongoose.model('Contribution',
             ward: String,
             phoneNumber: String,
         },
+        campaign: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Campaign'
+        },
         perks: [{
             type: Object
         }],

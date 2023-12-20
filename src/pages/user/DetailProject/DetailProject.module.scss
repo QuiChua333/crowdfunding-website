@@ -4,14 +4,15 @@
     width: 100%;
     height: auto;
 }
-
 .container-1 {
     display: flex;
     margin: 20px 130px;
     border-bottom: 1px solid #c8c8c8;
     padding-bottom: 40px;
 }
-
+.progressbar {
+    display: flex;
+}
 .container-left {
     width: 50%;
     margin-right: 20px;

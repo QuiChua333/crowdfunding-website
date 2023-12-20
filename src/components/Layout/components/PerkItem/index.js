@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './PerkItem.module.scss';
 import { useNavigate } from 'react-router-dom';
+import formatMoney from '~/utils/formatMoney';
+import formatDate from '~/utils/formatDate';
 
 const cx = classNames.bind(styles);
 
@@ -31,10 +33,11 @@ function PerkItem({
         if (!isInModal) {
             setPerkInModal(false);
         }
-        if (item.includeItems.some((item) => item.options && item.options.length > 0)) {
+        if (item.items.some((i) => i.item.options && i.item.options.length > 0)) {
             setItemPerkSelected(item);
             setIsOpenModalOption(true);
         } else {
+            // chưa xử lý
             navigate('/project/perk/detail', {
                 state: item,
             });
@@ -43,25 +46,25 @@ function PerkItem({
 
     return (
         <div className={cx('container-item')} onClick={handleClickItem}>
-            <img style={{ width: '100%', height: '35%' }} src={item.image} alt="img" />
+            <img style={{ width: '100%', height: '35%' }} src={item.image.url} alt="img" />
             <div style={{ margin: '20px' }}>
-                <h2 style={{ fontSize: '24px' }}>{item.name}</h2>
-                <b style={{ fontSize: '30px', fontWeight: '600' }}>${item.price} USD</b>
-                <p style={{ fontSize: '16px', fontWeight: '200' }}>{item.des}</p>
+                <h2 style={{ fontSize: '24px' }}>{item.title}</h2>
+                <b style={{ fontSize: '30px', fontWeight: '600' }}>{formatMoney(item.price)}</b>
+                <p style={{ fontSize: '16px', fontWeight: '200' }}>{item.description}</p>
 
                 {showMore && (
                     <div>
                         <p>
-                            <b style={{ fontSize: '18px', fontWeight: '500' }}>Included Items</b>
+                            <b style={{ fontSize: '18px', fontWeight: '500' }}>Bao gồm: </b>
                             <ul style={{ marginLeft: '20px', fontSize: '16px', fontWeight: '200' }}>
-                                {item.includeItems.map((itemA, indexA) => {
-                                    return <li key={indexA}>{itemA.name}</li>;
+                                {item.items.map((itemA, indexA) => {
+                                    return <li key={indexA}>{itemA.item.name}</li>;
                                 })}
                             </ul>
                         </p>
-                        <p style={{ fontSize: '18px', fontWeight: '500' }}>Estimated Shipping</p>
-                        <p style={{ fontSize: '16px', fontWeight: '200' }}>{item.estimateShipping}</p>
-                        <p style={{ fontSize: '16px', fontWeight: '200' }}>Ships worldwide.</p>
+                        <p style={{ fontSize: '18px', fontWeight: '500' }}>Ngày giao dự kiến</p>
+                        <p style={{ fontSize: '16px', fontWeight: '200' }}>{formatDate(item.estDelivery)}</p>
+                        <p style={{ fontSize: '16px', fontWeight: '200' }}>Giao toàn lành thổ.</p>
 
                         {isShowButton && (
                             item.quantity !== item.claimed ? (
