@@ -17,5 +17,9 @@ router.post('/refreshToken',UserController.refreshToken)
 router.post('/forgot-password', UserController.forgotPassword);
 router.get('/forgot-password/:id/verify-link/:tokenVerifyLinkForgotPassword', UserController.verifyLinkForgotPassword);
 router.patch('/forgot-password/update-new-password', UserController.updateNewPassword);
+router.get('/checkAdmin', checkToken,UserController.checkAdmin);
+router.get('/checkIndividualOfUser/:userIdParams', checkToken,UserController.checkIndividualOfUser);
+
+
 
 export default router

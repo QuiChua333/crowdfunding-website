@@ -54,7 +54,7 @@
     background-color: white;
     display: flex;
     align-items: center;
-    width: 75%;
+    width: 85%;
     justify-content: space-between;
     padding: 0 16px;
     height: 6.2rem;
@@ -126,8 +126,9 @@
     margin-right: 20px;
 }
 .user-section {
+    min-width: 170px;
     position: relative;
-    z-index: 100;
+    z-index: 120;
     cursor: pointer;
     margin-left: 12px;
     display: flex;
@@ -172,12 +173,16 @@
         animation: fadeIn  0.3s linear;
         span {
             display: block;
-            font-size: 14px;
-            padding: 12px;
+            font-size: 15px;
+            padding: 8px 14px;
+            &:nth-child(1) {
+                padding-top: 20px;
+            }
             &:hover {
                 color: #34ca96;
             }
         }
+     
     }
 }
 

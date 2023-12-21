@@ -375,6 +375,56 @@ const getCampaignsOfUserId = async (req, res) => {
         })
     }
 }
+const getAllCampaigns = async (req, res) => {
+    try {
+        const isAdmin = req.isAdmin
+        if (isAdmin) {
+           const campaigns = await Campaign.find({ status: { $ne: 'Bản nháp' } }).populate({
+                path: 'owner',
+                model: 'User'
+           }).exec()
+            res.status(200).json({
+                message: 'Lấy thông tin các chiến dịch  thành công',
+                data: campaigns
+            })
+        }
+        else throw new Error('Bạn không có quyền truy cập')
+        
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
+const checkCampaignOfUser = async (req, res) => {
+    try {
+        debugger
+        const isAdmin = req.isAdmin;
+        const userId = req.userId;
+        const {idCampaign} = req.params;
+        const campaign = await Campaign.findById(idCampaign).exec();
+        if (campaign) {
+            debugger
+            const matched = campaign.team.some(item => item.user.toString() === userId && item.isAccepted === true) || isAdmin ===true;
+            res.status(200).json({
+                message: 'Matched',
+                data: matched
+            })
+        }
+        else {
+            res.status(200).json({
+                message: 'Not matched',
+                data: false
+            })
+        }
+        
+
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
 
 export default {
     createNewCampaign,
@@ -387,5 +437,7 @@ export default {
     handleAcceptInvitationCampaign,
     deleteMember,
     launchCampaign,
-    getCampaignsOfUserId
+    getCampaignsOfUserId,
+    getAllCampaigns,
+    checkCampaignOfUser
 }

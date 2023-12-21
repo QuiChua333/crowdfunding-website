@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from '../../Profile.module.scss';
 import { Link, useParams } from 'react-router-dom';
@@ -8,11 +8,15 @@ import defaultAvatar from '~/assets/images/defaultAvt.png';
 import { BsFillQuestionCircleFill } from 'react-icons/bs';
 import { IoMdMail } from "react-icons/io";
 import { FaFacebook } from "react-icons/fa";
+import { useSelector } from 'react-redux';
+import baseURL from "~/utils/baseURL";
+import customAxios from '~/utils/customAxios'
 const cx = classNames.bind(styles);
 
 function ProfilePersonal() {
     const { id } = useParams()
-
+    const [user,setUser] = useState({})
+    const currentUser = useSelector(state => state.user.currentUser)
     const [showModalCampaigns, setShowModalCampaigns] = useState(false);
     const [showModalComments, setShowModalComments] = useState(false);
     const [showModalContributes, setShowModalContributes] = useState(false);
@@ -35,39 +39,55 @@ function ProfilePersonal() {
     const handleShowModalOutContributes = () => {
         setShowModalContributes(false);
     };
-
+    const getInfoUser = async () => {
+        try {
+            const res = await customAxios.get(`${baseURL}/user/getInfoUser/${id}`)
+            setUser(res.data.data)
+        } catch (error) {
+            
+        }
+    }
+    useEffect(() => {
+        getInfoUser()
+    },[])
     return (
         <div className={cx('wrapper')}>
-            <div className={cx('navbar')}>
-                <Link to={`/individuals/${id}/profile`} className={cx('nav-item', 'active')}>
+            {
+                currentUser._id === id &&
+                <div className={cx('navbar')}>
+                <a href={`/individuals/${id}/profile`} className={cx('nav-item', 'active')}>
                     <span>
                         <MdOutlineRemoveRedEye style={{ fontSize: '24px', marginRight: '8px' }} />
                         Xem hồ sơ
                     </span>
-                </Link>
-                <Link to={`/individuals/${id}/edit/profile`} className={cx('nav-item')}>
+                </a>
+                <a href={`/individuals/${id}/edit/profile`} className={cx('nav-item')}>
                     <span>
                         {' '}
                         <FaRegEdit style={{ fontSize: '24px', marginRight: '8px' }} />
                         Chỉnh sửa hồ sơ & Cài đặt
                     </span>
-                </Link>
+                </a>
             </div>
+            }
 
             <div className={cx('body')}>
-                <h1 className={cx('header-name')}>Phan Trọng Tính</h1>
+                <h1 className={cx('header-name')}>{user.fullName}</h1>
 
                 <div className={cx('content')}>
                     <div className={cx('tabpanel')}>
-                        <Link to={`/individuals/${id}/profile`} className={cx('tab', 'active')}>
+                        <a href={`/individuals/${id}/profile`} className={cx('tab', 'active')}>
                             Hồ sơ
-                        </Link>
-                        <Link to={`/individuals/${id}/campaigns`} className={cx('tab')}>
+                        </a>
+                        <a href={`/individuals/${id}/campaigns`} className={cx('tab')}>
                             Chiến dịch
-                        </Link>
-                        <Link to={`/individuals/${id}/contributions`} className={cx('tab')}>
-                            Đóng góp
-                        </Link>
+                        </a>
+                        {
+                            currentUser._id && currentUser._id === id &&
+                            <a href={`/individuals/${id}/contributions`} className={cx('tab')}>
+                            Đóng góp của tôi
+                            </a>
+                        }
                     </div>
 
                     <div className={cx('container-body-profile')}>

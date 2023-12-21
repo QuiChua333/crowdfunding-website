@@ -11,17 +11,17 @@ import { Link } from "react-router-dom";
 
 
 const cx = classNames.bind(styles)
-function CampaignRow({ index , perk, setChecked }) {
+function CampaignRow({ index , campaign, setChecked }) {
 
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null)
     const navigate = useNavigate();
     const handleClickChecked = (e,index) => {
         e.stopPropagation()
-        setChecked(index,!perk.isChecked)
+        setChecked(index,!campaign.isChecked)
     }
-    const handleClickPerk = () => {
-        navigate('/campaigns/:id/edit/perks/new')
+    const handleClickRow = () => {
+        window.location.href = `/campaigns/${campaign.id}/edit/basic`
     }
 
     useEffect(() => {
@@ -39,32 +39,32 @@ function CampaignRow({ index , perk, setChecked }) {
 
     return (
         
-            <tr onClick={handleClickPerk}>
+            <tr onClick={handleClickRow}>
                   {/* <Link to='/campaigns/:id/edit/perks/new' style={{position: 'relative', zIndex: '10'}}></Link> */}
                 <td className={cx('checkbox')}>
                     <span onClick={(e) => handleClickChecked(e,index)}>
                         {
-                            !perk.isChecked ? <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} /> : <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
+                            !campaign.isChecked ? <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} /> : <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
                         }
                     </span>
                 </td>
-                <td className={cx('title')}>{perk.title}</td>
-                <td className={cx('goal')}>$ {perk.price}</td>
+                <td className={cx('title')}>{campaign.title}</td>
+                <td className={cx('goal')}>{campaign.goal}</td>
                 <td className={cx('status')}>
-                    {perk.type &&
+                    {campaign.status &&
                         <span className={cx('featured')}>
-                            FEATURED
+                            {campaign.status}
                         </span>
                     }
                 </td>
-                <td className={cx('startDate')}>{perk.qtyClaimed}</td>
-                <td className={cx('endDate')}>{perk.est}</td>
-                <td className={cx('owner')}>{perk.est}</td>
+                <td className={cx('startDate')}>{campaign.startDate}</td>
+                <td className={cx('endDate')}>{campaign.endDate}</td>
+                <td className={cx('owner')}>{campaign.ownerName}</td>
                 <td className={cx('action')}>
                     <div className={cx('action-doc')} onClick={(e) => {e.stopPropagation();setOpenDropDown(prev => !prev)}} ref={docElement}>
                         <PiDotsThreeBold style={{ fontSize: '20px', color: '#7a69b3' }} />
                         <div className={cx('dropdown-wrapper')} style={{ display: openDropDown && 'block' }}>
-                            <DropDown />
+                            <DropDown campaign={campaign}/>
                         </div>
                     </div>
                 </td>

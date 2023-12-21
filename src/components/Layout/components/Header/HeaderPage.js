@@ -32,6 +32,11 @@ function Header() {
             window.removeEventListener('scroll', changeBackgroundHeader);
         }
     }, []);
+    const handleClickLogout = () => {
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('refreshToken')
+        window.location.href = '/'
+    }
     const boxFilterElement = useRef();
     useEffect(() => {
         function handleClickOutside(event) {
@@ -95,7 +100,7 @@ function Header() {
                 </div>
                 <div className={cx('group')}>
                     <div className={cx('nav-list')}>
-                        <div className={cx('create-campaign')}><a href='/start-a-campaign'>Tạo chiến dịch</a></div>
+                    <div className={cx('create-campaign')}><a href={!user.isAdmin ? '/start-a-campaign' : '#'}>Tạo chiến dịch</a></div>
                         {
                             !user._id &&
                             <>
@@ -111,11 +116,20 @@ function Header() {
                                 {
                                     showDropdownUser &&
                                     <div className={cx('dropdownBoxFilter')}>
-                                        <span>Chiến dịch của tôi</span>
-                                        <span>Đóng góp của tôi</span>
-                                        <span>Hồ sơ</span>
-                                        <span>Cài đặt</span>
-                                        <span>Đăng xuất</span>
+                                        {
+                                            !user.isAdmin &&
+                                            <>
+                                                <span onClick={() => window.location.href = `/individuals/${user._id}/campaigns`}>Chiến dịch của tôi</span>
+                                                <span onClick={() => window.location.href = `/individuals/${user._id}/contributions`}>Đóng góp của tôi</span>
+                                                <span onClick={() => window.location.href = `/individuals/${user._id}/profile`}>Hồ sơ</span>
+                                                <span onClick={() => window.location.href = `/individuals/${user._id}/edit/settings`}>Cài đặt</span>
+                                            </>
+                                        }
+                                        {
+                                            user.isAdmin &&
+                                            <span onClick={() => window.location.href = `/admin`}>Đến trang quản lý</span>
+                                        }
+                                        <span onClick={handleClickLogout}>Đăng xuất</span>
                                     </div>
                                 }
                             </div>

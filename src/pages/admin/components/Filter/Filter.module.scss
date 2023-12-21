@@ -17,14 +17,13 @@
 
 
         .conditions-wrapper {
+            animation: fadeIn .3s linear;
             position: absolute;
             z-index: 10;
             top: calc(100% + 2px);
             left: 0;
             width: 100%;
             border: 1px solid #ccc;
-            opacity: 0;
-            transition: all .3s linear;
 
             &.show {
                 opacity: 1;
@@ -48,6 +47,14 @@
                 border-top: 1px solid #ccc;
             }
             
+        }
+    }
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
         }
     }
 }

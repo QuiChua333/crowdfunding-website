@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { publicRoutes, privateUserRoutes, loginRoutes, adminRoutes } from '~/routes'
-import { DefaultLayout, CustomLayout, AdminRoutes, LoginRoutes, PrivateUserRoutes  } from '~/components/Layout';
+import { DefaultLayout, CustomLayout, AdminRoutes, LoginRoutes, PrivateUserRoutes, PrivateUserCampaignRoutes, PrivateUserIndividualsRoutes  } from '~/components/Layout';
 import Explore from './pages/user/Explore';
 
 function App() {
@@ -41,9 +41,45 @@ function App() {
                   <Page />
                 </Layout>} />
             })}
-            <Route element={<PrivateUserRoutes />}>
+            {/* <Route element={<PrivateUserRoutes />}>
               {
                 privateUserRoutes.map((route, index) => {
+                  let Layout = DefaultLayout;
+                  if (route.layout) {
+                    Layout = route.layout;
+                  }
+                  else if (route.layout === null) {
+                    Layout = Fragment;
+                  }
+                  const Page = route.component;
+                  return <Route key={index} path={route.path} element={
+                    <Layout>
+                      <Page />
+                    </Layout>} />
+                })}
+
+            </Route> */}
+            <Route element={<PrivateUserCampaignRoutes />}>
+              {
+                privateUserRoutes.campaigns.map((route, index) => {
+                  let Layout = DefaultLayout;
+                  if (route.layout) {
+                    Layout = route.layout;
+                  }
+                  else if (route.layout === null) {
+                    Layout = Fragment;
+                  }
+                  const Page = route.component;
+                  return <Route key={index} path={route.path} element={
+                    <Layout>
+                      <Page />
+                    </Layout>} />
+                })}
+
+            </Route>
+            <Route element={<PrivateUserIndividualsRoutes />}>
+              {
+                privateUserRoutes.individuals.map((route, index) => {
                   let Layout = DefaultLayout;
                   if (route.layout) {
                     Layout = route.layout;

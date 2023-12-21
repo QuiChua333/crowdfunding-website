@@ -18,7 +18,11 @@ function AdminSidebar({setTitle}) {
     useEffect(() => {
         console.log('render')
     })
-
+    const handleClickLogout = () => {
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('refreshToken')
+        window.location.href = '/'
+    }
     return (
         <div className={cx('wrapper')}>
             <div>
@@ -32,7 +36,7 @@ function AdminSidebar({setTitle}) {
                 <div className={cx('navItems')}>
 
                     <div className={cx('navSection')}>
-                        <a className={cx('navSection-title')}>
+                        <a className={cx('navSection-title')} style={{cursor: 'pointer'}}>
                             <div>
                                 Chức năng
                             </div>
@@ -97,6 +101,13 @@ function AdminSidebar({setTitle}) {
                         <a href="/" className={cx('navItem-link')}>
                             <div>
                                 Về trang chủ
+                            </div>
+                        </a>
+                    </div>
+                    <div className={cx('navItem')}>
+                        <a onClick={handleClickLogout} className={cx('navItem-link')} style={{cursor: 'pointer'}}>
+                            <div>
+                                Đăng xuất
                             </div>
                         </a>
                     </div>

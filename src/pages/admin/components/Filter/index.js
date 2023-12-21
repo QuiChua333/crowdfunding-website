@@ -5,8 +5,8 @@ import { useRef, useState, useEffect } from "react";
 import styles from './Filter.module.scss'
 const cx = classNames.bind(styles)
 function Filter({ listConditions, handleClickItem }) {
-    const [showDropDown,setShowDropDown] = useState(false)
-    const [value,setValue] = useState(listConditions[0] || 'Lọc')
+    const [showDropDown, setShowDropDown] = useState(false)
+    const [value, setValue] = useState(listConditions[0] || 'Lọc')
     const refElement = useRef(null)
     useEffect(() => {
         function handleClickOutside(event) {
@@ -32,13 +32,16 @@ function Filter({ listConditions, handleClickItem }) {
                     <FaAngleUp />
                 }
 
-                <div className={cx('conditions-wrapper', { show: showDropDown })}>
                 {
-                    listConditions.map((item,index) => {
-                        return  <div onClick={() => {setValue(item); handleClickItem(item)}} index={index}>{item}</div>
-                    })
+                    showDropDown &&
+                    <div className={cx('conditions-wrapper')}>
+                        {
+                            listConditions.map((item, index) => {
+                                return <div onClick={() => { setValue(item); handleClickItem(item) }} index={index}>{item}</div>
+                            })
+                        }
+                    </div>
                 }
-                </div>
             </div>
         </div>
     );

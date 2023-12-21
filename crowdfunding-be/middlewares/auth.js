@@ -8,6 +8,7 @@ export default function checkToken(req, res, next) {
             token = token.split(' ')[1];
             let data = jwt.verify(token, process.env.JWT_SECRET_ACCESS_TOKEN);
             req.userId = data.id
+            req.isAdmin = data.isAdmin
         }
         else {
             throw new Error('Unauthorized user')

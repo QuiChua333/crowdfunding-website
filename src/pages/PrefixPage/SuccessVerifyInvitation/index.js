@@ -5,7 +5,7 @@ import styles from './SuccessVerify.module.scss';
 import axios from 'axios';
 import baseURL from '~/utils/baseURL';
 import success from '~/assets/images/success.png';
-
+import PageNotFound from '../PageNotFound';
 const cx = classNames.bind(styles);
 
 function SuccessVerifyInvitation() {
@@ -28,18 +28,19 @@ function SuccessVerifyInvitation() {
     }, [param]);
 
     return (
-        <div className={cx('container')}>
+        <>
             {validUrl && (
-                <>
+                <div className={cx('container')}>
                     <img src={success} alt="success_img" className={cx('success_img')} />
                     <h1>Bạn đã tham gia vào chiến dịch</h1>
                     <Link to="/">
                         <button className={cx('green_btn')}>Quay về trang chủ</button>
                     </Link>
-                </>
+                </div>
             )}
-            {validUrl === false && <h1 className={cx('not-found')}>404 Not Found</h1>}
-        </div>
+            {validUrl === false && <PageNotFound />}
+        </>
+
     );
 }
 

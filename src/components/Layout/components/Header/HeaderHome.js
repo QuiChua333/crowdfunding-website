@@ -71,6 +71,11 @@ function Header2() {
     useEffect(() => {
         console.log(user)
     }, [user])
+    const handleClickLogout = () => {
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('refreshToken')
+        window.location.href = '/'
+    }
     return (
         <header className={cx('wrapper', {
             'active': header,
@@ -95,9 +100,9 @@ function Header2() {
                     <Link to='/' className={cx('icon-logo')}>GIVE - FUN</Link>
                 </div>
                 <div className={cx('group')}>
-                  
+
                     <div className={cx('nav-list')}>
-                        <div className={cx('create-campaign')}><a href='/start-a-campaign'>Tạo chiến dịch</a></div>
+                        <div className={cx('create-campaign')}><a href={!user.isAdmin ? '/start-a-campaign' : '#'}>Tạo chiến dịch</a></div>
                         {
                             !user._id &&
                             <>
@@ -109,15 +114,24 @@ function Header2() {
                             user._id &&
                             <div className={cx('user-section')} onClick={() => setShowDropdownUser(prev => !prev)} ref={boxFilterElement}>
                                 <img className={cx('user-avatar')} src={user.avatar.url} />
-                                <span className={cx('user-name')}>{user.fullName}  <FaAngleDown  className={cx('icon', { active: showDropdownUser })}  /></span>
+                                <span className={cx('user-name')}>{user.fullName}  <FaAngleDown className={cx('icon', { active: showDropdownUser })} /></span>
                                 {
                                     showDropdownUser &&
                                     <div className={cx('dropdownBoxFilter')}>
-                                        <span>Chiến dịch của tôi</span>
-                                        <span>Đóng góp của tôi</span>
-                                        <span>Hồ sơ</span>
-                                        <span>Cài đặt</span>
-                                        <span>Đăng xuất</span>
+                                        {
+                                            !user.isAdmin &&
+                                            <>
+                                                <span onClick={() => window.location.href = `/individuals/${user._id}/campaigns`}>Chiến dịch của tôi</span>
+                                                <span onClick={() => window.location.href = `/individuals/${user._id}/contributions`}>Đóng góp của tôi</span>
+                                                <span onClick={() => window.location.href = `/individuals/${user._id}/profile`}>Hồ sơ</span>
+                                                <span onClick={() => window.location.href = `/individuals/${user._id}/edit/settings`}>Cài đặt</span>
+                                            </>
+                                        }
+                                        {
+                                            user.isAdmin &&
+                                            <span onClick={() => window.location.href = `/admin`}>Đến trang quản lý</span>
+                                        }
+                                        <span onClick={handleClickLogout}>Đăng xuất</span>
                                     </div>
                                 }
                             </div>

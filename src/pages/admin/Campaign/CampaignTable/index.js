@@ -4,52 +4,40 @@ import styles from './CampaignTable.module.scss'
 import CampaignRow from "./CampaignRow";
 import { IoSquareOutline, IoCheckboxSharp } from "react-icons/io5";
 import { useEffect, useState } from "react";
-
+import convertDate from "~/utils/convertDate";
 
 const cx = classNames.bind(styles)
 
-function CampaignTable({}) {
-    const listPerkDefault = [
-        {
-            title: 'Bộ trang phục thể thao',
-            price: 50,
-            type: 'A',
-            qtyClaimed: '20/24',
-            est: 'May 2024',
-            isChecked: false
-        },
-        {
-            title: 'Bộ trang phục thể thao',
-            price: 50,
-            type: '',
-            qtyClaimed: '20/24',
-            est: 'May 2024',
-            isChecked: false
-        },
-        {
-            title: 'Bộ trang phục thể thao',
-            price: 50,
-            type: '',
-            qtyClaimed: '20/24',
-            est: 'May 2024',
-            isChecked: false
-        },
-        {
-            title: 'Bộ trang phục thể thao',
-            price: 50,
-            type: '',
-            qtyClaimed: '20/24',
-            est: 'May 2024',
-            isChecked: false
+function CampaignTable({campaigns, onCampaignTableChange}) {
+    const [listCampaigns,setlistCampaigns] = useState([...campaigns].map(item => {
+        let dateString = '';
+        let endDateString = ''
+        if (item.startDate) {
+            dateString =  convertDate(item.startDate)
+            let endDate =  new Date(item.startDate) 
+            endDate.setDate(endDate.getDate() + item.duration)
+            endDateString= convertDate(endDate)
+        
         }
-    ]
-    const [listPerk,setListPerk] = useState([...listPerkDefault]);
+        
+        return {
+            id: item._id,
+            title: item.title,
+            goal: (item.goal/1000000).toFixed(2) + ' triệu',
+            status: item.status,
+            startDate: dateString,
+            endDate: endDateString,
+            ownerName: item.owner.fullName,
+            isChecked: false
+            
+        }
+    }));
     const [isCheckAll,setCheckAll] = useState(false) 
 
     
     const handleClickCheckALl = () => {
         setCheckAll(prev => !prev);
-        setListPerk(prev => {
+        setlistCampaigns(prev => {
             const nextState = [...prev].map((item,index) => {
                     return {...item, isChecked: !isCheckAll}
             })
@@ -57,7 +45,7 @@ function CampaignTable({}) {
         })
     }
     const handleSetChecked = (indexChange,checked) => {
-        setListPerk(prev => {
+        setlistCampaigns(prev => {
             const nextState = [...prev].map((item,index) => {
                 if (index===indexChange) {
                     return {...item, isChecked: checked}
@@ -68,12 +56,12 @@ function CampaignTable({}) {
         })
     }
     useEffect(()=> {
-        const checkAll = listPerk.every(item => item.isChecked === true);
+        const checkAll = listCampaigns.every(item => item.isChecked === true);
         setCheckAll(checkAll)
   
-        // onPerkTableChange([...listPerk])
+        onCampaignTableChange([...listCampaigns])
 
-    },[listPerk])
+    },[listCampaigns])
     
     return (
         <div className={cx('wrapper')}>
@@ -87,7 +75,7 @@ function CampaignTable({}) {
                                 }
                             </span>
                         </th>
-                        <th className={cx('title')}>TIÊU ĐỀ</th>
+                        <th className={cx('title')}>TÊN CHIẾN DỊCH</th>
                         <th className={cx('goal')}>MỤC TIÊU</th>
                         <th className={cx('status')}>TRẠNG THÁI</th>
                         <th className={cx('startDate')}>NGÀY BẮT ĐẦU</th>
@@ -98,8 +86,8 @@ function CampaignTable({}) {
                 </thead>
                 <tbody>
                     {
-                        listPerk.map((item, index) => {
-                            return <CampaignRow key={index} perk={item} index={index} setChecked={handleSetChecked}/>
+                        listCampaigns.map((item, index) => {
+                            return <CampaignRow key={index} campaign={item} index={index} setChecked={handleSetChecked}/>
                         })
                     }
                 </tbody>

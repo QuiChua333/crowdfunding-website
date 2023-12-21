@@ -3,44 +3,57 @@ import styles from '../../Profile.module.scss'
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
 import defaultAvatar from '~/assets/images/defaultAvt.png'
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FaFacebookF } from "react-icons/fa";
-
+import baseURL from "~/utils/baseURL";
+import customAxios from '~/utils/customAxios'
 const cx = classNames.bind(styles);
 function EditSetting() {
     const { id } = useParams()
+    const [user, setUser] = useState({})
 
     const [isUpdatePasswordEmail, setUpdatePasswordEmail] = useState(false);
+    const getInfoUser = async () => {
+        try {
+            const res = await customAxios.get(`${baseURL}/user/getInfoUser/${id}`)
+            setUser(res.data.data)
+        } catch (error) {
+
+        }
+    }
+    useEffect(() => {
+        getInfoUser()
+    }, [])
     return (
         <div className={cx('wrapper')}>
             <div className={cx('navbar')}>
-            <Link to={`/individuals/${id}/profile`} className={cx('nav-item')}>
+            <a href={`/individuals/${id}/profile`} className={cx('nav-item')}>
                     <span>
                         <MdOutlineRemoveRedEye style={{ fontSize: '24px', marginRight: '8px' }} />
                         Xem hồ sơ
                     </span>
-                </Link>
-                <Link to={`/individuals/${id}/edit/profile`} className={cx('nav-item', 'active')}>
+                </a>
+                <a href={`/individuals/${id}/edit/profile`} className={cx('nav-item', 'active')}>
                     <span>
                         {' '}
                         <FaRegEdit style={{ fontSize: '24px', marginRight: '8px' }} />
                         Chỉnh sửa hồ sơ & Cài đặt
                     </span>
-                </Link>
+                </a>
             </div>
 
             <div className={cx('body')}>
-                <h1 className={cx('header-name')}>Huỳnh Ngọc Quí</h1>
+                <h1 className={cx('header-name')}>{user.fullName}</h1>
 
                 <div className={cx('content')}>
                     <div className={cx('tabpanel')}>
-                    <Link to={`/individuals/${id}/edit/profile`} className={cx('tab')}>
+                    <a href={`/individuals/${id}/edit/profile`} className={cx('tab')}>
                             Hồ sơ
-                        </Link>
-                        <Link  to={`/individuals/${id}/edit/settings`} className={cx('tab', 'active')}>
+                        </a>
+                        <a href={`/individuals/${id}/edit/settings`} className={cx('tab', 'active')}>
                             Cài đặt
-                        </Link>
+                        </a>
                     </div>
                     <div className={cx('section-info')} style={{ marginTop: '32px' }}>
                         <h1 className={cx('section-title')}>

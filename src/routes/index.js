@@ -37,6 +37,7 @@ const publicRoutes = [
     { path: '/individuals/:id/profile', component: ProfilePersonal, layout: HeaderOnlyLayout },
 
     { path: '/givefun/verify-user/:tokenLinkVerifyUser', component: VerifyUser, layout: null },
+    { path: '/campaigns/team/invitation/:tokenLinkInvitation', component: SuccessVerifyInvitation, layout: null },
 ]
 const adminRoutes = [
     { path: '/admin/campaigns', component: CampaignManagement, layout: AdminLayout },
@@ -47,21 +48,25 @@ const adminRoutes = [
     { path: '/admin', component: CampaignManagement, layout: AdminLayout },
 
 ]
-const privateUserRoutes = [
-     { path: '/campaigns/:id/edit/basic', component: BasicCampaign, layout: null },
-     { path: '/campaigns/:id/edit/story', component: ContentCampaign, layout: null },
-     { path: '/campaigns/:id/edit/perks/table', component: PerksCampaign, layout: null },
-     { path: '/campaigns/:id/edit/perks/:idPerk', component: NewPerk, layout: null },
-     { path: '/campaigns/:id/edit/items/table', component: ItemsCampaign, layout: null },
-     { path: '/campaigns/:id/edit/items/:idItem', component: NewItem, layout: null },
-     { path: '/campaigns/:id/edit/team', component: TeamCampaign, layout: null },
-     { path: '/campaigns/:id/edit/funding', component: FundingCampaign, layout: null },
-     { path: '/campaigns/:id/edit/settings', component: SettingCampaign, layout: null },
-     { path: '/campaigns/team/invitation/:tokenLinkInvitation', component: SuccessVerifyInvitation, layout: null },
-     { path: '/individuals/:id/edit/profile', component: EditProfile, layout: HeaderOnlyLayout },
-     { path: '/individuals/:id/edit/settings', component: EditSetting, layout: HeaderOnlyLayout },
-     { path: '/individuals/:id/contributions', component: Contributes, layout: HeaderOnlyLayout },
-     { path: '/start-a-campaign', component: PrefixCampaign, layout: HeaderOnlyLayout },
-]
+const privateUserRoutes = {
+    campaigns: [
+        { path: '/campaigns/:id/edit/basic', component: BasicCampaign, layout: null },
+        { path: '/campaigns/:id/edit/story', component: ContentCampaign, layout: null },
+        { path: '/campaigns/:id/edit/perks/table', component: PerksCampaign, layout: null },
+        { path: '/campaigns/:id/edit/perks/:idPerk', component: NewPerk, layout: null },
+        { path: '/campaigns/:id/edit/items/table', component: ItemsCampaign, layout: null },
+        { path: '/campaigns/:id/edit/items/:idItem', component: NewItem, layout: null },
+        { path: '/campaigns/:id/edit/team', component: TeamCampaign, layout: null },
+        { path: '/campaigns/:id/edit/funding', component: FundingCampaign, layout: null },
+        { path: '/campaigns/:id/edit/settings', component: SettingCampaign, layout: null },
+    ],
+    individuals: [
+        { path: '/individuals/:id/edit/profile', component: EditProfile, layout: HeaderOnlyLayout },
+        { path: '/individuals/:id/edit/settings', component: EditSetting, layout: HeaderOnlyLayout },
+        { path: '/individuals/:id/contributions', component: Contributes, layout: HeaderOnlyLayout },
+        { path: '/start-a-campaign', component: PrefixCampaign, layout: HeaderOnlyLayout },
+    ]   
+    
+}
 
 export { publicRoutes, privateUserRoutes, loginRoutes, adminRoutes }

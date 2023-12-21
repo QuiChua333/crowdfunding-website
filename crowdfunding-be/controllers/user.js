@@ -71,8 +71,8 @@ const loginUser = async (req, res) => {
             return res.status(200).json({ message: "An Email sent to your account please verify" });
         }
 
-        const accessToken = generateAccessToken({ email: user.email, id: user._id });
-        const refreshToken = generateRefreshToken({ email: user.email, id: user._id });
+        const accessToken = generateAccessToken({ email: user.email, id: user._id, isAdmin: user.isAdmin });
+        const refreshToken = generateRefreshToken({ email: user.email, id: user._id, isAdmin: user.isAdmin });
         user.refreshToken = refreshToken
         await user.save();
         return res.status(200).json({ data: { accessToken,refreshToken ,isAdmin: user.isAdmin }, message: "Logged in successfully" });
@@ -344,6 +344,37 @@ const refreshToken = async({refreshToken}) => {
         else throw new Error(error.message)
     }
 }
+const checkAdmin = async (req, res) => {
+    try {
+        const isAdmin = req.isAdmin;
+        res.status(200).json({
+            message: 'Successfully',
+            data: isAdmin
+        })
+
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
+
+const checkIndividualOfUser = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const {userIdParams} = req.params;
+
+        res.status(200).json({
+            message: 'Check matched',
+            data: userId === userIdParams
+        })
+
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
 export default {
     registerUser,
     verifyEmailRegister,
@@ -357,5 +388,7 @@ export default {
     getLinkVerifyUser,
     checkLinkVerifyUser,
     refreshToken,
-    getInfoCurrentUser
+    getInfoCurrentUser,
+    checkAdmin,
+    checkIndividualOfUser
 };

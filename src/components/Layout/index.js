@@ -5,5 +5,7 @@ export { default as AdminLayout } from './AdminLayout'
 export { default as CustomLayout } from './CustomLayout'
 export { default as AdminRoutes } from './RouteLayout/AdminRoutes'
 export { default as PrivateUserRoutes } from './RouteLayout/PrivateUserRoutes'
+export { default as PrivateUserCampaignRoutes } from './RouteLayout/PrivateUserRoutes/PrivateUserCampaignRoutes'
+export { default as PrivateUserIndividualsRoutes } from './RouteLayout/PrivateUserRoutes/PrivateUserIndividualsRoutes'
 export { default as LoginRoutes } from './RouteLayout/LoginRoutes'
 // export another layout

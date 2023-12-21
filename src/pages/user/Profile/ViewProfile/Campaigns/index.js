@@ -8,11 +8,14 @@ import { Link, useParams } from 'react-router-dom';
 import baseURL from "~/utils/baseURL";
 import customAxios from '~/utils/customAxios'
 import ItemCampaign from './ItemCampaign';
+import { useSelector } from 'react-redux';
 const cx = classNames.bind(styles);
 function ViewCampaigns() {
-    console.log('campaign')
+    const [isHasCampaign, setHasCampaign] = useState(false)
+    const currentUser = useSelector(state => state.user.currentUser)
     const { id } = useParams()
     const [campaignsOfUser, setCampaignOfUser] = useState([])
+    const [user, setUser] = useState({})
     const getCampaigns = async () => {
         try {
             const res = await customAxios.get(`${baseURL}/campaign/getCampaignsOfUserId/${id}`)
@@ -21,41 +24,56 @@ function ViewCampaigns() {
 
         }
     }
+    const getInfoUser = async () => {
+        try {
+            const res = await customAxios.get(`${baseURL}/user/getInfoUser/${id}`)
+            setUser(res.data.data)
+        } catch (error) {
+
+        }
+    }
     useEffect(() => {
         getCampaigns()
+        getInfoUser()
     }, [])
     return (
         <div className={cx('wrapper')}>
-            <div className={cx('navbar')}>
-                <Link to={`/individuals/${id}/profile`} className={cx('nav-item', 'active')}>
-                    <span>
-                        <MdOutlineRemoveRedEye style={{ fontSize: '24px', marginRight: '8px' }} />
-                        Xem hồ sơ
-                    </span>
-                </Link>
-                <Link to={`/individuals/${id}/edit/profile`} className={cx('nav-item')}>
-                    <span>
-                        {' '}
-                        <FaRegEdit style={{ fontSize: '24px', marginRight: '8px' }} />
-                        Chỉnh sửa hồ sơ & Cài đặt
-                    </span>
-                </Link>
-            </div>
+            {
+                currentUser._id === id &&
+                <div className={cx('navbar')}>
+                    <a href={`/individuals/${id}/profile`} className={cx('nav-item', 'active')}>
+                        <span>
+                            <MdOutlineRemoveRedEye style={{ fontSize: '24px', marginRight: '8px' }} />
+                            Xem hồ sơ
+                        </span>
+                    </a>
+                    <a href={`/individuals/${id}/edit/profile`} className={cx('nav-item')}>
+                        <span>
+                            {' '}
+                            <FaRegEdit style={{ fontSize: '24px', marginRight: '8px' }} />
+                            Chỉnh sửa hồ sơ & Cài đặt
+                        </span>
+                    </a>
+                </div>
+            }
 
             <div className={cx('body')}>
-                <h1 className={cx('header-name')}>Phan Trọng Tính</h1>
+                <h1 className={cx('header-name')}>{user.fullName}</h1>
 
                 <div className={cx('content')}>
                     <div className={cx('tabpanel')}>
-                        <Link to={`/individuals/${id}/profile`} className={cx('tab')}>
+                        <a href={`/individuals/${id}/profile`} className={cx('tab')}>
                             Hồ sơ
-                        </Link>
-                        <Link to={`/individuals/${id}/campaigns`} className={cx('tab', 'active')}>
+                        </a>
+                        <a href={`/individuals/${id}/campaigns`} className={cx('tab', 'active')}>
                             Chiến dịch
-                        </Link>
-                        <Link to={`/individuals/${id}/contributions`} className={cx('tab')}>
-                            Đóng góp
-                        </Link>
+                        </a>
+                        {
+                            currentUser._id && currentUser._id === id &&
+                            <a href={`/individuals/${id}/contributions`} className={cx('tab')}>
+                                Đóng góp của tôi
+                            </a>
+                        }
                     </div>
 
                     <div style={{ marginTop: '32px' }}>
@@ -63,11 +81,18 @@ function ViewCampaigns() {
                             Dự án là chủ sở hữu
                         </div>
                         {campaignsOfUser.map((item, index) => {
-                            return <ItemCampaign key={index} item={item} />;
+                            if ((currentUser._id && (item.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true }) || item.owner?._id === currentUser._id)) || item.status === 'Đang gây quỹ') {
+                                if (!isHasCampaign) setHasCampaign(true)
+                                return <ItemCampaign key={index} item={item} />
+                            }
+
+                            else return <></>
                         })}
-                        <div className={cx('show-more')}>
-                            <span>Show more</span>
-                        </div>
+                        {
+                            !isHasCampaign && <p>
+                                Hiện người này chưa có chiến dịch nào được công khai!</p>
+                        }
+
                     </div>
                     <div style={{ marginTop: '32px' }}>
                         <div style={{ fontSize: '24px', fontWeight: '500', lineHeight: '35px', marginBottom: '16px' }}>
@@ -76,9 +101,9 @@ function ViewCampaigns() {
                         {/* {[1, 2, 3].map((item, index) => {
                             return <ItemCampaign />;
                         })} */}
-                        <div className={cx('show-more')}>
+                        {/* <div className={cx('show-more')}>
                             <span>Show more</span>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
