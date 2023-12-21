@@ -334,84 +334,67 @@ function DetailProject() {
                     </div>
                 </div>
                 <div className={cx('container-right')}>
-                    <p style={{ color: '#088366', fontSize: '18px', fontWeight: '600' }}>Đang gây quỹ</p>
-                    <p style={{ color: '#2a2a2a', fontSize: '30px', fontWeight: '600' }}>{ItemProject?.title}</p>
-                    <p style={{ color: '#2a2a2a', fontSize: '16px', marginTop: '20px' }}>{ItemProject?.tagline}</p>
-                    <div style={{ display: 'flex', marginLeft: '10px', marginTop: '20px' }}>
+                    <p className={cx('text-funding')}>Đang gây quỹ</p>
+                    <p className={cx('text-name')}>{ItemProject?.title}</p>
+                    <p className={cx('text-des')}>{ItemProject?.tagline}</p>
+                    <div className={cx('container-layout-info')}>
                         <img
-                            style={{ width: '48px', height: '48px', borderRadius: '50%' }}
+                            className={cx('avatar')}
                             src={ItemProject.owner?.avatar?.url || defaultAvatar}
                             alt="avt"
                         />
-                        <div style={{ marginLeft: '12px' }}>
-                            <a href="" style={{ fontWeight: '600', fontSize: '18px' }}>
+                        <div className={cx('container-info')}>
+                            <a href="" className={cx('name-user')}>
                                 {ItemProject.owner?.fullName}
                             </a>
                             <div style={{ display: 'flex' }}>
                                 <span>{quantityCampaignOfUser} Campaigns</span>
-                                <div
-                                    style={{
-                                        margin: '0 5px',
-                                        width: '1.5px',
-                                        backgroundColor: '#231823',
-                                        height: '20px',
-                                    }}
-                                ></div>
+                                <div className={cx('seprate')}></div>
                                 <span>
                                     {ItemProject.location?.city} | {ItemProject.location?.country}
                                 </span>
                             </div>
                         </div>
                     </div>
-                    <div style={{ margin: '20px 0' }}>
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                fontSize: '24px',
-                                padding: '0 4px',
-                            }}
-                        >
-                            <b style={{ fontWeight: '500' }}>
-                                {formatMoney(money)} <span style={{ fontWeight: '300', fontSize: '18px' }}></span>
+                    <div className={cx('container-layout-money')}>
+                        <div className={cx('container-money')}>
+                            <b className={cx('text-current-money')}>
+                                {formatMoney(money)} 
                             </b>
-                            <b style={{ fontWeight: '500', fontSize: '20px' }}>
-                                {quantityPeople}{' '}
-                                <span style={{ fontWeight: '300', fontSize: '18px' }}>người đóng góp</span>
-                            </b>
+                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                <span className={cx('container-people')}>{quantityPeople}</span>
+                                <span className={cx('text-people')}>người đóng góp</span>
+                            </div>
                         </div>
                         <ProgressBar
                             margin="6px 0"
                             labelAlignment="right"
                             labelColor="#fff"
+                            labelSize='12px'
                             width="100%"
                             baseBgColor="#ccc"
                             bgColor="#34ca96"
                             borderRadius="10px"
+                            height='16px'
                             customLabel={formatPercent((money / ItemProject.goal) * 100)}
                             maxCompleted={ItemProject.goal}
                             completed={money}
                         />
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                fontSize: '18px',
-                                padding: '0 4px',
-                                fontWeight: '300',
-                            }}
-                        >
-                            <span>
-                                {formatPercent((money / ItemProject.goal) * 100) + " %"} của {formatMoney(ItemProject.goal)}
-                            </span>
-                            <b style={{ fontWeight: '500', fontSize: '20px' }}>
+                        <div className={cx('container-layout-deadline')}>
+                            <div className={cx('container-deadline')}>
+                                <b className={cx('text-money-total')}>{formatPercent((money / ItemProject.goal) * 100) + " %"}</b>
+                                <span className={cx('text-of')}>của</span>
+                                <b className={cx('text-money-total')}>{formatMoney(ItemProject.goal)}</b>
+                            </div>
+                            
+                            <b className={cx('container-people')}>
                                 {getDeadline()}{' '}
-                                <span style={{ fontWeight: '300', fontSize: '18px' }}>ngày còn lại</span>
+                                <span className={cx('text-people')}>ngày còn lại</span>
                             </b>
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className={cx('container-button')}>
                         <div>
                             <button
                                 className={cx('hover-btn')}
@@ -423,8 +406,8 @@ function DetailProject() {
                             >
                                 XEM QUÀ TẶNG
                             </button>
-                            <button className={cx('hover-btn')} type="button" style={{ margin: '0 10px' }}>
-                                <AiOutlineHeart style={{ color: '#fff', fontSize: '20px' }} /> THEO DÕI
+                            <button className={cx('hover-btn')} type="button">
+                                <AiOutlineHeart className={cx('text-follow')}/> THEO DÕI
                             </button>
                         </div>
                         <div>
@@ -544,7 +527,7 @@ function DetailProject() {
             {isOpenModal && (
                 <ModalPerk
                     setItemPerkSelected={setItemPerkSelected}
-                    listPerk={ItemProject.listPerk}
+                    listPerk={listPerkByCampaignId}
                     close={() => setIsOpenModal(false)}
                     setIsOpenModalOption={setIsOpenModalOption}
                     setPerkInModal={setPerkInModal}

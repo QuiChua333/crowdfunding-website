@@ -5,6 +5,7 @@ import ItemDetailPerk from '~/components/ItemDetailPerk';
 import ItemDetailPerkSelect from '~/components/ItemDetailPerkSelect';
 import { useLocation } from 'react-router-dom';
 import ModalDetailPerk from './ModalDetailPerk'
+import formatMoney from '~/utils/formatMoney';
 
 const cx = classNames.bind(styles);
 
@@ -21,7 +22,7 @@ function DetailPerk() {
     {
         id: 'perk1',
         image: 'https://c4.iggcdn.com/indiegogo-media-prod-cld/image/upload/c_fill,w_762,g_center,q_auto:best,dpr_1.3,f_auto,h_506/mtixazdzdtgna6xcucwv',
-        name: 'Camera Sling 9L - Early Bird',
+        name: 'Camera Sling 9L - Early New',
         price: 95,
         des: 'Save $25 by ordering today on Indiegogo. SHIPPING, VAT & DUTIES: Please note that the shipping fee covers ALL applicable shipping, VAT, and duties. You will not need pay any fees upon arrival. WANT TO ADD MORE ITEMS? If youd like to add other bags to your order you can do so on the following page after selecting this perk.',
         includeItems: [
@@ -277,12 +278,12 @@ function DetailPerk() {
 
 
   return (
-    <div style={{width: '100%'}} className={cx('disableSelect')}>
-      <p style={{width: '100%', textAlign: 'center', margin: '6px 0 20px', fontSize: '28px', fontWeight: 'bold', color: '#207d5d', borderBottom: '1px solid #ccc'}}>GIVEFUND</p>
-      <div style={{display: 'flex', height: '100%', padding: '10px 140px', margin: '10px 0'}}>
-        <div style={{width: '52%', marginRight: '30px'}}>
-          <p style={{fontSize: '20px', fontWeight: '600', marginLeft: '20px'}}>Danh sách quà tặng có thể thêm</p>
-          <div className={cx('custom-scroll')} style={{display: 'grid', gridTemplateColumns: '1fr 1fr', maxHeight: '58%', overflowY: 'scroll'}}>
+    <div className={cx('disableSelect', 'wrapper')}>
+      <p className={cx('title-website')}>GIVE-FUN</p>
+      <div className={cx('container-body')}>
+        <div className={cx('container-body-1')}>
+          <p className={cx('title')}>Danh sách quà tặng có thể thêm</p>
+          <div className={cx('custom-scroll')}>
             {
               listPerks.map((item, index) => {
                 return (
@@ -299,27 +300,27 @@ function DetailPerk() {
           </div>
         </div>
 
-        <div style={{width: '48%', marginLeft: '30px'}}>
-          <div style={{display: 'flex', flexDirection: 'column'}}>
-            <span style={{fontSize: '20px', fontWeight: '600', marginLeft: '20px', marginBottom: '20px'}}>Your Contribution<span style={{fontSize: '14px', fontWeight: '500', marginLeft: '10px', color: '#616161'}}>(<span>{quantityContribute}</span> item)</span></span>
-            <div className={cx('custom-scroll')} style={{display: 'flex', flexDirection: 'column', height: '360px', overflowY: 'scroll'}}>
+        <div className={cx('container-body-2')}>
+          <div className={cx('container-1')}>
+            <span className={cx('title')}>Đóng góp của bạn<span className={cx('value')}>(<span>{quantityContribute}</span> item)</span></span>
+            <div className={cx('custom-scroll-2')}>
               {
-              listSelected.map((item, index) => {
-                return <ItemDetailPerkSelect setPerkSelected={setPerkSelected} item={item} key={index} index={index} setIsOpenModalUpdate={setIsOpenModalUpdate} setIsOpenModal={setIsOpenModal} handleChangeQuantityOrder={handleChangeQuantityOrder} handleClickRemoveItem={handleClickRemoveItem}/>
-              })
-            }
+                listSelected.map((item, index) => {
+                  return <ItemDetailPerkSelect setPerkSelected={setPerkSelected} item={item} key={index} index={index} setIsOpenModalUpdate={setIsOpenModalUpdate} setIsOpenModal={setIsOpenModal} handleChangeQuantityOrder={handleChangeQuantityOrder} handleClickRemoveItem={handleClickRemoveItem}/>
+                })
+              }
             </div>
           </div>
 
-          <div style={{marginTop: '40px', display: 'flex', flexDirection: 'column', padding: '20px 40px', border: '1px solid #ccc', borderRadius: '4px'}}>
-            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '24px', fontWeight: '450'}}>
-              <span>Tổng tiền</span>
-              <span>$ {total}</span>
+          <div className={cx('container-2')}>
+            <div className={cx('container-total')}>
+              <span>Tổng tiền: </span>
+              <span>{formatMoney(total)}</span>
             </div>
 
-            <div style={{height: '1px', backgroundColor: '#ccc', marginTop: '10px'}}></div>
+            <div className={cx('separate')}></div>
 
-            <button className={cx('btn-checkout')} type="button">ĐI ĐẾN CHECKOUT</button>
+            <button className={cx('btn-checkout')} type="button">TIẾP TỤC THANH TOÁN</button>
           </div>
           
         </div>

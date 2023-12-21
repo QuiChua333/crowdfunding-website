@@ -13,6 +13,94 @@
 .progressbar {
     display: flex;
 }
+.text-funding {
+    font-size: 18px;
+    color: #088366;
+    font-weight: 600;
+}
+.text-name {
+    font-size: 30px;
+    color: #2a2a2a;
+    font-weight: 600;
+}
+.text-des {
+    font-size: 16px;
+    color: #2a2a2a;
+    margin-top: 20px;
+}
+.container-layout-info {
+    display: flex;
+    margin: 20px 0 0 10px;
+}
+.container-info {
+    margin-left: 12px;
+}
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+.name-user {
+    font-size: 18px;
+    font-weight: 600;
+}
+.seprate {
+    margin: 0 5px;
+    width: 1.5px;
+    background-color: #231823;
+    height: 20px;
+}
+.container-layout-money {
+    margin: 20px 0;
+}
+.text-current-money {
+    font-weight: bold;
+}
+.container-money {
+    display: flex;
+    justify-content: space-between;
+    font-size: 24px;
+    padding: 0 4px;
+}
+.container-people {
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 8px;
+}
+.text-money-total {
+    font-size: 20px;
+    font-weight: bold;
+}
+.text-of {
+    font-size: 20px;
+    margin: 0 8px;
+    color: #3d3d3d;
+}
+.text-follow {
+    font-size: 20px;
+    color: #fff;
+}
+.container-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.container-deadline {
+    display: flex;
+    justify-content: center;
+}
+.text-people {
+    font-size: 18px;
+    font-weight: 100;
+    color: #3d3d3d;
+}
+.container-layout-deadline {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    padding: 0 4px;
+    font-weight: 300;
+}
 .container-left {
     width: 50%;
     margin-right: 20px;

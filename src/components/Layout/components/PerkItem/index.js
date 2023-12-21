@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import classNames from 'classnames/bind';
 import styles from './PerkItem.module.scss';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import formatMoney from '~/utils/formatMoney';
 import formatDate from '~/utils/formatDate';
 
@@ -26,7 +26,7 @@ function PerkItem({
             setShowMore(true);
         }
     };
-
+    const {id} = useParams();
     const handleClickPerk = () => {
         closePerkModal();
 
@@ -38,7 +38,7 @@ function PerkItem({
             setIsOpenModalOption(true);
         } else {
             // chưa xử lý
-            navigate('/project/perk/detail', {
+            navigate(`/project/${id}/perk/detail`, {
                 state: item,
             });
         }
@@ -46,25 +46,25 @@ function PerkItem({
 
     return (
         <div className={cx('container-item')} onClick={handleClickItem}>
-            <img style={{ width: '100%', height: '35%' }} src={item.image.url} alt="img" />
-            <div style={{ margin: '20px' }}>
+            <img src={item.image.url} alt="img" />
+            <div className={cx('container-body')}>
                 <h2 style={{ fontSize: '24px' }}>{item.title}</h2>
-                <b style={{ fontSize: '30px', fontWeight: '600' }}>{formatMoney(item.price)}</b>
-                <p style={{ fontSize: '16px', fontWeight: '200' }}>{item.description}</p>
+                <b className={cx('price')}>{formatMoney(item.price)}</b>
+                <p className={cx('des')}>{item.description}</p>
 
                 {showMore && (
                     <div>
                         <p>
-                            <b style={{ fontSize: '18px', fontWeight: '500' }}>Bao gồm: </b>
-                            <ul style={{ marginLeft: '20px', fontSize: '16px', fontWeight: '200' }}>
+                            <b className={cx('text-title')}>Bao gồm: </b>
+                            <ul className={cx('items')}>
                                 {item.items.map((itemA, indexA) => {
                                     return <li key={indexA}>{itemA.item.name}</li>;
                                 })}
                             </ul>
                         </p>
-                        <p style={{ fontSize: '18px', fontWeight: '500' }}>Ngày giao dự kiến</p>
-                        <p style={{ fontSize: '16px', fontWeight: '200' }}>{formatDate(item.estDelivery)}</p>
-                        <p style={{ fontSize: '16px', fontWeight: '200' }}>Giao toàn lành thổ.</p>
+                        <p className={cx('text-title')}>Ngày giao dự kiến</p>
+                        <p className={cx('des')}>{formatDate(item.estDelivery)}</p>
+                        <p className={cx('des')}>Giao toàn lành thổ.</p>
 
                         {isShowButton && (
                             item.quantity !== item.claimed ? (
@@ -72,7 +72,7 @@ function PerkItem({
                                     GET THIS PERK
                                 </button>
                             ) : (
-                                <span style={{justifyContent: 'center', display: 'flex', color: '#FF582A'}}>Số lượng đã hết</span>
+                                <span className={cx('text-error')}>Số lượng đã hết</span>
                             )
                         )}
                     </div>

@@ -7,23 +7,22 @@ const cx = classNames.bind(styles);
 
 function ModalPerk({close, setIsOpenModalOption, setPerkInModal, listPerk, setItemPerkSelected}) {
   return (
-    <div style={{width: '100%', height: '100%', position: 'fixed', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)', top: '0', zIndex: '1000'}} onClick={close}>
-        <div onClick={(e) => e.stopPropagation()} className={cx('modal')} style={{overflowY: 'scroll', width: '450px', backgroundColor: '#fff', height: '90%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '50px', borderRadius: '4px'}}>
+    <div className={cx('wrapper')} onClick={close}>
+        <div onClick={(e) => e.stopPropagation()} className={cx('modal')}>
             <span className={cx('btn-close')} role='button' onClick={close}>&times;</span>
-            <p style={{fontSize: '22px', marginTop: '-40px', fontWeight: '500'}}>Back this project</p>
-            <div style={{marginTop: '30px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '90%'}}>
-                <p style={{fontWeight: '400', fontSize: '18px'}}>Make a contribution</p>
-                <div style={{width: '100%', height: 'auto', border: '1px solid #c8c8c8', padding: "20px", display: 'flex', flexDirection: 'column', marginBottom: '30px', backgroundColor: '#fafafa'}}>
-                    <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center'}}>
-                        <input className={cx('input-price')} type="number" name="price" placeholder='Enter money'/>
-                        <span style={{color: '#858585', fontSize: '20px'}}>VND</span>
-                        <button className={cx('btn-continue')} type="button">CONTINUE</button>
+            <p className={cx('title-modal')}>Quay lại chiến dịch</p>
+            <div className={cx('container-body')}>
+                <p className={cx('title-contribute')}>Thực hiện đóng góp</p>
+                <div className={cx('container-layout-input')}>
+                    <div className={cx('container-input')}>
+                        <input className={cx('input-price')} type="number" name="price" placeholder='Nhập số tiền (VND)'/>
+                        <button className={cx('btn-continue')} type="button">Tiếp tục</button>
                     </div>
-                    <p style={{color: '#575757', fontSize: '12px', marginBottom: '0'}}>Contributions are not associated with perks</p>
+                    <p className={cx('title-under-input')}>Đóng góp sẽ không liên quan tới quà</p>
                 </div>
-                <p style={{fontWeight: '400', fontSize: '18px'}}>Select An Option</p>
+                <p className={cx('title-contribute')}>Chọn một quà</p>
 
-                <div style={{height: 'auto'}}>
+                <div className={cx('container-list-perks')}>
                             {listPerk.map((item, index) => {
                                 return <PerlItem setItemPerkSelected={setItemPerkSelected} item={item} key={index} setIsOpenModalOption = {setIsOpenModalOption} closePerkModal={close} isInModal setPerkInModal={setPerkInModal}/>;
                             })}

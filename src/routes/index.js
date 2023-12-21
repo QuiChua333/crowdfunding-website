@@ -51,7 +51,7 @@ const publicRoutes = [
     { path: '/campaigns/perk/detail', component: DetailPerk, layout: null },
     { path: '/campaigns/team/invitation/:tokenLinkInvitation', component: SuccessVerifyInvitation, layout: null },
     { path: '/project/:id/detail', component: DetailProject, layout: DefaultLayout },
-    { path: '/project/perk/detail', component: DetailPerk, layout: null },
+    { path: '/project/:id/perk/detail', component: DetailPerk, layout: null },
     { path: '/projects/:id/payments/new/checkout', component: Payment, layout: null },
 
     // admin
