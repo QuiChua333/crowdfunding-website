@@ -360,8 +360,8 @@ const deleteMember = async (req, res) => {
 
 const getCampaignsOfUserId = async (req, res) => {
     try {
-        const {id} = req.params;
-        const campaigns = await Campaign.find({owner: id}).populate({
+        const { id } = req.params;
+        const campaigns = await Campaign.find({ owner: id }).populate({
             path: 'owner',
             model: 'User'
         }).exec();
@@ -379,17 +379,75 @@ const getAllCampaigns = async (req, res) => {
     try {
         const isAdmin = req.isAdmin
         if (isAdmin) {
-           const campaigns = await Campaign.find({ status: { $ne: 'Bản nháp' } }).populate({
-                path: 'owner',
-                model: 'User'
-           }).exec()
+
+            let { page = 1, size = 15, status = 'Tất cả', searchString = '' } = req.query;
+            page = parseInt(page);
+            size = parseInt(size)
+            size = size >= 15 ? 15 : size
+            const filterCampaigns = await Campaign.aggregate([
+                {
+                    $lookup: {
+                        from: 'users', // Tên của collection chứa thông tin người sở hữu (assumed là 'users')
+                        localField: 'owner',
+                        foreignField: '_id',
+                        as: 'owner'
+                    }
+                },
+                {
+                    $unwind: '$owner' // Giải nén mảng owner tạo từ $lookup để truy cập trực tiếp vào các trường của owner
+                },
+                {
+                    $project: {
+                        'owner.password': 0, 
+                        'owner.refreshToken': 0,
+                        'owner.isAdmin': 0,
+                        'owner.isVerifiedEmail': 0,
+                        'owner.isVerifiedUser': 0,
+                    }
+                },
+                {
+                    $match: {
+                        $and: [
+                            {
+                                status: status === 'Tất cả' ? {$nin: ['Tất cả', 'Bản nháp']} : status
+                            },
+                            {
+                                $or: [
+                                    {
+                                        title: { $regex: `.*${searchString}.*`, $options: 'i' }
+                                    },
+                                    {
+                                        'owner.fullName': { $regex: `.*${searchString}.*`, $options: 'i' }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    $skip: (page - 1) * size
+                },
+                {
+                    $limit: size
+                }
+            ]);
+            const totalRecords = await Campaign.countDocuments();
+            const totalPages = Math.ceil(totalRecords / size);
+
+            // const campaigns = await Campaign.find({ status: { $ne: 'Bản nháp' } }).populate({
+            //     path: 'owner',
+            //     model: 'User'
+            // }).exec()
             res.status(200).json({
                 message: 'Lấy thông tin các chiến dịch  thành công',
-                data: campaigns
+                data: {
+                    campaigns: filterCampaigns,
+                    totalPages
+                }
             })
         }
         else throw new Error('Bạn không có quyền truy cập')
-        
+
     } catch (error) {
         res.status(400).json({
             message: error.message
@@ -401,11 +459,11 @@ const checkCampaignOfUser = async (req, res) => {
         debugger
         const isAdmin = req.isAdmin;
         const userId = req.userId;
-        const {idCampaign} = req.params;
+        const { idCampaign } = req.params;
         const campaign = await Campaign.findById(idCampaign).exec();
         if (campaign) {
             debugger
-            const matched = campaign.team.some(item => item.user.toString() === userId && item.isAccepted === true) || isAdmin ===true;
+            const matched = campaign.team.some(item => item.user.toString() === userId && item.isAccepted === true) || isAdmin === true;
             res.status(200).json({
                 message: 'Matched',
                 data: matched
@@ -417,7 +475,7 @@ const checkCampaignOfUser = async (req, res) => {
                 data: false
             })
         }
-        
+
 
     } catch (error) {
         res.status(400).json({
@@ -425,7 +483,31 @@ const checkCampaignOfUser = async (req, res) => {
         })
     }
 }
+const adminChangeStatusCampaign = async (req, res) => {
+    try {
+        const isAdmin = req.isAdmin;
+        if (isAdmin) {
+            const { idCampaign } = req.params;
+            const { status } = req.body;
+            const campaign = await Campaign.findById(idCampaign).exec();
+            if (campaign) {
+                campaign.status = status;
+                await campaign.save()
+                res.status(200).json({
+                    message: 'Admin change status campaign successfully',
+                    data: campaign
+                })
+            }
+            else throw new Error('Chiến dịch không tồn tại')
+        }
+        else throw new Error('Bạn không có quyền truy cập')
 
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
 export default {
     createNewCampaign,
     getCampaignById,
@@ -439,5 +521,6 @@ export default {
     launchCampaign,
     getCampaignsOfUserId,
     getAllCampaigns,
-    checkCampaignOfUser
+    checkCampaignOfUser,
+    adminChangeStatusCampaign
 }

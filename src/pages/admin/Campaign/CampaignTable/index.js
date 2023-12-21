@@ -8,34 +8,39 @@ import convertDate from "~/utils/convertDate";
 
 const cx = classNames.bind(styles)
 
-function CampaignTable({campaigns, onCampaignTableChange}) {
-    const [listCampaigns,setlistCampaigns] = useState([...campaigns].map(item => {
-        let dateString = '';
-        let endDateString = ''
-        if (item.startDate) {
-            dateString =  convertDate(item.startDate)
-            let endDate =  new Date(item.startDate) 
-            endDate.setDate(endDate.getDate() + item.duration)
-            endDateString= convertDate(endDate)
-        
-        }
-        
-        return {
-            id: item._id,
-            title: item.title,
-            goal: (item.goal/1000000).toFixed(2) + ' triệu',
-            status: item.status,
-            startDate: dateString,
-            endDate: endDateString,
-            ownerName: item.owner.fullName,
-            isChecked: false
-            
-        }
-    }));
+function CampaignTable({campaigns, onCampaignTableChange, getAllCampaigns}) {
+    const [listCampaigns,setlistCampaigns] = useState([]);
     const [isCheckAll,setCheckAll] = useState(false) 
-
+    useEffect(() => {
+        setlistCampaigns(prev => {
+            const state = [...campaigns].map(item => {
+                let dateString = '';
+                let endDateString = ''
+                if (item.startDate) {
+                    dateString =  convertDate(item.startDate)
+                    let endDate =  new Date(item.startDate) 
+                    endDate.setDate(endDate.getDate() + item.duration)
+                    endDateString= convertDate(endDate)
+                
+                }
+                
+                return {
+                    id: item._id,
+                    title: item.title,
+                    goal: (item.goal/1000000).toFixed(2) + ' triệu',
+                    status: item.status,
+                    startDate: dateString,
+                    endDate: endDateString,
+                    ownerName: item.owner.fullName,
+                    isChecked: false
+                    
+                }
+            })
+            return state
+        })
+    },[campaigns])
     
-    const handleClickCheckALl = () => {
+    const handleClickCheckAll = () => {
         setCheckAll(prev => !prev);
         setlistCampaigns(prev => {
             const nextState = [...prev].map((item,index) => {
@@ -56,7 +61,7 @@ function CampaignTable({campaigns, onCampaignTableChange}) {
         })
     }
     useEffect(()=> {
-        const checkAll = listCampaigns.every(item => item.isChecked === true);
+        const checkAll = listCampaigns.length > 0 ? listCampaigns.every(item => item.isChecked === true) : false;
         setCheckAll(checkAll)
   
         onCampaignTableChange([...listCampaigns])
@@ -69,7 +74,7 @@ function CampaignTable({campaigns, onCampaignTableChange}) {
                 <thead>
                     <tr>
                         <th className={cx('checkbox')}>
-                            <span onClick={handleClickCheckALl}>
+                            <span onClick={handleClickCheckAll}>
                                 {
                                     !isCheckAll ? <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} /> : <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
                                 }
@@ -86,8 +91,8 @@ function CampaignTable({campaigns, onCampaignTableChange}) {
                 </thead>
                 <tbody>
                     {
-                        listCampaigns.map((item, index) => {
-                            return <CampaignRow key={index} campaign={item} index={index} setChecked={handleSetChecked}/>
+                        listCampaigns?.map((item, index) => {
+                            return <CampaignRow key={index} campaign={item} index={index} setChecked={handleSetChecked} getAllCampaigns={getAllCampaigns}/>
                         })
                     }
                 </tbody>

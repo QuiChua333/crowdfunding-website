@@ -17,6 +17,7 @@ router.delete('/:id/deleteMember/:memberId',checkToken,CampaignController.delete
 router.get('/getCampaignsOfUserId/:id',CampaignController.getCampaignsOfUserId)
 router.get('/getAllCampaigns',checkToken,CampaignController.getAllCampaigns)
 router.get('/checkCampaignOfUser/:idCampaign',checkToken,CampaignController.checkCampaignOfUser)
+router.patch('/adminChangeStatusCampaign/:idCampaign',checkToken,CampaignController.adminChangeStatusCampaign)
 
 
 
