@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './ModalOptionPerk.module.scss';
 import PerkItem from '~/components/Layout/components/PerkItem';
@@ -18,9 +18,10 @@ function ModalOptionPerk({ close, setIsOpenModal, perkInModal, itemPerk }) {
             return {
                 name: itemA.item.name,
                 optionsSelected: itemA.item.options.map((i) => {
+                    console.log(i)
                     return {
                         name: i.name,
-                        value: '',
+                        value: i.values[0],
                     };
                 }),
             };
@@ -38,7 +39,7 @@ function ModalOptionPerk({ close, setIsOpenModal, perkInModal, itemPerk }) {
                         return {
                             ...i,
                             optionsSelected: optionsSelectedItems.find((j) => {
-                                return j.name === i.name;
+                                return j.name === i.item.name;
                             }),
                         };
                     } else {
@@ -53,17 +54,20 @@ function ModalOptionPerk({ close, setIsOpenModal, perkInModal, itemPerk }) {
         let nameOption = e.target.name;
         let value = e.target.value;
         // prev là mảng result
+
         setOptionsSelectedItems((prev) => {
             return [...prev].map((item) => {
                 if (item.name === nameItem) {
                     return {
                         ...item,
                         optionsSelected: [...item.optionsSelected].map((itemOptionSelect) => {
-                            if (itemOptionSelect.name === nameOption)
+                            if (itemOptionSelect.name === nameOption){
+
                                 return {
                                     ...itemOptionSelect,
                                     value: value,
                                 };
+                            } 
                             else {
                                 return itemOptionSelect;
                             }

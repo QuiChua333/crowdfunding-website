@@ -201,7 +201,6 @@ function DetailProject() {
         try {
             const config = {};
             const { data } = await axios.get(`${baseUrl}/contribution/getQuantityPeopleByCampaign/${id}`, config);
-            console.log(data);
             setQuantityPeople(data.data);
         } catch (error) {
             console.log(error);
@@ -211,7 +210,6 @@ function DetailProject() {
         try {
             const config = {};
             const { data } = await axios.get(`${baseUrl}/contribution/getMoneyByCampaign/${id}`, config);
-            console.log(data);
             setMoney(data.data);
         } catch (error) {
             console.log(error);
@@ -348,7 +346,7 @@ function DetailProject() {
                                 {ItemProject.owner?.fullName}
                             </a>
                             <div style={{ display: 'flex' }}>
-                                <span>{quantityCampaignOfUser} Campaigns</span>
+                                <span>{quantityCampaignOfUser} chiến dịch</span>
                                 <div className={cx('seprate')}></div>
                                 <span>
                                     {ItemProject.location?.city} | {ItemProject.location?.country}
@@ -406,7 +404,7 @@ function DetailProject() {
                             >
                                 XEM QUÀ TẶNG
                             </button>
-                            <button className={cx('hover-btn')} type="button">
+                            <button className={cx('hover-btn-follow')} type="button">
                                 <AiOutlineHeart className={cx('text-follow')}/> THEO DÕI
                             </button>
                         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './ModalDetailPerk.module.scss';
 import PerkItem from '~/components/Layout/components/PerkItem';
@@ -7,17 +7,17 @@ const cx = classNames.bind(styles);
 
 function ModalDetailPerk({ itemPerk, setIsOpenModal, handleSelectedItem, isOpenModalUpdate, handleEditListSelected }) {
     const [optionsSelectedItems, setOptionsSelectedItems] = useState(() => {
-        let arrItemHasOption = itemPerk.includeItems.filter((item) => {
-            return item.options && item.options.length > 0;
+        let arrItemHasOption = itemPerk.items.filter((itemA) => {
+            return itemA.item.isHasOption && itemA.item.options.length > 0;
         });
 
-        let result = arrItemHasOption.map((item) => {
+        let result = arrItemHasOption.map((itemB) => {
             return {
-                name: item.name,
-                optionsSelected: item.options.map((i) => {
+                name: itemB.item.name,
+                optionsSelected: itemB.item.options.map((i) => {
                     return {
                         name: i.name,
-                        value: i.itemsOption[0]
+                        value: i.values[0]
                     };
                 }),
             };
@@ -28,8 +28,6 @@ function ModalDetailPerk({ itemPerk, setIsOpenModal, handleSelectedItem, isOpenM
     const handleChangeSelectOption = (e, nameItem) => {
         let nameOption = e.target.name;
         let value = e.target.value;
-        // prev là mảng result
-
         setOptionsSelectedItems((prev) => {
             return [...prev].map((item) => {
                 if (item.name === nameItem) {
@@ -37,10 +35,13 @@ function ModalDetailPerk({ itemPerk, setIsOpenModal, handleSelectedItem, isOpenM
                         ...item,
                         optionsSelected: [...item.optionsSelected].map((itemOptionSelect) => {
                             if (itemOptionSelect.name === nameOption)
+                            {
                                 return {
                                     ...itemOptionSelect,
                                     value: value,
                                 };
+                            }
+                                
                             else {
                                 return itemOptionSelect;
                             }
@@ -55,16 +56,16 @@ function ModalDetailPerk({ itemPerk, setIsOpenModal, handleSelectedItem, isOpenM
     const handleOnclickAccept = () => {
         const newItem = {
             ...itemPerk,
-            includeItems: [...itemPerk.includeItems].map((item) => {
-                if (item.options && item.options.length > 0) {
+            items: [...itemPerk.items].map((itemA) => {
+                if (itemA.item.isHasOption && itemA.item.options.length > 0) {
                     return {
-                        ...item,
+                        ...itemA,
                         optionsSelected: optionsSelectedItems.find((i) => {
-                            return i.name === item.name;
+                            return i.name === itemA.item.name;
                         }).optionsSelected,
                     };
                 } else {
-                    return item;
+                    return itemA;
                 }
             }),
         };
@@ -76,7 +77,6 @@ function ModalDetailPerk({ itemPerk, setIsOpenModal, handleSelectedItem, isOpenM
             setIsOpenModal(false);
         }
     };
-
     return (
         <div className={cx('wrapper')} onClick={() => {setIsOpenModal(true);}}>
             <div className={cx('container-body')} onClick={(e) => e.stopPropagation()}>
@@ -99,18 +99,18 @@ function ModalDetailPerk({ itemPerk, setIsOpenModal, handleSelectedItem, isOpenM
 
                     <div style={{ width: '50%' }}>
                         <p>Chọn quà của bạn</p>
-                        {itemPerk.includeItems.map((itemA, indexA) => {
+                        {itemPerk.items.map((itemA, indexA) => {
                             return (
                                 <div className={cx('container-list-perk')} key={indexA}>
-                                    <p>{itemA.name}</p>
-                                    {itemA.options &&
-                                        itemA.options.length &&
-                                        itemA.options.map((itemB, indexB) => {
+                                    <p>{itemA.item.name}</p>
+                                    {itemA.item.isHasOption &&
+                                        itemA.item.options.length &&
+                                        itemA.item.options.map((itemB, indexB) => {
                                             return (
                                                 <div className={cx('container-options')} key={indexB}>
                                                     <span className={cx('name')}>{itemB.name + ': '}</span>
-                                                    <select onChange={(e) => handleChangeSelectOption(e, itemA.name)} name={itemB.name} >
-                                                        {itemB.itemsOption.map((itemC, indexC) => {
+                                                    <select onChange={(e) => handleChangeSelectOption(e, itemA.item.name)} name={itemB.name} >
+                                                        {itemB.values.map((itemC, indexC) => {
                                                             return (
                                                                 <option value={itemC} key={indexC} selected={itemA.optionsSelected.map(x=> x.value).includes(itemC)}>
                                                                     {itemC}
