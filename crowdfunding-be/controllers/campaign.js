@@ -1,7 +1,26 @@
-import { Campaign, User, Item, Perk, Contribution } from "../model/index.js";
-import cloudinary from "../utils/cloudinary.js"
-import jwt from "jsonwebtoken";
-import sendEmail from '../utils/sendEmail.js'
+import { Campaign, User, Item, Perk, Contribution } from '../model/index.js';
+import cloudinary from '../utils/cloudinary.js';
+import jwt from 'jsonwebtoken';
+import sendEmail from '../utils/sendEmail.js';
+
+const getQuantityCampaingnPerUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const campain = await Campaign.findById(id).exec();
+        const userId = campain.owner.toString();
+        const campaigns = await Campaign.find({owner: userId}).exec();
+
+        res.status(200).json({
+            message: 'Lấy số lượng chiến dịch của user thành công',
+            data: campaigns.length,
+        });
+    } catch (error) {
+        res.status(400).json({
+            message: error.message,
+        });
+    }
+};
+
 
 
 const editCampaign = async (req, res) => {
@@ -22,8 +41,8 @@ const editCampaign = async (req, res) => {
             cardImage,
             imageDetailPage,
             momoNumber,
-            team
-        } = req.body
+            team,
+        } = req.body;
         const campaign = await Campaign.findById(id).exec();
         if (campaign) {
             if (campaign.owner.toString() !== userId) {
@@ -99,26 +118,34 @@ const editCampaign = async (req, res) => {
         }
         else throw new Error('Không tồn tại chiến dịch')
     } catch (error) {
-        debugger
+        debugger;
         res.status(400).json({
-            message: error.message
-        })
+            message: error.message,
+        });
     }
-}
+};
 const getCampaignById = async (req, res) => {
     try {
         const { id } = req.params;
-        const campaign = await Campaign.findById(id).exec();
+        const campaign = await Campaign.findById(id)
+            .populate([
+                {
+                    path: 'owner',
+                    model: 'User',
+                },
+            ])
+            .exec();
+
         res.status(200).json({
             message: 'Lấy thông tin chiến dịch thành công',
-            data: campaign
-        })
+            data: campaign,
+        });
     } catch (error) {
         res.status(400).json({
-            message: error.message
-        })
+            message: error.message,
+        });
     }
-}
+};
 const createNewCampaign = async (req, res) => {
     try {
         const userId = req.userId;
@@ -135,14 +162,14 @@ const createNewCampaign = async (req, res) => {
         })
         res.status(200).json({
             message: 'Tạo chiến dịch thành công',
-            data: campaign
-        })
+            data: campaign,
+        });
     } catch (error) {
         res.status(400).json({
-            message: error.message
-        })
+            message: error.message,
+        });
     }
-}
+};
 const changeCardImage = async (req, res) => {
     try {
         const userId = req.userId
@@ -186,45 +213,75 @@ const changeCardImage = async (req, res) => {
 
     } catch (error) {
         res.status(400).json({
-            message: error.message
-        })
+            message: error.message,
+        });
     }
-}
+};
 
 const CKEUpload = async (req, res) => {
     try {
         const { file } = req.body;
         const result = await cloudinary.uploader.upload(file, {
-            folder: process.env.CLOUDINARY_CKEDITOR_FOLDER_NAME
-        })
+            folder: process.env.CLOUDINARY_CKEDITOR_FOLDER_NAME,
+        });
         res.status(200).json({
-            url: result.secure_url
-        })
+            url: result.secure_url,
+        });
     } catch (error) {
         res.status(400).json({
-            message: error.message
-        })
+            message: error.message,
+        });
     }
-}
+};
 
 const getTeamMember = async (req, res) => {
     try {
         const { id } = req.params;
-        const campaign = await Campaign.findById(id).populate({
-            path: 'team.user',
-            model: 'User'
-        }).exec();
-        const result = campaign.team.map(item => { return { ...item._doc, user: { ...item._doc.user._doc, password: 'Not show' } } })
+        const campaign = await Campaign.findById(id)
+            .populate({
+                path: 'team.user',
+                model: 'User',
+            })
+            .exec();
+        const result = campaign.team.map((item) => {
+            return { ...item._doc, user: { ...item._doc.user._doc, password: 'Not show' } };
+        });
         res.status(200).json({
             message: 'Lấy thông tin thành viên chiến dịch thành công',
-            data: result
-        })
+            data: result,
+        });
+    } catch (error) {
+        res.status(400).json({
+            message: error.message,
+        });
+    }
+}
+
+const launchCampaign = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { id } = req.params;
+        const campaign = await Campaign.findById(id).exec();
+        if (campaign) {
+            if (campaign.owner.toString() !== userId) {
+                throw new Error('Không có quyền truy cập vào dự án này')
+            }
+            campaign.status = 'Chờ xác nhận'
+            await campaign.save();
+            res.status(200).json({
+                message: 'Lấy thông tin thành viên chiến dịch thành công',
+                data: campaign
+            })
+        }
+        else throw new Error('Không tồn tại chiến dịch')
+
+
     } catch (error) {
         res.status(400).json({
             message: error.message
         })
     }
-}
+};
 
 const launchCampaign = async (req, res) => {
     try {
@@ -286,27 +343,27 @@ const sendInvitation = async (req, res) => {
         else throw new Error('Không tồn tại chiến dịch')
     } catch (error) {
         res.status(400).json({
-            message: error.message
-        })
+            message: error.message,
+        });
     }
-}
+};
 const handleAcceptInvitationCampaign = async (req, res) => {
     try {
-        const { tokenLinkInvitation } = req.params
-        const { email,
-            campaignId,
-            userId,
-        } = jwt.verify(tokenLinkInvitation, process.env.JWT_SECRET_LINK_SEND_INVITATION)
+        const { tokenLinkInvitation } = req.params;
+        const { email, campaignId, userId } = jwt.verify(
+            tokenLinkInvitation,
+            process.env.JWT_SECRET_LINK_SEND_INVITATION,
+        );
 
         const user = await User.findById(userId).exec();
         const campaign = await Campaign.findById(campaignId).exec();
         debugger
         if (!user) {
-            throw new Error('Invalid link')
+            throw new Error('Invalid link');
         }
         debugger
         if (!campaign) {
-            throw new Error('Invalid link')
+            throw new Error('Invalid link');
         }
         debugger
         const bool = campaign.team.some(item => item._doc.user.toString() === user._id.toString());
@@ -316,21 +373,21 @@ const handleAcceptInvitationCampaign = async (req, res) => {
         //     canEdit,
         //     isAccepted: true
         // }
-        campaign.team = [...campaign.team].map(item => {
-            if (item._doc.user.toString() === userId) return { ...item._doc, isAccepted: true }
-            else return { ...item._doc }
-        })
+        campaign.team = [...campaign.team].map((item) => {
+            if (item._doc.user.toString() === userId) return { ...item._doc, isAccepted: true };
+            else return { ...item._doc };
+        });
         await campaign.save();
         res.status(200).json({
             message: 'Accept successfully',
-        })
+        });
     } catch (error) {
         debugger
         res.status(400).json({
-            message: error.message
-        })
+            message: error.message,
+        });
     }
-}
+};
 const deleteMember = async (req, res) => {
     try {
         const userId = req.userId
@@ -351,13 +408,91 @@ const deleteMember = async (req, res) => {
         }
         else throw new Error('Không tồn tại chiến dịch')
     } catch (error) {
-        debugger
+        debugger;
+        res.status(400).json({
+            message: error.message,
+        });
+    }
+};
+const getAllCampaigns = async (req, res) => {
+    try {
+        const isAdmin = req.isAdmin
+        if (isAdmin) {
+
+            let { page = 1, size = 15, status = 'Tất cả', searchString = '' } = req.query;
+            page = parseInt(page);
+            size = parseInt(size)
+            size = size >= 15 ? 15 : size
+            const filterCampaigns = await Campaign.aggregate([
+                {
+                    $lookup: {
+                        from: 'users', // Tên của collection chứa thông tin người sở hữu (assumed là 'users')
+                        localField: 'owner',
+                        foreignField: '_id',
+                        as: 'owner'
+                    }
+                },
+                {
+                    $unwind: '$owner' // Giải nén mảng owner tạo từ $lookup để truy cập trực tiếp vào các trường của owner
+                },
+                {
+                    $project: {
+                        'owner.password': 0, 
+                        'owner.refreshToken': 0,
+                        'owner.isAdmin': 0,
+                        'owner.isVerifiedEmail': 0,
+                        'owner.isVerifiedUser': 0,
+                    }
+                },
+                {
+                    $match: {
+                        $and: [
+                            {
+                                status: status === 'Tất cả' ? {$nin: ['Tất cả', 'Bản nháp']} : status
+                            },
+                            {
+                                $or: [
+                                    {
+                                        title: { $regex: `.*${searchString}.*`, $options: 'i' }
+                                    },
+                                    {
+                                        'owner.fullName': { $regex: `.*${searchString}.*`, $options: 'i' }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    $skip: (page - 1) * size
+                },
+                {
+                    $limit: size
+                }
+            ]);
+            const totalRecords = await Campaign.countDocuments();
+            const totalPages = Math.ceil(totalRecords / size);
+
+            // const campaigns = await Campaign.find({ status: { $ne: 'Bản nháp' } }).populate({
+            //     path: 'owner',
+            //     model: 'User'
+            // }).exec()
+            res.status(200).json({
+                message: 'Lấy thông tin các chiến dịch  thành công',
+                data: {
+                    campaigns: filterCampaigns,
+                    totalPages
+                }
+            })
+        }
+        else throw new Error('Bạn không có quyền truy cập')
+
+    } catch (error) {
         res.status(400).json({
             message: error.message
         })
     }
 }
-
 const getCampaignsOfUserId = async (req, res) => {
     try {
         const { id } = req.params;
@@ -454,6 +589,7 @@ const getAllCampaigns = async (req, res) => {
         })
     }
 }
+
 const checkCampaignOfUser = async (req, res) => {
     try {
         debugger
@@ -545,6 +681,8 @@ export default {
     sendInvitation,
     CKEUpload,
     handleAcceptInvitationCampaign,
+    getQuantityCampaingnPerUser,
+
     deleteMember,
     launchCampaign,
     getCampaignsOfUserId,

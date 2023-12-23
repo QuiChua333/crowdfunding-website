@@ -4,6 +4,8 @@ import { ContributionController } from "../controllers/index.js";
 const router = express.Router();
 
 
+router.get('/getQuantityPeopleByCampaign/:id', ContributionController.getQuantityPeople);
+router.get('/getMoneyByCampaign/:id', ContributionController.getMoneyByCampaign);
 
 
 router.get('/', (req, res) => {

@@ -4,6 +4,8 @@ import styles from './Login.module.scss';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import logoTrangNho from '~/assets/images/logoTrangNho.png'
+
 const cx = classNames.bind(styles);
 
 function Login() {
@@ -132,8 +134,9 @@ function Login() {
                     </form>
                 </div>
                 <div className={cx('right')}>
-                    <h2>Bạn chưa có tài khoản ?</h2>
-                    <a href="/sign-up">
+                    <img style={{width: '120px', height: '120px'}} src={logoTrangNho} alt="logo"/>
+                    <span>Bạn chưa có tài khoản ?</span>
+                    <Link to="/sign-up">
                         <button type="button" className={cx('white_btn')}>
                             Đăng ký
                         </button>

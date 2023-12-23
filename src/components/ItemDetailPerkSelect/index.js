@@ -3,6 +3,7 @@ import { BiPlus } from 'react-icons/bi';
 import { HiOutlineMinusSm } from 'react-icons/hi';
 import classNames from 'classnames/bind';
 import styles from './ItemDetailPerkSelect.module.scss';
+import formatMoney from '~/utils/formatMoney';
 
 const cx = classNames.bind(styles);
 
@@ -33,7 +34,7 @@ function ItemDetailPerkSelect({
     };
     useEffect(() => {
         setOptions((prev) => {
-            const res = item.includeItems.reduce((acc, cur) => {
+            const res = item.items.reduce((acc, cur) => {
                 if (cur.optionsSelected) {
                     return (
                         acc +
@@ -49,58 +50,20 @@ function ItemDetailPerkSelect({
         });
     }, [item]);
     return (
-        <div
-            className={cx('disableSelect')}
-            style={{
-                display: 'flex',
-                borderBottom: '1px solid #CACACA',
-                flexDirection: 'column',
-                alignItems: 'center',
-                padding: '10px 10px 20px',
-            }}
-        >
-            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                <div style={{ display: 'flex', width: '80%' }}>
-                    <img
-                        className={cx('disableSelect')}
-                        style={{
-                            width: '100px',
-                            height: '80px',
-                            borderRadius: '4px',
-                            border: '1px solid #949494',
-                            marginTop: '6px',
-                        }}
-                        src={item.image}
-                        alt="img"
-                    />
-                    <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '20px', position: 'relative' }}>
-                        <span className={cx('disableSelect')} style={{ fontSize: '16px', fontWeight: '400' }}>
-                            {item.name}
-                        </span>
-                        <span style={{ fontSize: '14px', fontWeight: '300', color: '#949494' }}>{options}</span>
-                        <div
-                            style={{
-                                width: '100px',
-                                height: '30px',
-                                border: '1px solid #262626',
-                                borderRadius: '20px',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                padding: '2px 10px',
-                                bottom: '-4px',
-                                position: 'absolute',
-                                marginBottom: '4px',
-                            }}
-                        >
+        <div className={cx('wrapper')}>
+            <div className={cx('container-body')}>
+                <div className={cx('container-1')}>
+                    <img src={item.image.url} alt="img"/>
+                    <div className={cx('content')}>
+                        <span className={cx('title')}>{item.title}</span>
+                        <span className={cx('options')}>{options}</span>
+                        <div className={cx('container-item')}>
                             <HiOutlineMinusSm
                                 className={cx('btn-quantity')}
                                 style={{ cursor: 'pointer' }}
                                 onClick={handleClickSub}
                             />
-                            <span style={{ fontWeight: '600' }} className={cx('disableSelect')}>
-                                {item.quantityOrder}
-                            </span>
+                            <span className={cx('quantityOder')}>{item.quantityOrder}</span>
                             <BiPlus
                                 className={cx('btn-quantity')}
                                 style={{ cursor: 'pointer' }}
@@ -109,30 +72,21 @@ function ItemDetailPerkSelect({
                         </div>
                     </div>
                 </div>
-                <div
-                    style={{
-                        width: '20%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                    }}
-                >
+
+                <div className={cx('container-2')}>
                     <div>
-                        <span className={cx('disableSelect', 'btn-edit')} onClick={handleClickEdit}>
+                        <span className={cx('btn-edit')} onClick={handleClickEdit}>
                             Edit
                         </span>
-                        <span className={cx('disableSelect', 'btn-remove')} onClick={() => handleClickRemoveItem(index)}>
+                        <span className={cx('btn-remove')} onClick={() => handleClickRemoveItem(index)}>
                             Remove
                         </span>
                     </div>
-                    <span className={cx('disableSelect')} style={{ fontSize: '18px', fontWeight: 'bold' }}>
-                        {item.price} USD
-                    </span>
+                    <span className={cx('money')}>{formatMoney(item.price)}</span>
                 </div>
             </div>
             {item.quantityOrder === item.quantity - item.claimed && (
-                <span style={{ marginTop: '20px', fontSize: '14px', color: '#FF582A' }}>
+                <span className={cx('text-error')}>
                     ! Số lượng tối đa còn lại có thể chọn là: {item.quantity - item.claimed}
                 </span>
             )}

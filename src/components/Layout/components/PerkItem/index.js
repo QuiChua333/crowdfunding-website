@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 
 import classNames from 'classnames/bind';
 import styles from './PerkItem.module.scss';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import formatMoney from '~/utils/formatMoney';
+import formatDate from '~/utils/formatDate';
 
 const cx = classNames.bind(styles);
 
@@ -24,18 +26,19 @@ function PerkItem({
             setShowMore(true);
         }
     };
-
+    const {id} = useParams();
     const handleClickPerk = () => {
         closePerkModal();
 
         if (!isInModal) {
             setPerkInModal(false);
         }
-        if (item.includeItems.some((item) => item.options && item.options.length > 0)) {
+        if (item.items.some((i) => i.item.options && i.item.options.length > 0)) {
             setItemPerkSelected(item);
             setIsOpenModalOption(true);
         } else {
-            navigate('/project/perk/detail', {
+            // chưa xử lý
+            navigate(`/project/${id}/perk/detail`, {
                 state: item,
             });
         }
@@ -43,33 +46,33 @@ function PerkItem({
 
     return (
         <div className={cx('container-item')} onClick={handleClickItem}>
-            <img style={{ width: '100%', height: '35%' }} src={item.image} alt="img" />
-            <div style={{ margin: '20px' }}>
-                <h2 style={{ fontSize: '24px' }}>{item.name}</h2>
-                <b style={{ fontSize: '30px', fontWeight: '600' }}>${item.price} USD</b>
-                <p style={{ fontSize: '16px', fontWeight: '200' }}>{item.des}</p>
+            <img src={item.image.url} alt="img" />
+            <div className={cx('container-body')}>
+                <h2 style={{ fontSize: '24px' }}>{item.title}</h2>
+                <b className={cx('price')}>{formatMoney(item.price)}</b>
+                <p className={cx('des')}>{item.description}</p>
 
                 {showMore && (
                     <div>
                         <p>
-                            <b style={{ fontSize: '18px', fontWeight: '500' }}>Included Items</b>
-                            <ul style={{ marginLeft: '20px', fontSize: '16px', fontWeight: '200' }}>
-                                {item.includeItems.map((itemA, indexA) => {
-                                    return <li key={indexA}>{itemA.name}</li>;
+                            <b className={cx('text-title')}>Bao gồm: </b>
+                            <ul className={cx('items')}>
+                                {item.items.map((itemA, indexA) => {
+                                    return <li key={indexA}>{itemA.item.name}</li>;
                                 })}
                             </ul>
                         </p>
-                        <p style={{ fontSize: '18px', fontWeight: '500' }}>Estimated Shipping</p>
-                        <p style={{ fontSize: '16px', fontWeight: '200' }}>{item.estimateShipping}</p>
-                        <p style={{ fontSize: '16px', fontWeight: '200' }}>Ships worldwide.</p>
+                        <p className={cx('text-title')}>Ngày giao dự kiến</p>
+                        <p className={cx('des')}>{formatDate(item.estDelivery)}</p>
+                        <p className={cx('des')}>Giao toàn lành thổ.</p>
 
                         {isShowButton && (
                             item.quantity !== item.claimed ? (
                                 <button type="button" className={cx('btn-getPerk')} onClick={handleClickPerk}>
-                                    GET THIS PERK
+                                    CHỌN QUÀ NÀY
                                 </button>
                             ) : (
-                                <span style={{justifyContent: 'center', display: 'flex', color: '#FF582A'}}>Số lượng đã hết</span>
+                                <span className={cx('text-error')}>Số lượng đã hết</span>
                             )
                         )}
                     </div>
