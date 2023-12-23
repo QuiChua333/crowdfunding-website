@@ -3,21 +3,25 @@ import { Schema, ObjectId } from "mongoose"
 export default mongoose.model('User',
     new Schema({
         fullName: String,
-        country: String,
         address: {
-            fullName: String,
             province: String,
             district: String,
             ward: String,
             phoneNumber: String,
         },
-        description: String,
-        profileImage: String,
+        story: {
+            shortDescription: String,
+            aboutMe: String,
+        },
+        profileImage: {
+            url: String,
+            public_id: String,
+        },
         avatar: {
             url: String,
             public_id: String,
         },
-        facebookLink: String,
+        linkFacebook: String,
         email: String,
         password: String,
         isVerifiedEmail: { type: Boolean, default: false },

@@ -13,7 +13,7 @@ import { IoCloseSharp } from "react-icons/io5";
 import { useRef, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import customAxios from '~/utils/customAxios'
-
+import axios from "axios";
 import baseURL from "~/utils/baseURL";
 // import { FaAngleDown } from "react-icons/fa";
 // import { AiFillQuestionCircle } from "react-icons/ai";
@@ -136,7 +136,7 @@ function NewPerk() {
     }
     const getListLocationShip = async () => {
         try {
-            const res = await customAxios.get('https://provinces.open-api.vn/api/p');
+            const res = await axios.get('https://provinces.open-api.vn/api/p');
             setListLocationShip(res.data.map(item => item.name));
             setListLocationShipOrigin(res.data.map(item => item.name));
         } catch (error) {

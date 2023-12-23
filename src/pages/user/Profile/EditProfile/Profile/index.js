@@ -7,40 +7,110 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import baseURL from "~/utils/baseURL";
 import customAxios from '~/utils/customAxios'
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading } from "~/redux/slides/GlobalApp";
+import { toast } from "react-toastify";
+import { setCurrentUser } from "~/redux/slides/User";
 const cx = classNames.bind(styles);
 function EditProfile() {
     const { id } = useParams()
-    const [user, setUser] = useState({})
+    const dispatch = useDispatch()
+    const user = useSelector(state => state.user.currentUser)
+    const [userState, setUserState] = useState({})
+    useEffect(() => {
+        setUserState(prev => {
+            const state = {
+                fullName: user.fullName || '',
+                address: user.address || {
+                    province: '',
+                    district: '',
+                    ward: '',
+                    phoneNumber: '',
+                },
+                story: user.story || {
+                    shortDescription: '',
+                    aboutMe: ''
+                },
+                avatar: user.avatar || {
+                    url: '',
+                    public_id: ''
+                },
+                profileImage: user.profileImage || {
+                    url: '',
+                    public_id: ''
+                },
+                linkFacebook: user.linkFacebook || ''
+            }
 
+            return state
+        })
+    },[user])
     const elementInputProfileImage = useRef(null);
     const elementInputProfileAvt = useRef(null);
-    const [profileImage, setProfileImage] = useState('');
-    const [profileAvt, setProfileAvt] = useState('');
-    const handlePreviewProfileImage = (event) => {
-        if (event.target.files[0]) {
-            const file = event.target.files[0]
-            const url = URL.createObjectURL(file)
-            setProfileImage(url);
-        }
-    }
-    const handlePreviewProfileAvt = (event) => {
-        if (event.target.files[0]) {
-            const file = event.target.files[0]
-            const url = URL.createObjectURL(file)
-            setProfileAvt(url);
-        }
-    }
-    const getInfoUser = async () => {
-        try {
-            const res = await customAxios.get(`${baseURL}/user/getInfoUser/${id}`)
-            setUser(res.data.data)
-        } catch (error) {
 
+    const handleChangeInputBasic = (e) => {
+        const name= e.target.name;
+        const value = e.target.value;
+        if (name.startsWith('address') || name.startsWith('story')) {
+            const name1 = name.split('/')[0]
+            const name2 = name.split('/')[1];
+            setUserState(prev => ({
+                ...prev,
+                [name1]: {
+                    ...prev[`${name1}`],
+                    [name2]: value
+                }
+            }))
+        }
+       
+        else {
+            setUserState(prev => ({
+                ...prev,
+                [name]: value
+            }))
         }
     }
-    useEffect(() => {
-        getInfoUser()
-    }, [])
+    // useEffect(() => {
+    //     console.log(userState)
+    // },[userState])
+    const handleChangeProfileImage = (e) => {
+        if (e.target.files[0]) {
+            const file = e.target.files[0]
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                let res = reader.result;
+                setUserState(prev => {
+                    return { ...prev, profileImage: { ...prev.profileImage, url: res } }
+                })
+            }
+        }
+    }
+    const handleChangeAvatar = (e) => {
+        if (e.target.files[0]) {
+            const file = e.target.files[0]
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                let res = reader.result;
+                setUserState(prev => {
+                    return { ...prev, avatar: { ...prev.avatar, url: res } }
+                })
+            }
+        }
+    }
+    const handleSave = async () => {
+        dispatch(setLoading(true))
+        try {
+            const res = await customAxios.patch(`${baseURL}/user/editUser/${id}`, userState)
+            dispatch(setLoading(false))
+            dispatch(setCurrentUser(res.data.data))
+            toast.success('Cập nhật thông tin thành công')
+        } catch (error) {
+            dispatch(setLoading(false))
+            console.log(error.message)
+        }
+    }
     return (
         <div className={cx('wrapper')}>
             <div className={cx('navbar')}>
@@ -74,32 +144,35 @@ function EditProfile() {
 
                     <div className={cx('section-info')} style={{ marginTop: '32px' }}>
                         <h1 className={cx('section-title')}>
-                            Basic Info
+                            Thông Tin Cơ Bản
                         </h1>
 
                         <div style={{ marginTop: '24px' }}>
+                           
                             <div className={cx('field')} style={{ maxWidth: '600px' }}>
-                                <label className={cx('field-label')}>First Name</label>
-                                <input className={cx('itext-field')} />
-                            </div>
-                            <div className={cx('field')} style={{ maxWidth: '600px' }}>
-                                <label className={cx('field-label')}>Last Name</label>
-                                <input className={cx('itext-field')} />
-                            </div>
-                            <div className={cx('field')} style={{ maxWidth: '600px' }}>
-                                <label className={cx('field-label')}>Country</label>
-                                <input className={cx('itext-field')} />
+                                <label className={cx('field-label')}>Họ và tên</label>
+                                <input className={cx('itext-field')} value={userState.fullName} onChange={handleChangeInputBasic} name="fullName"/>
                             </div>
 
 
-                            <div style={{ display: 'flex', gap: '32px', maxWidth: '700px' }}>
+                            <div style={{ display: 'flex', gap: '32px', maxWidth: '700px', marginTop: '24px' }}>
                                 <div className={cx('field')} style={{ flex: '3' }}>
-                                    <label className={cx('field-label')}>City</label>
-                                    <input className={cx('itext-field')} />
+                                    <label className={cx('field-label')}>Tỉnh/Thành phố</label>
+                                    <input className={cx('itext-field')} value={userState.address?.province} onChange={handleChangeInputBasic} name="address/province"/>
                                 </div>
                                 <div className={cx('field')} style={{ flex: '2' }}>
-                                    <label className={cx('field-label')}>Postal Code</label>
-                                    <input className={cx('itext-field')} />
+                                    <label className={cx('field-label')}>Quận/Huyện</label>
+                                    <input className={cx('itext-field')} value={userState.address?.district} onChange={handleChangeInputBasic} name="address/district"/>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', gap: '32px', maxWidth: '700px',marginTop: '16px' }}>
+                                <div className={cx('field')} style={{ flex: '3' }}>
+                                    <label className={cx('field-label')}>Xã/Phường</label>
+                                    <input className={cx('itext-field')} value={userState.address?.ward} onChange={handleChangeInputBasic} name="address/ward"/>
+                                </div>
+                                <div className={cx('field')} style={{ flex: '2' }}>
+                                    <label className={cx('field-label')}>Số điện thoại</label>
+                                    <input className={cx('itext-field')} value={userState.address?.phoneNumber} onChange={handleChangeInputBasic} name="address/phoneNumber"/>
                                 </div>
                             </div>
                         </div>
@@ -107,46 +180,46 @@ function EditProfile() {
 
                     <div className={cx('section-info')} style={{ marginTop: '32px' }}>
                         <h1 className={cx('section-title')}>
-                            Your Story
+                            Câu Chuyện Của Bạn
                         </h1>
 
                         <div style={{ marginTop: '24px' }}>
                             <div className={cx('field')} style={{ maxWidth: '800px' }}>
-                                <label className={cx('field-label')}>Short Description</label>
-                                <input className={cx('itext-field')} />
+                                <label className={cx('field-label')}>Mô tả ngắn gọn</label>
+                                <input className={cx('itext-field')} value={userState.story?.shortDescription} onChange={handleChangeInputBasic} name="story/shortDescription"/>
                             </div>
                             <div className={cx('field')} style={{ maxWidth: '600px' }}>
-                                <label className={cx('field-label')}>About Me</label>
-                                <textarea className={cx('itext-field')} style={{ minHeight: '200px' }} />
+                                <label className={cx('field-label')}>Về tôi</label>
+                                <textarea className={cx('itext-field')} style={{ minHeight: '200px' }}  value={userState.story?.aboutMe} onChange={handleChangeInputBasic} name="story/aboutMe"/>
                             </div>
 
                         </div>
                     </div>
                     <div className={cx('section-info')} style={{ marginTop: '32px' }}>
                         <h1 className={cx('section-title')}>
-                            Your Photos
+                            Ảnh của bạn
                         </h1>
 
                         <div style={{ marginTop: '24px' }}>
                             <div className={cx('field')} style={{ maxWidth: '800px' }}>
-                                <label className={cx('field-label')}>Profile Image</label>
+                                <label className={cx('field-label')}>Ảnh hồ sơ</label>
                                 <div className={cx('img-wrapper')}>
-                                    <img src={profileImage || defaultAvatar}>
+                                    <img src={userState.profileImage?.url || defaultAvatar}>
                                     </img>
 
-                                    <input ref={elementInputProfileImage} type="file" onChange={(e) => handlePreviewProfileImage(e)} accept="image/jpg, image/jpeg, image/png" />
+                                    <input ref={elementInputProfileImage} type="file" onChange={handleChangeProfileImage} accept="image/jpg, image/jpeg, image/png" />
                                 </div>
-                                <div onClick={() => elementInputProfileImage.current.click()} className={cx('btn')} style={{ marginTop: '32px' }}>{profileImage ? 'Change Image' : 'Add Image'}</div>
+                                <div onClick={() => elementInputProfileImage.current.click()} className={cx('btn')} style={{ marginTop: '32px' }}>{userState.profileImage?.url ? 'Đổi ảnh' : 'Thêm ảnh'}</div>
                             </div>
                             <div className={cx('field')} style={{ maxWidth: '800px', marginTop: '40px' }}>
-                                <label className={cx('field-label')}>Avatar</label>
+                                <label className={cx('field-label')}>Ảnh đại diện</label>
                                 <div className={cx('img-wrapper')} style={{ width: '150px', height: '150px' }}>
-                                    <img src={profileAvt || defaultAvatar}>
+                                    <img src={userState.avatar?.url || defaultAvatar}>
                                     </img>
 
-                                    <input ref={elementInputProfileAvt} type="file" onChange={(e) => handlePreviewProfileAvt(e)} accept="image/jpg, image/jpeg, image/png" />
+                                    <input ref={elementInputProfileAvt} type="file" onChange={handleChangeAvatar} accept="image/jpg, image/jpeg, image/png" />
                                 </div>
-                                <div onClick={() => elementInputProfileAvt.current.click()} className={cx('btn')} style={{ marginTop: '32px' }}>{profileAvt ? 'Change Image' : 'Add Image'}</div>
+                                <div onClick={() => elementInputProfileAvt.current.click()} className={cx('btn')} style={{ marginTop: '32px' }}>{userState.avatar?.url ? 'Đổi ảnh' : 'Thêm ảnh'}</div>
 
                             </div>
 
@@ -155,28 +228,21 @@ function EditProfile() {
 
                     <div className={cx('section-info')} style={{ marginTop: '32px' }}>
                         <h1 className={cx('section-title')}>
-                            Outside Links
+                            Liên Kết Bên Ngoài
                         </h1>
 
                         <div style={{ marginTop: '24px' }}>
                             <div className={cx('field')} style={{ maxWidth: '800px' }}>
-                                <label className={cx('field-label')}>Facebook Link</label>
-                                <input className={cx('itext-field')} />
+                                <label className={cx('field-label')}>Liên kết Facebook</label>
+                                <input className={cx('itext-field')} value={userState.linkFacebook} onChange={handleChangeInputBasic} name="linkFacebook"/>
                             </div>
-                            <div className={cx('field')} style={{ maxWidth: '800px' }}>
-                                <label className={cx('field-label')}>YouTube Link</label>
-                                <input className={cx('itext-field')} />
-                            </div>
-                            <div className={cx('field')} style={{ maxWidth: '800px' }}>
-                                <label className={cx('field-label')}>Twitter Link</label>
-                                <input className={cx('itext-field')} />
-                            </div>
+                           
 
 
                         </div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                        <div className={cx('btn')} style={{ marginTop: '8px' }}>Save</div>
+                        <div onClick={handleSave} className={cx('btn')} style={{ marginTop: '8px' }}>Lưu</div>
                     </div>
                 </div>
             </div>

@@ -117,7 +117,7 @@ function ItemsCampaign() {
                                         <img src={images.arrow} style={{ width: '40px', height: '60px', objectFit: 'cover', marginTop: '32px' }} />
 
                                         <div style={{ marginTop: '40px' }}>
-                                            <a href="/campaigns/:id/edit/perks/table" className={cx('btn', 'btn-ok')} style={{ fontSize: '16px' }} >ĐI ĐẾN TRANG ĐẶC QUYỀN </a>
+                                            <a href={`/campaigns/${id}/edit/perks/table`} className={cx('btn', 'btn-ok')} style={{ fontSize: '16px' }} >ĐI ĐẾN TRANG ĐẶC QUYỀN </a>
                                         </div>
 
 

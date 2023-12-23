@@ -1,4 +1,4 @@
-import { Campaign, User } from "../model/index.js";
+import { Campaign, User, Item, Perk, Contribution } from "../model/index.js";
 import cloudinary from "../utils/cloudinary.js"
 import jwt from "jsonwebtoken";
 import sendEmail from '../utils/sendEmail.js'
@@ -123,7 +123,7 @@ const createNewCampaign = async (req, res) => {
     try {
         const userId = req.userId;
         const campaign = await Campaign.create({
-            status: 'draft',
+            status: 'Bản nháp',
             owner: userId,
             team: [
                 {
@@ -463,13 +463,15 @@ const checkCampaignOfUser = async (req, res) => {
         const campaign = await Campaign.findById(idCampaign).exec();
         if (campaign) {
             debugger
-            const matched = campaign.team.some(item => item.user.toString() === userId && item.isAccepted === true) || isAdmin === true;
+            const matched = campaign.owner.toString() === userId ||  campaign.team.some(item => item.user.toString() === userId && item.isAccepted === true) || isAdmin === true;
+            debugger
             res.status(200).json({
                 message: 'Matched',
                 data: matched
             })
         }
         else {
+            debugger
             res.status(200).json({
                 message: 'Not matched',
                 data: false
@@ -508,6 +510,32 @@ const adminChangeStatusCampaign = async (req, res) => {
         })
     }
 }
+
+const adminDeleteCampaign = async (req, res) => {
+    try {
+        const isAdmin = req.isAdmin;
+        if (isAdmin) {
+            const { idCampaign } = req.params;
+            const campaign = await Campaign.findById(idCampaign).exec();
+            if (campaign) {
+                await campaign.deleteOne();
+                await Item.deleteMany({campaign: idCampaign})
+                await Perk.deleteMany({campaign: idCampaign})
+                await Contribution.deleteMany({campaign: idCampaign})
+                res.status(200).json({
+                    message: 'Đã xóa chiến dịch thành công',
+                })
+            }
+            else throw new Error('Chiến dịch không tồn tại')
+        }
+        else throw new Error('Bạn không có quyền truy cập')
+
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+} 
 export default {
     createNewCampaign,
     getCampaignById,
@@ -522,5 +550,6 @@ export default {
     getCampaignsOfUserId,
     getAllCampaigns,
     checkCampaignOfUser,
-    adminChangeStatusCampaign
+    adminChangeStatusCampaign,
+    adminDeleteCampaign
 }

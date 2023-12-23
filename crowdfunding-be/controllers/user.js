@@ -75,7 +75,7 @@ const loginUser = async (req, res) => {
         const refreshToken = generateRefreshToken({ email: user.email, id: user._id, isAdmin: user.isAdmin });
         user.refreshToken = refreshToken
         await user.save();
-        return res.status(200).json({ data: { accessToken,refreshToken ,isAdmin: user.isAdmin }, message: "Logged in successfully" });
+        return res.status(200).json({ data: { accessToken, refreshToken, isAdmin: user.isAdmin }, message: "Logged in successfully" });
     } catch (error) {
         return res.status(400).json({
             message: error.message,
@@ -167,7 +167,7 @@ const verifyEmailRegister = async (req, res) => {
 
 const getInfoCurrentUser = async (req, res) => {
     try {
-        const userId  = req.userId;
+        const userId = req.userId;
         debugger
         const user = await User.findById(userId).exec();
         delete user._doc.password
@@ -218,55 +218,120 @@ const editUser = async (req, res) => {
     try {
         const { id } = req.params;
         const {
-            infoVerify
+            infoVerify,
+            fullName,
+            address,
+            story,
+            avatar,
+            profileImage,
+            linkFacebook,
         } = req.body
         const user = await User.findById(id).exec();
-        if (infoVerify) {
+        if (user) {
+            if (infoVerify) {
 
-            user.infoVerify.fullName = infoVerify.fullName ?? user.infoVerify.fullName
-            user.infoVerify.phoneNumber = infoVerify.phoneNumber ?? user.infoVerify.phoneNumber
-            user.infoVerify.birthday = infoVerify.birthday ?? user.infoVerify.birthday
-            user.infoVerify.detailAddress = infoVerify.detailAddress ?? user.infoVerify.detailAddress
-            user.infoVerify.identifyCode = infoVerify.identifyCode ?? user.infoVerify.identifyCode
-            user.infoVerify.status = infoVerify.status ?? (user.infoVerify.status || 'Chờ xác minh')
-            user.infoVerify.times = user.infoVerify.times ? user.infoVerify.times + 1 : 1
-            debugger
-            if (infoVerify.identifyCardImage.url !== '') {
+                user.infoVerify.fullName = infoVerify.fullName ?? user.infoVerify.fullName
+                user.infoVerify.phoneNumber = infoVerify.phoneNumber ?? user.infoVerify.phoneNumber
+                user.infoVerify.birthday = infoVerify.birthday ?? user.infoVerify.birthday
+                user.infoVerify.detailAddress = infoVerify.detailAddress ?? user.infoVerify.detailAddress
+                user.infoVerify.identifyCode = infoVerify.identifyCode ?? user.infoVerify.identifyCode
+                user.infoVerify.status = infoVerify.status ?? (user.infoVerify.status || 'Chờ xác minh')
+                user.infoVerify.times = user.infoVerify.times ? user.infoVerify.times + 1 : 1
                 debugger
-                if (!infoVerify.identifyCardImage?.url.startsWith('http')) {
-                    if (user.infoVerify?.identifyCardImage?.url) {
-                        await cloudinary.uploader.destroy(user.infoVerify?.identifyCardImage?.public_id)
-                    }
-                    const result = await cloudinary.uploader.upload(infoVerify.identifyCardImage?.url, {
-                        folder: process.env.CLOUDINARY_FOLDER_NAME
-                    })
+                if (infoVerify.identifyCardImage.url !== '') {
+                    debugger
+                    if (!infoVerify.identifyCardImage?.url.startsWith('http')) {
+                        if (user.infoVerify?.identifyCardImage?.url) {
+                            await cloudinary.uploader.destroy(user.infoVerify?.identifyCardImage?.public_id)
+                        }
+                        const result = await cloudinary.uploader.upload(infoVerify.identifyCardImage?.url, {
+                            folder: process.env.CLOUDINARY_FOLDER_NAME
+                        })
 
-                    user.infoVerify.identifyCardImage = {
-                        url: result.secure_url,
-                        public_id: result.public_id,
+                        user.infoVerify.identifyCardImage = {
+                            url: result.secure_url,
+                            public_id: result.public_id,
+                        }
+                    }
+
+
+                }
+                else {
+                    user.infoVerify = {
+                        ...user.infoVerify._doc,
+                        identifyCardImage: {
+                            url: '',
+                            public_id: '',
+                        },
                     }
                 }
 
 
             }
-            else {
-                user.infoVerify = {
-                    ...user.infoVerify._doc,
-                    identifyCardImage: {
+            user.fullName = fullName ?? user.fullName
+            user.linkFacebook = linkFacebook ?? user.linkFacebook
+            user.address = address ?? user.address
+            user.story = story ?? user.story
+            if (avatar) {
+
+                if (avatar.url !== '') {
+                    if (!avatar.url.startsWith('http')) {
+                        if (user.avatar && user.avatar.url) {
+                            await cloudinary.uploader.destroy(user.avatar.public_id)
+                        }
+                        const result = await cloudinary.uploader.upload(avatar.url, {
+                            folder: process.env.CLOUDINARY_FOLDER_NAME
+                        })
+                        user.avatar = {
+                            url: result.secure_url,
+                            public_id: result.public_id,
+                        }
+                    }
+
+                }
+
+                else {
+                    user.avatar = {
                         url: '',
                         public_id: '',
-                    },
+                    }
                 }
             }
+            if (profileImage) {
 
+                if (profileImage.url !== '') {
+                    if (!profileImage.url.startsWith('http')) {
+                        if (user.profileImage && user.profileImage.url) {
+                            await cloudinary.uploader.destroy(user.profileImage.public_id)
+                        }
+                        const result = await cloudinary.uploader.upload(profileImage.url, {
+                            folder: process.env.CLOUDINARY_FOLDER_NAME
+                        })
+                        user.profileImage = {
+                            url: result.secure_url,
+                            public_id: result.public_id,
+                        }
+                    }
 
+                }
+
+                else {
+                    user.profileImage = {
+                        url: '',
+                        public_id: '',
+                    }
+                }
+            }
+            await user.save();
+            delete user._doc.password
+            delete user._doc.refreshToken
+            res.status(200).json({
+                message: 'Update user successfully',
+                data: user
+            })
         }
-        await user.save();
-        delete user._doc.password
-        res.status(200).json({
-            message: 'Update user successfully',
-            data: user
-        })
+        else throw new Error('Tài khoản không tồn tại')
+
     }
 
     catch (error) {
@@ -322,13 +387,13 @@ const checkLinkVerifyUser = async (req, res) => {
         })
     }
 }
-const refreshToken = async({refreshToken}) => {
+const refreshToken = async ({ refreshToken }) => {
     try {
-        const payload = jwt.verify(refreshToken,process.env.JWT_SECRET_REFRESH_TOKEN);
+        const payload = jwt.verify(refreshToken, process.env.JWT_SECRET_REFRESH_TOKEN);
         const userId = payload.id;
         const user = await User.findById(userId).exec()
         if (user.refreshToken === refreshToken) {
-            const newAccessToken = generateAccessToken({email: user.email, id: user._id});
+            const newAccessToken = generateAccessToken({ email: user.email, id: user._id, isAdmin: user.isAdmin });
             return {
                 accessToken: newAccessToken,
                 refreshToken: refreshToken
@@ -338,7 +403,7 @@ const refreshToken = async({refreshToken}) => {
 
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
-   
+
             throw new Error('expired')
         }
         else throw new Error(error.message)
@@ -362,7 +427,7 @@ const checkAdmin = async (req, res) => {
 const checkIndividualOfUser = async (req, res) => {
     try {
         const userId = req.userId;
-        const {userIdParams} = req.params;
+        const { userIdParams } = req.params;
 
         res.status(200).json({
             message: 'Check matched',

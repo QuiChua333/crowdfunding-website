@@ -5,17 +5,36 @@ import indemand from '~/assets/images/why-image/indemand.png'
 import baseURL from '~/utils/baseURL';
 import { FaArrowRightLong } from "react-icons/fa6";
 import customAxios from '~/utils/customAxios'
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
 function PrefixCampaign() {
+
+
     const handleClickStartCampaign = async () => {
-        try {
-            const res = await customAxios.post(`${baseURL}/campaign/createNewCampaign`) 
-            window.location.href = `/campaigns/${res.data.data._id}/edit/basic`
-        } catch (error) {
-            console.log(error.message)
+        const token = localStorage.getItem('accessToken') || false
+        if (!token) {
+            localStorage.removeItem('accessToken')
+            localStorage.removeItem('refreshToken')
+            window.location.href = '/login'
         }
+
+        const res = await customAxios.get(`${baseURL}/user/checkAdmin`)
+        if (res.data.data) {
+            return;
+        }
+        else {
+            try {
+                const res = await customAxios.post(`${baseURL}/campaign/createNewCampaign`)
+                window.location.href = `/campaigns/${res.data.data._id}/edit/basic`
+            } catch (error) {
+                console.log(error.message)
+            }
+        }
+
+
+        
     }
     return (
         <div className={cx('wrapper')}>
@@ -168,7 +187,7 @@ function PrefixCampaign() {
                         <span>Tiếp tục gây quỹ sau khi chiến dịch của bạn kết thúc và nhận được khoản giải ngân hàng tháng.</span>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     );

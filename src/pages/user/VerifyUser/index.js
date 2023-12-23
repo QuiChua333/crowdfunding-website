@@ -6,12 +6,13 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { setLoading } from "~/redux/slides/GlobalApp";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import baseURL from "~/utils/baseURL";
 import { TiTick } from "react-icons/ti";
 const cx = classNames.bind(styles)
 
 function VerifyUser() {
+    const previousLink = useSelector(state => state.globalApp.previousLink)
     const dispatch = useDispatch()
     const inputElement = useRef(null)
     const { tokenLinkVerifyUser } = useParams();
@@ -107,7 +108,7 @@ function VerifyUser() {
                             </div>
 
                             <div className={cx('return')} style={{ marginTop: '28px' }}>
-                                <span onClick={() => window.location.href = `/individuals/${user._id}/campaigns`} style={{ fontSize: '14px', fontWeight: '500' }}><IoArrowBackSharp style={{ fontSize: '18px', marginBottom: '4px' }} /> Quay về Give Fun</span>
+                                <span onClick={() => window.location.href = previousLink} style={{ fontSize: '14px', fontWeight: '500' }}><IoArrowBackSharp style={{ fontSize: '18px', marginBottom: '4px' }} /> Quay về Give Fun</span>
                             </div>
 
                             <div className={cx('footer')}>

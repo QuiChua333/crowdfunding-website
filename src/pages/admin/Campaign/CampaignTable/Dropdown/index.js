@@ -29,7 +29,8 @@ function DropDown({ menu, onClickItem, index, campaign, getAllCampaigns }) {
             contentOK: 'XÁC NHẬN',
             contentCancel: 'HỦY',
             isShow: true,
-            type: 'adminAction'
+            type: `adminAction${campaign.id}`
+
         }))
        
     }
@@ -43,7 +44,7 @@ function DropDown({ menu, onClickItem, index, campaign, getAllCampaigns }) {
             contentOK: 'XÁC NHẬN',
             contentCancel: 'HỦY',
             isShow: true,
-            type: 'adminAction'
+            type: `adminAction${campaign.id}`
         }))
        
     }
@@ -57,7 +58,7 @@ function DropDown({ menu, onClickItem, index, campaign, getAllCampaigns }) {
             contentOK: 'XÁC NHẬN',
             contentCancel: 'HỦY',
             isShow: true,
-            type: 'adminAction'
+            type: `adminAction${campaign.id}`
         }))
        
     }
@@ -69,7 +70,7 @@ function DropDown({ menu, onClickItem, index, campaign, getAllCampaigns }) {
             contentOK: 'XÁC NHẬN',
             contentCancel: 'HỦY',
             isShow: true,
-            type: 'adminDelete'
+            type: `adminDelete${campaign.id}`
         }))
        
     }
@@ -89,25 +90,28 @@ function DropDown({ menu, onClickItem, index, campaign, getAllCampaigns }) {
         dispatch(setLoading(true))
         try {
             const res = await customAxios.delete(`${baseURL}/campaign/adminDeleteCampaign/${campaign.id}`)
-            getAllCampaigns()
             dispatch(setLoading(false))
             toast.success('Dự án đã được xóa khỏi hệ thống')
+            getAllCampaigns()
+      
         } catch (error) {
             console.log(error.message)
         }
     }
     useEffect(() => {
         if (messageBox.result) {
-            if (messageBox.type === 'adminAction') {
+            if (messageBox.type === `adminAction${campaign.id}`
+            ) {
                 if (messageBox.result === true) {
                     dispatch(setMessageBox({result: null, isShow: false}))
                     changeStatusCampaign(status)
                 }
             }
-            if (messageBox.type === 'adminDelete') {
+            if (messageBox.type === `adminDelete${campaign.id}`) {
                 if (messageBox.result === true) {
                     dispatch(setMessageBox({result: null, isShow: false}))
                     deleteCampaign()
+
                 }
             }
         }

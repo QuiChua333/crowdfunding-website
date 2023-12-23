@@ -12,7 +12,8 @@ const initialState = {
         result: null,
         type: '',
         isShow: false
-    }
+    },
+    previousLink: ''
 }
 
 const slice = createSlice({
@@ -28,9 +29,12 @@ const slice = createSlice({
                 ...action.payload
             };
         },
+        setPreviousLink: (state,action) => {
+            state.previousLink = action.payload;
+        },
     },
     
 })
 
 export default slice.reducer;
-export const {setLoading, setMessageBox} = slice.actions
+export const {setLoading, setMessageBox, setPreviousLink} = slice.actions

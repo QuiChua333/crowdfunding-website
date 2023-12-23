@@ -7,11 +7,12 @@ import styles from './HeaderHome.module.scss'
 import DropDown from './Dropdown';
 import baseURL from "~/utils/baseURL";
 import customAxios from '~/utils/customAxios'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentUser } from '~/redux/slides/User';
 const cx = classNames.bind(styles);
 // Component dùng chung
 function Header2() {
+    const user = useSelector(state => state.user.currentUser)
     const dispatch = useDispatch()
     const [showDropdownUser, setShowDropdownUser] = useState(false)
     const [header, setHeader] = useState(false);
@@ -51,11 +52,12 @@ function Header2() {
 
         }
     }
-    const [user, setUser] = useState({})
+ 
     const getUser = async () => {
         try {
             const res = await customAxios.get(`${baseURL}/user/getInfoCurrentUser`)
-            setUser(res.data.data)
+            setFlat(true)
+
             dispatch(setCurrentUser(res.data.data))
         } catch (error) {
 
@@ -67,15 +69,14 @@ function Header2() {
         if (token) {
             getUser()
         }
+        else setFlat(false)
     }, [])
-    useEffect(() => {
-        console.log(user)
-    }, [user])
     const handleClickLogout = () => {
         localStorage.removeItem('accessToken')
         localStorage.removeItem('refreshToken')
         window.location.href = '/'
     }
+    const [flat,setFlat] = useState(null)
     return (
         <header className={cx('wrapper', {
             'active': header,
@@ -104,16 +105,16 @@ function Header2() {
                     <div className={cx('nav-list')}>
                         <div className={cx('create-campaign')}><a href={!user.isAdmin ? '/start-a-campaign' : '#'}>Tạo chiến dịch</a></div>
                         {
-                            !user._id &&
+                            flat===false &&
                             <>
                                 <div className={cx('sign-in')}><a href='/login'>Đăng nhập</a></div>
                                 <div><a href='/sign-up'>Đăng ký</a></div>
                             </>
                         }
                         {
-                            user._id &&
+                            flat &&
                             <div className={cx('user-section')} onClick={() => setShowDropdownUser(prev => !prev)} ref={boxFilterElement}>
-                                <img className={cx('user-avatar')} src={user.avatar.url} />
+                                <img className={cx('user-avatar')} src={user.avatar?.url} />
                                 <span className={cx('user-name')}>{user.fullName}  <FaAngleDown className={cx('icon', { active: showDropdownUser })} /></span>
                                 {
                                     showDropdownUser &&
