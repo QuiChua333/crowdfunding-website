@@ -105,7 +105,7 @@ function Header2() {
                     <div className={cx('nav-list')}>
                         <div className={cx('create-campaign')}><a href={!user.isAdmin ? '/start-a-campaign' : '#'}>Tạo chiến dịch</a></div>
                         {
-                            flat===false &&
+                            flat===false  &&
                             <>
                                 <div className={cx('sign-in')}><a href='/login'>Đăng nhập</a></div>
                                 <div><a href='/sign-up'>Đăng ký</a></div>

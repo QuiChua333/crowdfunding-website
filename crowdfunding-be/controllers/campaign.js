@@ -257,31 +257,6 @@ const getTeamMember = async (req, res) => {
     }
 }
 
-const launchCampaign = async (req, res) => {
-    try {
-        const userId = req.userId;
-        const { id } = req.params;
-        const campaign = await Campaign.findById(id).exec();
-        if (campaign) {
-            if (campaign.owner.toString() !== userId) {
-                throw new Error('Không có quyền truy cập vào dự án này')
-            }
-            campaign.status = 'Chờ xác nhận'
-            await campaign.save();
-            res.status(200).json({
-                message: 'Lấy thông tin thành viên chiến dịch thành công',
-                data: campaign
-            })
-        }
-        else throw new Error('Không tồn tại chiến dịch')
-
-
-    } catch (error) {
-        res.status(400).json({
-            message: error.message
-        })
-    }
-};
 
 const launchCampaign = async (req, res) => {
     try {
@@ -414,85 +389,7 @@ const deleteMember = async (req, res) => {
         });
     }
 };
-const getAllCampaigns = async (req, res) => {
-    try {
-        const isAdmin = req.isAdmin
-        if (isAdmin) {
 
-            let { page = 1, size = 15, status = 'Tất cả', searchString = '' } = req.query;
-            page = parseInt(page);
-            size = parseInt(size)
-            size = size >= 15 ? 15 : size
-            const filterCampaigns = await Campaign.aggregate([
-                {
-                    $lookup: {
-                        from: 'users', // Tên của collection chứa thông tin người sở hữu (assumed là 'users')
-                        localField: 'owner',
-                        foreignField: '_id',
-                        as: 'owner'
-                    }
-                },
-                {
-                    $unwind: '$owner' // Giải nén mảng owner tạo từ $lookup để truy cập trực tiếp vào các trường của owner
-                },
-                {
-                    $project: {
-                        'owner.password': 0, 
-                        'owner.refreshToken': 0,
-                        'owner.isAdmin': 0,
-                        'owner.isVerifiedEmail': 0,
-                        'owner.isVerifiedUser': 0,
-                    }
-                },
-                {
-                    $match: {
-                        $and: [
-                            {
-                                status: status === 'Tất cả' ? {$nin: ['Tất cả', 'Bản nháp']} : status
-                            },
-                            {
-                                $or: [
-                                    {
-                                        title: { $regex: `.*${searchString}.*`, $options: 'i' }
-                                    },
-                                    {
-                                        'owner.fullName': { $regex: `.*${searchString}.*`, $options: 'i' }
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    $skip: (page - 1) * size
-                },
-                {
-                    $limit: size
-                }
-            ]);
-            const totalRecords = await Campaign.countDocuments();
-            const totalPages = Math.ceil(totalRecords / size);
-
-            // const campaigns = await Campaign.find({ status: { $ne: 'Bản nháp' } }).populate({
-            //     path: 'owner',
-            //     model: 'User'
-            // }).exec()
-            res.status(200).json({
-                message: 'Lấy thông tin các chiến dịch  thành công',
-                data: {
-                    campaigns: filterCampaigns,
-                    totalPages
-                }
-            })
-        }
-        else throw new Error('Bạn không có quyền truy cập')
-
-    } catch (error) {
-        res.status(400).json({
-            message: error.message
-        })
-    }
-}
 const getCampaignsOfUserId = async (req, res) => {
     try {
         const { id } = req.params;
@@ -682,7 +579,6 @@ export default {
     CKEUpload,
     handleAcceptInvitationCampaign,
     getQuantityCampaingnPerUser,
-
     deleteMember,
     launchCampaign,
     getCampaignsOfUserId,

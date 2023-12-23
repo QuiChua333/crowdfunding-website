@@ -30,17 +30,18 @@ function CampaignManagement() {
     const handleChangeSearchInput = (value) => {
         setFilter(prev => ({ ...prev, textSearch: value }))
     }
-    useEffect(() => {
-        // let tmp = [...campaignsOrigin];
-        // if (filter.status!=='Tất cả') tmp = tmp.filter(item => item.status === filter.status);
-        // if (filter.textSearch!=='') {
-        //     const value = filter.textSearch.trim().toLowerCase();
-        //     tmp = tmp.filter(item => item.title.toLowerCase().includes(value) || item.owner.fullName.toLowerCase().includes(value))
-        // }
-        // setCampaigns([...tmp])
+    const handleClickPreviousPage = () => {
+        if (filter.page === 1) return;
+        setFilter(prev => ({...prev, page: prev.page - 1}))
+    }
 
+    const handleClickNextPage = () => {
+        if (filter.page === totalPages) return;
+        setFilter(prev => ({...prev, page: prev.page + 1}))
+    }
+    useEffect(() => {
         const queryParams = { page: filter.page, searchString: filter.textSearch, status: filter.status };
-        const queryString = new URLSearchParams(queryParams).toString();
+        const queryString = new URLSearchParams(queryParams).toString(); 
         const pathWithQuery = `${baseURL}/campaign/getAllCampaigns?${queryString}`;
         setPathWithQuery(pathWithQuery)
         getAllCampaigns()
@@ -49,14 +50,14 @@ function CampaignManagement() {
         getAllCampaigns()
     }, [pathWithQuery])
     const [campaigns, setCampaigns] = useState([])
-    const [campaignsOrigin, setCampaignsOrigin] = useState([])
+    // const [campaignsOrigin, setCampaignsOrigin] = useState([])
     const getAllCampaigns = async () => {
-        setLoadingData(true)
+        // setLoadingData(true)
         try {
             const res = await customAxios.get(pathWithQuery)
-            setLoadingData(false)
+            // setLoadingData(false)
             setCampaigns(res.data.data.campaigns)
-            setCampaignsOrigin(res.data.data.campaigns)
+            // setCampaignsOrigin(res.data.data.campaigns)
             setTotalPages(res.data.data.totalPages)
 
         } catch (error) {
@@ -72,15 +73,7 @@ function CampaignManagement() {
             return num
         })
     }
-    const handleClickPreviousPage = () => {
-        if (filter.page === 1) return;
-        setFilter(prev => ({...prev, page: prev.page - 1}))
-    }
-
-    const handleClickNextPage = () => {
-        if (filter.page === totalPages) return;
-        setFilter(prev => ({...prev, page: prev.page + 1}))
-    }
+   
 
     return (
         <div className={cx('wrapper')}>

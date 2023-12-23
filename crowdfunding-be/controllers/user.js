@@ -4,35 +4,31 @@ import sendEmail from '../utils/sendEmail.js';
 import jwt from 'jsonwebtoken';
 import cloudinary from "../utils/cloudinary.js"
 
-const registerUser = async (req, res) => {
+const checkRegisterEmail = async (req, res) => {
     try {
         const { fullName, email, password } = req.body;
         let user = await User.findOne({ email }).exec();
         if (user) {
-            return res.status(409).json({ message: 'User with given email already Exist!' });
+            return res.status(409).json({ message: 'Email này đã tồn tại!' });
         }
         const hashedPassword = await bcrypt.hash(password, parseInt(process.env.ROUNDS));
-        const newUser = await User.create({
-            fullName,
-            email,
-            password: hashedPassword,
-        });
-
         const tokenVerifyEmailLink = jwt.sign(
             {
-                email: newUser.email,
+                fullName,
+                email,
+                password: hashedPassword,
             },
             process.env.JWT_SECRET_LINK_VERIFY_EMAIL,
             {
                 expiresIn: process.env.EXPIRED_LINK_VERIFY_EMAI,
             },
         );
-        const url = `${process.env.FRONT_END_URL}users/${newUser.id}/verify/${tokenVerifyEmailLink}`;
-        await sendEmail(newUser.email, 'Verify Email', url);
+        const url = `${process.env.FRONT_END_URL}users/verify/${tokenVerifyEmailLink}`;
+        await sendEmail(email, 'Verify Email', url);
 
         return res.status(201).json({
-            message: 'User register successfully !',
-            data: newUser.email,
+            message: `Một liên kết đã được gửi đến ${email}. Vui lòng truy cập liên kết để xác thực tài khoản. Liên kết tồn tại trong 5 phút.`,
+            data: url,
         });
     } catch (error) {
         return res.status(400).json({
@@ -41,36 +37,21 @@ const registerUser = async (req, res) => {
     }
 };
 
+
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email }).exec();
         if (!user) {
-            return res.status(401).json({ message: 'This account is not registered' });
+            return res.status(401).json({ message: 'Sai tài khoản hoặc mật khẩu' });
         }
         const validPassword = await bcrypt.compare(
             password,
             user.password
         );
         if (!validPassword) {
-            return res.status(401).json({ message: "Invalid Email or Password" });
+            return res.status(401).json({ message: "Sai tài khoản hoặc mật khẩu" });
         }
-        if (!user.isVerifiedEmail) {
-            const tokenVerifyEmailLink = jwt.sign(
-                {
-                    email: user.email,
-                },
-                process.env.JWT_SECRET_LINK_VERIFY_EMAIL,
-                {
-                    expiresIn: process.env.EXPIRED_LINK_VERIFY_EMAI,
-                },
-            );
-            const url = `${process.env.FRONT_END_URL}users/${user.id}/verify/${tokenVerifyEmailLink}`;
-            await sendEmail(user.email, 'Verify Email', url);
-
-            return res.status(200).json({ message: "An Email sent to your account please verify" });
-        }
-
         const accessToken = generateAccessToken({ email: user.email, id: user._id, isAdmin: user.isAdmin });
         const refreshToken = generateRefreshToken({ email: user.email, id: user._id, isAdmin: user.isAdmin });
         user.refreshToken = refreshToken
@@ -88,7 +69,7 @@ const forgotPassword = async (req, res) => {
         const { email } = req.body;
         let emailUser = await User.findOne({ email }).exec();
         if (!emailUser) {
-            return res.status(401).json({ message: 'This email is not existed or registered !' });
+            return res.status(401).json({ message: 'Email không tồn tại!' });
         }
         const tokenResetPassword = jwt.sign(
             {
@@ -102,7 +83,10 @@ const forgotPassword = async (req, res) => {
         const url = `${process.env.FRONT_END_URL}user/${emailUser.id}/update-new-password/${tokenResetPassword}`;
         await sendEmail(emailUser.email, 'Password Reset', url);
 
-        res.status(200).json({ message: "Password reset link sent to your email account" });
+        res.status(200).json({
+            message: `Một liên kết cập nhật mật khẩu đã được gửi đến ${emailUser.email}. Liên kết tồn tại trong 5 phút.`,
+            data: url
+         });
 
     } catch (error) {
         return res.status(400).json({
@@ -131,7 +115,7 @@ const updateNewPassword = async (req, res) => {
         const hashedPassword = await bcrypt.hash(newPassword, parseInt(process.env.ROUNDS));
         user.password = hashedPassword;
         await user.save();
-        return res.status(200).json({ message: "Password updated successfully" });
+        return res.status(200).json({ message: "Cập nhật mật khẩu thành công!" });
     } catch (error) {
         return res.status(400).json({
             message: error.message,
@@ -150,16 +134,29 @@ const generateRefreshToken = (payload) => {
     });
 }
 
-const verifyEmailRegister = async (req, res) => {
+const registerUser = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id).exec();
-        if (!user) return res.status(400).json({ message: 'Invalid link' });
-
         const token = req.params.tokenLinkVerifyEmail;
-        jwt.verify(token, process.env.JWT_SECRET_LINK_VERIFY_EMAIL);
-        user.isVerifiedEmail = true;
-        await user.save();
-        res.status(200).json({ message: 'Email verified successfully' });
+        const newUser = jwt.verify(token, process.env.JWT_SECRET_LINK_VERIFY_EMAIL);
+        const existsUser = await User.findOne({ email: newUser.email }).exec();
+        if (!existsUser) {
+            const user = await User.create({
+                ...newUser,
+                isVerifiedEmail: true,
+                avatar : {
+                    url : "https://res.cloudinary.com/nqportfolio/image/upload/v1703343774/CROWDFUNDING/lvadocmjdweyplapvtin.png",
+                    public_id : "CROWDFUNDING/lvadocmjdweyplapvtin"
+                },
+                profileImage : {
+                    url : "https://res.cloudinary.com/nqportfolio/image/upload/v1703343774/CROWDFUNDING/lvadocmjdweyplapvtin.png",
+                    public_id : "CROWDFUNDING/lvadocmjdweyplapvtin"
+                }
+            })
+
+            res.status(200).json({ message: 'Email verified successfully' });
+        }
+        else res.status(200).json({ message: 'Tài khoản đã tồn tại' });
+
     } catch (error) {
         res.status(400).json({ message: 'Invalid link' });
     }
@@ -441,8 +438,8 @@ const checkIndividualOfUser = async (req, res) => {
     }
 }
 export default {
+    checkRegisterEmail,
     registerUser,
-    verifyEmailRegister,
     loginUser,
     forgotPassword,
     verifyLinkForgotPassword,

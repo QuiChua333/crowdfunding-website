@@ -2,14 +2,18 @@ import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './SignUp.module.scss';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
-import axios from 'axios';
+import customAxios from '~/utils/customAxios'
 import { Link } from 'react-router-dom';
+import baseURL from '~/utils/baseURL';
 import logoTrangNho from '~/assets/images/logoTrangNho.png'
+import { useDispatch } from 'react-redux';
+import { setLoading } from '~/redux/slides/GlobalApp';
+import { toast } from 'react-toastify';
 const cx = classNames.bind(styles);
 
 function SignUp() {
-
     const [name, setName] = useState('');
+    const dispatch = useDispatch()
     const [textValidateName, setTextValidateName] = useState('');
     const [email, setEmail] = useState('');
     const [textValidateEmail, setTextValidateEmail] = useState('');
@@ -26,7 +30,7 @@ function SignUp() {
     const handleShowAndHideConfirmPass = () => {
         setShowConfirmPass(!showConfirmPass);
     };
-
+    const [showButtonRegister,setShowButtonRegister] = useState(true)
     const [error, setError] = useState('');
     const [msg, setMsg] = useState('');
 
@@ -92,22 +96,28 @@ function SignUp() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('')
         let flagName = validateName(name);
         let flagEmail = validateEmail(email);
         let flagPassword = validatePass(pass);
         let flagConfirmPass = validateConfirmPass(confirmPass);
         if (flagName && flagEmail && flagPassword && flagConfirmPass) {
             // Xử lý submit ở đây..
+            dispatch(setLoading(true))
             try {
-                const url = "http://localhost:5000/user/register";
+                const url = `${baseURL}/user/checkRegisterEmail`;
                 const data = {
                     fullName: name,
                     email,
                     password: pass
                 }
-                const { data: res } = await axios.post(url, data);
+                const { data: res } = await customAxios.post(url, data);
+                dispatch(setLoading(false))
+                // toast.success('Tài khoản đã bị khóa')
+                setShowButtonRegister(false)
                 setMsg(res.message);
             } catch (error) {
+                dispatch(setLoading(false))
                 if (
                     error.response &&
                     error.response.status >= 400 &&
@@ -116,14 +126,14 @@ function SignUp() {
                     setError(error.response.data.message);
                 }
             }
-        } 
+        }
     };
 
     return (
         <div className={cx('signup_container')}>
             <div className={cx('signup_form_container')}>
                 <div className={cx('left')}>
-                    <img style={{width: '120px', height: '120px'}} src={logoTrangNho} alt="logo"/>
+                    <img style={{ width: '120px', height: '120px' }} src={logoTrangNho} alt="logo" />
                     <h2>Chào mừng bạn quay lại</h2>
                     <a href="/login">
                         <button type="button" className={cx('white_btn')}>
@@ -195,9 +205,12 @@ function SignUp() {
                         </div>
                         {error && <div className={cx('error_msg')}>{error}</div>}
                         {msg && <div className={cx('success_msg')}>{msg}</div>}
-                        <button type="submit" className={cx('green_btn')}>
-                            Đăng ký
-                        </button>
+                        {
+                            showButtonRegister &&
+                            <button type="submit" className={cx('green_btn')}>
+                                Đăng ký
+                            </button>
+                        }
                     </form>
                 </div>
             </div>

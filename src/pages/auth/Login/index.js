@@ -5,10 +5,13 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import logoTrangNho from '~/assets/images/logoTrangNho.png'
+import { useDispatch } from 'react-redux';
+import { setLoading } from '~/redux/slides/GlobalApp';
 
 const cx = classNames.bind(styles);
 
 function Login() {
+    const dispatch = useDispatch()
     const [email, setEmail] = useState('');
     const [textValidateEmail, setTextValidateEmail] = useState('');
     const [pass, setPass] = useState('');
@@ -56,10 +59,12 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('')
         let flagEmail = validateEmail(email);
         let flagPassword = validatePass(pass);
         if (flagEmail && flagPassword) {
             // Xử lý submit ở đây
+            dispatch(setLoading(true))
             try {
                 const data = {
                     email,
@@ -68,6 +73,8 @@ function Login() {
                 const { data: res } = await axios.post(`${process.env.REACT_APP_URL_BACKEND}/user/login`, data);
                 localStorage.setItem("accessToken", res.data.accessToken);
                 localStorage.setItem("refreshToken", res.data.refreshToken);
+            dispatch(setLoading(false))
+
                 if (res.data.isAdmin) {
                     window.location.href = "/admin";
                 }
@@ -76,6 +83,8 @@ function Login() {
                 }
 
             } catch (error) {
+                dispatch(setLoading(false))
+
                 if (
                     error.response &&
                     error.response.status >= 400 &&
@@ -140,7 +149,7 @@ function Login() {
                         <button type="button" className={cx('white_btn')}>
                             Đăng ký
                         </button>
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>

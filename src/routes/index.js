@@ -28,7 +28,7 @@ const publicRoutes = [
     { path: '/', component: Home, layout: HomeLayout },
     { path: '/explore', component: Explore, layout: HeaderOnlyLayout },
     { path: '/forgot', component: ForgetPassword, layout: null },
-    { path: '/users/:id/verify/:tokenLinkVerifyEmail', component: TemplateEmailVerify, layout: null },
+    { path: '/users/verify/:tokenLinkVerifyEmail', component: TemplateEmailVerify, layout: null },
     { path: '/user/:id/update-new-password/:tokenResetPassword', component: ResetPassword, layout: null },
     { path: '/project/:id/detail', component: DetailProject, layout: DefaultLayout },
     { path: '/project/:id/perk/detail', component: DetailPerk, layout: null },

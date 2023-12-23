@@ -3,8 +3,8 @@ import { UserController } from "../controllers/index.js";
 import checkToken from '../middlewares/auth.js'
 const router = express.Router();
 
-router.post('/register', UserController.registerUser);
-router.get("/:id/verify/:tokenLinkVerifyEmail", UserController.verifyEmailRegister);
+router.post('/checkRegisterEmail', UserController.checkRegisterEmail);
+router.get("/registerUser/:tokenLinkVerifyEmail", UserController.registerUser);
 router.post('/login', UserController.loginUser);
 router.get('/getInfoUser/:id', UserController.getInfoUser);
 router.get('/getUserByEmail/:email', UserController.getUserByEmail);

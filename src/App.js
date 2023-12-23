@@ -9,22 +9,6 @@ function App() {
     <Router>
       <div className="App">
         <CustomLayout>
-          {/* <Routes>
-            {publicRoutes.map((route, index) => {
-              let Layout = DefaultLayout;
-              if (route.layout) {
-                Layout = route.layout;
-              }
-              else if (route.layout === null) {
-                Layout = Fragment;
-              }
-              const Page = route.component;
-              return <Route key={index} path={route.path} element={
-                <Layout>
-                  <Page />
-                </Layout>} />
-            })}
-          </Routes> */}
           <Routes>
             
           {publicRoutes.map((route, index) => {
@@ -41,24 +25,6 @@ function App() {
                   <Page />
                 </Layout>} />
             })}
-            {/* <Route element={<PrivateUserRoutes />}>
-              {
-                privateUserRoutes.map((route, index) => {
-                  let Layout = DefaultLayout;
-                  if (route.layout) {
-                    Layout = route.layout;
-                  }
-                  else if (route.layout === null) {
-                    Layout = Fragment;
-                  }
-                  const Page = route.component;
-                  return <Route key={index} path={route.path} element={
-                    <Layout>
-                      <Page />
-                    </Layout>} />
-                })}
-
-            </Route> */}
             <Route element={<PrivateUserCampaignRoutes />}>
               {
                 privateUserRoutes.campaigns.map((route, index) => {
