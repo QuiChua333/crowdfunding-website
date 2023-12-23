@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import classNames from 'classnames/bind';
 import styles from './DetailProject.module.scss';
 import axios from 'axios';
@@ -6,15 +6,7 @@ import baseUrl from '../../../utils/baseURL';
 import defaultAvatar from '~/assets/images/defaultAvt.png';
 import formatMoney from '~/utils/formatMoney.js';
 import ProgressBar from '@ramonak/react-progress-bar';
-
-import {
-    AiFillFacebook,
-    AiFillTwitterSquare,
-    AiOutlineLink,
-    AiOutlineHeart,
-    AiOutlineDoubleLeft,
-    AiOutlineDoubleRight,
-} from 'react-icons/ai';
+import { AiOutlineHeart, AiOutlineDoubleLeft, AiOutlineDoubleRight } from 'react-icons/ai';
 import ModalPerk from './ModalPerk';
 import Footer from '~/components/Layout/components/Footer';
 import PerkItem from '~/components/Layout/components/PerkItem';
@@ -22,10 +14,26 @@ import ModalOptionPerk from './ModalOptionPerk';
 import { useParams } from 'react-router-dom';
 import formatPercent from '~/utils/formatPercent';
 import formatDate from '~/utils/formatDate';
+import { PiDotsThreeBold } from 'react-icons/pi';
+import DropDown from './Dropdown';
 
 const cx = classNames.bind(styles);
 
 function DetailProject() {
+    const [openDropDown, setOpenDropDown] = useState(false);
+    const docElement = useRef(null);
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (docElement.current && !docElement.current.contains(event.target)) {
+                setOpenDropDown(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [docElement]);
+
     const [ItemProject, setItemProject] = useState({});
     const [listPerkByCampaignId, setListPerkByCampaignId] = useState([]);
     const [quantityPeople, setQuantityPeople] = useState(0);
@@ -336,13 +344,9 @@ function DetailProject() {
                     <p className={cx('text-name')}>{ItemProject?.title}</p>
                     <p className={cx('text-des')}>{ItemProject?.tagline}</p>
                     <div className={cx('container-layout-info')}>
-                        <img
-                            className={cx('avatar')}
-                            src={ItemProject.owner?.avatar?.url || defaultAvatar}
-                            alt="avt"
-                        />
+                        <img className={cx('avatar')} src={ItemProject.owner?.avatar?.url || defaultAvatar} alt="avt" />
                         <div className={cx('container-info')}>
-                            <a href="" className={cx('name-user')}>
+                            <a href="/" className={cx('name-user')}>
                                 {ItemProject.owner?.fullName}
                             </a>
                             <div style={{ display: 'flex' }}>
@@ -356,10 +360,8 @@ function DetailProject() {
                     </div>
                     <div className={cx('container-layout-money')}>
                         <div className={cx('container-money')}>
-                            <b className={cx('text-current-money')}>
-                                {formatMoney(money)} 
-                            </b>
-                            <div style={{display: 'flex', alignItems: 'center'}}>
+                            <b className={cx('text-current-money')}>{formatMoney(money)}</b>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <span className={cx('container-people')}>{quantityPeople}</span>
                                 <span className={cx('text-people')}>người đóng góp</span>
                             </div>
@@ -368,26 +370,27 @@ function DetailProject() {
                             margin="6px 0"
                             labelAlignment="right"
                             labelColor="#fff"
-                            labelSize='12px'
+                            labelSize="12px"
                             width="100%"
                             baseBgColor="#ccc"
                             bgColor="#34ca96"
                             borderRadius="10px"
-                            height='16px'
+                            height="16px"
                             customLabel={formatPercent((money / ItemProject.goal) * 100)}
                             maxCompleted={ItemProject.goal}
                             completed={money}
                         />
                         <div className={cx('container-layout-deadline')}>
                             <div className={cx('container-deadline')}>
-                                <b className={cx('text-money-total')}>{formatPercent((money / ItemProject.goal) * 100) + " %"}</b>
+                                <b className={cx('text-money-total')}>
+                                    {formatPercent((money / ItemProject.goal) * 100) + ' %'}
+                                </b>
                                 <span className={cx('text-of')}>của</span>
                                 <b className={cx('text-money-total')}>{formatMoney(ItemProject.goal)}</b>
                             </div>
-                            
+
                             <b className={cx('container-people')}>
-                                {getDeadline()}{' '}
-                                <span className={cx('text-people')}>ngày còn lại</span>
+                                {getDeadline()} <span className={cx('text-people')}>ngày còn lại</span>
                             </b>
                         </div>
                     </div>
@@ -405,13 +408,20 @@ function DetailProject() {
                                 XEM QUÀ TẶNG
                             </button>
                             <button className={cx('hover-btn-follow')} type="button">
-                                <AiOutlineHeart className={cx('text-follow')}/> THEO DÕI
+                                <AiOutlineHeart className={cx('text-follow')} /> THEO DÕI
                             </button>
                         </div>
-                        <div>
-                            <AiFillFacebook className={cx('icon-link')} />
-                            <AiFillTwitterSquare className={cx('icon-link')} />
-                            <AiOutlineLink className={cx('icon-link')} />
+                        <div className={cx('action-doc')}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenDropDown((prev) => !prev);
+                            }}
+                            ref={docElement}
+                        >
+                            <PiDotsThreeBold style={{ fontSize: '20px', color: '#ccc'}} />
+                            <div className={cx('dropdown-wrapper')} style={{ display: openDropDown && 'block' }}>
+                                <DropDown />
+                            </div>
                         </div>
                     </div>
                 </div>

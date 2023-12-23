@@ -4,7 +4,7 @@ import styles from './SignUp.module.scss';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-
+import logoTrangNho from '~/assets/images/logoTrangNho.png'
 const cx = classNames.bind(styles);
 
 function SignUp() {
@@ -123,6 +123,7 @@ function SignUp() {
         <div className={cx('signup_container')}>
             <div className={cx('signup_form_container')}>
                 <div className={cx('left')}>
+                    <img style={{width: '120px', height: '120px'}} src={logoTrangNho} alt="logo"/>
                     <h2>Chào mừng bạn quay lại</h2>
                     <Link to="/login">
                         <button type="button" className={cx('white_btn')}>
