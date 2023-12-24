@@ -133,6 +133,7 @@ const getCampaignById = async (req, res) => {
                     path: 'owner',
                     model: 'User',
                 },
+                
             ])
             .exec();
 

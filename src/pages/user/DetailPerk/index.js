@@ -6,9 +6,8 @@ import ItemDetailPerkSelect from '~/components/ItemDetailPerkSelect';
 import { useLocation, useParams } from 'react-router-dom';
 import ModalDetailPerk from './ModalDetailPerk';
 import formatMoney from '~/utils/formatMoney';
-import axios from 'axios';
 import baseUrl from '../../../utils/baseURL';
-
+import customAxios from '~/utils/customAxios'
 const cx = classNames.bind(styles);
 
 function DetailPerk() {
@@ -30,7 +29,7 @@ function DetailPerk() {
     const getListPerksByCampaignId = async () => {
         try {
             const config = {};
-            const { data } = await axios.get(`${baseUrl}/perk/getPerksHasListItemsByCampaignId/${id}`, config);
+            const { data } = await customAxios.get(`${baseUrl}/perk/getPerksHasListItemsByCampaignId/${id}`, config);
             setListPerkByCampaignId([...data.data]);
             let arr = [...data.data].map((item) => {
                 if (item._id === itemPerkSelectedFirst._id) {

@@ -384,26 +384,33 @@ const checkLinkVerifyUser = async (req, res) => {
         })
     }
 }
-const refreshToken = async ({ refreshToken }) => {
+const refreshToken = async (req, res) => {
     try {
+        const {refreshToken} = req.body;
         const payload = jwt.verify(refreshToken, process.env.JWT_SECRET_REFRESH_TOKEN);
         const userId = payload.id;
         const user = await User.findById(userId).exec()
         if (user.refreshToken === refreshToken) {
             const newAccessToken = generateAccessToken({ email: user.email, id: user._id, isAdmin: user.isAdmin });
-            return {
-                accessToken: newAccessToken,
-                refreshToken: refreshToken
-            }
+            res.status(200).json({
+                data: {
+                    accessToken: newAccessToken,
+                    refreshToken: refreshToken
+                }
+            })
         }
         else throw new Error('Refresh token is invalid')
 
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
 
-            throw new Error('expired')
+            res.status(401).json({
+                message: error.message
+            })
         }
-        else throw new Error(error.message)
+        res.status(400).json({
+            message: error.message
+        })
     }
 }
 const checkAdmin = async (req, res) => {
