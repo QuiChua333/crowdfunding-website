@@ -1,27 +1,23 @@
 import classNames from "classnames/bind";
 import styles from './Dropdown.module.scss'
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setFilterExplore } from "~/redux/slides/GlobalApp";
 const cx = classNames.bind(styles)
 function DropDown({ active, activeHeader, listFieldGrouByCategory, style }) {
-    const handleClickField = (filed) => {
-        const queryParams = { field: filed };
-
-         const queryString = new URLSearchParams(queryParams).toString();
-
-    // Tạo đường dẫn với tham số truy vấn
-    const pathWithQuery = `/explore?${queryString}`;
-
-    // Mở một trang mới hoặc cửa sổ mới
-    window.location.href = pathWithQuery
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const handleClickField = (field) => {
+        dispatch(setFilterExplore({
+            field
+        }))
+        navigate('/explore')
     }
     const handleClickCategory = (category) => {
-        const queryParams = { category: category };
-
-         const queryString = new URLSearchParams(queryParams).toString();
-
-    // Tạo đường dẫn với tham số truy vấn
-    const pathWithQuery = `/explore?${queryString}`;
-
-    window.location.href = pathWithQuery
+        dispatch(setFilterExplore({
+            category
+        }))
+        navigate('/explore')
     }
     return (
         <div className={cx('wrapper', { active, activeHeader })} style={style}>
@@ -39,22 +35,22 @@ function DropDown({ active, activeHeader, listFieldGrouByCategory, style }) {
                 <div className={cx('categories')}>
                     {
                         listFieldGrouByCategory.map((item, index) => {
-                            return <div key={index} className={cx('category', {third: index===2, second: index===1, first: index===0})}>
+                            return <div key={index} className={cx('category', { third: index === 2, second: index === 1, first: index === 0 })}>
                                 <a onClick={() => handleClickCategory(item.category)} className={cx('label')}>{item.category}</a>
 
-                                <div className={cx('list-field', {first: index===0})}>
-                                    
+                                <div className={cx('list-field', { first: index === 0 })}>
+
                                     {
                                         item.listFields.map((item2, index2) => {
-                                          
-                                                return <div onClick={() => handleClickField(item2)} key={index2} className={cx('field-item')} ><span><a>{item2}</a></span></div>
+
+                                            return <div onClick={() => handleClickField(item2)} key={index2} className={cx('field-item')} ><span><a>{item2}</a></span></div>
                                         })
                                     }
                                 </div>
                             </div>
                         })
                     }
-                
+
                 </div>
 
             </div>

@@ -9,7 +9,8 @@ import { FaFacebookF } from "react-icons/fa";
 import baseURL from "~/utils/baseURL";
 import customAxios from '~/utils/customAxios'
 import { useDispatch, useSelector } from "react-redux";
-import { setPreviousLink } from "~/redux/slides/GlobalApp";
+import { setLoading, setPreviousLink } from "~/redux/slides/GlobalApp";
+import { toast } from "react-toastify";
 const cx = classNames.bind(styles);
 function EditSetting() {
     const dispatch = useDispatch()
@@ -29,7 +30,7 @@ function EditSetting() {
             return state
         })
     }, [user])
-    const [password,setPassword] = useState({
+    const [password, setPassword] = useState({
         currentPassword: '',
         newPassword: '',
         confirmNewPassword: ''
@@ -44,17 +45,36 @@ function EditSetting() {
     }
     useEffect(() => {
         console.log(password)
-    },[password])
+    }, [password])
     const handleClickVerify = async () => {
         try {
             dispatch(setPreviousLink(window.location.href))
             const res = await customAxios.get(`${baseURL}/user/getLinkVerifyUser`);
             const index = res.data.data.indexOf('givefun');
-            const link = res.data.data.substring(index-1);
+            const link = res.data.data.substring(index - 1);
             console.log(link)
             navigate(link)
         } catch (error) {
-            
+
+        }
+    }
+    const handleClickSavePassword = async () => {
+        dispatch(setLoading(true))
+        try {
+            const res = await customAxios.patch(`${baseURL}/user/updatePassword`, { currentPassword: password.currentPassword, newPassword: password.confirmNewPassword })
+            localStorage.setItem('accessToken',res.data.data.accessToken)
+            localStorage.setItem('refreshToken',res.data.data.refreshToken)
+            dispatch(setLoading(false))
+            toast.success('Cập nhật mật khẩu thành công!');
+            setPassword({
+                currentPassword: '',
+                newPassword: '',
+                confirmNewPassword: ''
+            })
+        } catch (error) {
+            dispatch(setLoading(false))
+            setPassword(prev => ({...prev, currentPassword: ''}))
+            toast.error(error.response.data.message);
         }
     }
     return (
@@ -183,19 +203,19 @@ function EditSetting() {
                         <div style={{ marginTop: '24px' }}>
                             <div className={cx('field')} style={{ maxWidth: '400px' }}>
                                 <label className={cx('field-label')}>Mật khẩu hiện tại</label>
-                                <input className={cx('itext-field')} name="currentPassword" onChange={handleChangeInputPassword}/>
+                                <input className={cx('itext-field')} name="currentPassword" onChange={handleChangeInputPassword} value={password.currentPassword}/>
                             </div>
                             <div className={cx('field')} style={{ maxWidth: '400px' }}>
                                 <label className={cx('field-label')}>Mật khẩu mới</label>
-                                <input className={cx('itext-field')} name="newPassword" onChange={handleChangeInputPassword}/>
+                                <input className={cx('itext-field')} name="newPassword" onChange={handleChangeInputPassword} value={password.newPassword}/>
                             </div>
                             <div className={cx('field')} style={{ maxWidth: '400px' }}>
                                 <label className={cx('field-label')}>Nhập lại mật khẩu mới</label>
-                                <input className={cx('itext-field')} name="confirmNewPassword" onChange={handleChangeInputPassword}/>
+                                <input className={cx('itext-field')} name="confirmNewPassword" onChange={handleChangeInputPassword} value={password.confirmNewPassword}/>
                             </div>
 
 
-                            <div className={cx('btn')} style={{ marginTop: '16px' }}>Lưu</div>
+                            <div onClick={handleClickSavePassword} className={cx('btn')} style={{ marginTop: '16px' }}>Lưu</div>
                         </div>
                     </div>
 

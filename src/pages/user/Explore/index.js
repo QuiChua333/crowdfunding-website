@@ -3,37 +3,38 @@ import { AiOutlineSearch, AiOutlineClose } from "react-icons/ai";
 import ProjectCardItem from "~/components/ProjectCardItem";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import customAxios from '~/utils/customAxios'
-
+import InfiniteScroll from "react-infinite-scroll-component";
 import baseURL from "~/utils/baseURL";
 import styles from './Explore.module.scss'
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 const cx = classNames.bind(styles);
 
 function Explore() {
     const navigate = useNavigate()
-    const location = useLocation();
+    const filterExplore = useSelector(state => state.globalApp.filterExplore)
     const [listFieldGrouByCategory, setListFieldGrouByCategory] = useState([])
-    const searchParams = new URLSearchParams(location.search);
-    const fieldParams = searchParams.get('field');
-    const categoryParams = searchParams.get('category')
-    const timeParams = searchParams.get('time')
-    const sortParams = searchParams.get('sort')
-    const textSearchParams = searchParams.get('textSearch')
+    const [pathWithQuery, setPathWithQuery] = useState('')
+    const [campaigns, setCampaigns] = useState([])
+    const [hasMore,setHasMore] = useState(true)
     const [filter, setFilter] = useState(() => {
         const state = {
-            field: fieldParams,
-            category: categoryParams,
-            time: timeParams || 'Tất cả',
-            textSearch: textSearchParams || '',
-            sort: sortParams || 'Xu hướng'
+            textSearch: '',
+            sort: 'Xu hướng',
+            category: 'Tất cả',
+            status: 'Tất cả',
+            ...filterExplore
         }
-        if (!categoryParams) delete state.category
-        if (!fieldParams) delete state.field
-        
-        return {...state}
+        if (filterExplore.field) {
+            delete state.category
+        }
+        return state
     })
+    useEffect(() => {
+        console.log(filter)
+    }, [filter])
     const getListCategory = async () => {
         try {
             const res = await customAxios.get(`${baseURL}/field/getFieldGroupByCategory`)
@@ -80,7 +81,7 @@ function Explore() {
                     }
                 }
             }))
-            
+
         } catch (error) {
 
         }
@@ -99,59 +100,25 @@ function Explore() {
         };
     }, [boxFilterElement]);
     const [activeBoxFilter, setActiveBoxFilter] = useState(false);
-    
-   
     useEffect(() => {
         getListCategory()
     }, [])
+    const getAllCampaign = async () => {
+        try {
+            const res = await customAxios.get(pathWithQuery)
+            // setLoadingData(false)
+            console.log(res.data.data)
 
-    const handleClickShowMore = (index, category) => {
-        if (category !== 'Tất cả') {
-            setListFieldGrouByCategory(prev => {
-                return [...prev].map((item, index2) => {
-                    if (index2 === index) {
-                        return {
-                            ...item,
-                            showMore: !item.showMore
-                        }
-                    }
-                    else return item
-                })
-            })
+            setCampaigns(res.data.data)
+            // setCampaignsOrigin(res.data.data.campaigns)
+
+        } catch (error) {
+
         }
-        console.log('in',category,filter.category)
-        if (category!==filter.category) {
-            setFilter(prev => ({ ...prev, category, field: '' }))
-        }
-
-     
     }
-    const handleFilterField = (field) => {
-       if (field!==filter.field) {
-        setFilter(prev => ({ ...prev, category: '', field }))
-       }
-    }
-    const handleChangeSearchInput = (e) => {
-        setFilter(prev => ({ ...prev, textSearch: e.target.value }))
-    }
-    const changeLocation = () => {
-        const queryParams = {
-            sort: filter.sort,
-            textSearch: filter.textSearch,
-            category: filter.category,
-            field: filter.field,
-            time: filter.time
-        };
-        if (!filter.category) delete queryParams.category
-        if (!filter.field) delete queryParams.field
-
-        const queryString = new URLSearchParams(queryParams).toString();
-        const pathWithQuery = `/explore?${queryString}`;
-
-        // Mở một trang mới hoặc cửa sổ mới
-        navigate(pathWithQuery)
+    useEffect(() => {
         setListFieldGrouByCategory(prev => {
-            return [...prev].map(item => {
+            const nextState = [...prev].map(item => {
                 if (item.category === filter.category) {
                     if (item.category !== 'Tất cả') {
                         return {
@@ -187,21 +154,79 @@ function Explore() {
                     }
                 }
             })
+            return nextState
+
         })
-        //gọi api get campaign
-    
-    }
-    useEffect(() => {
-        changeLocation()
-       
+        let queryParams = { searchString: filter.textSearch, sort: filter.sort, status: filter.status };
+        if (filter.category) {
+            queryParams.category = filter.category
+        }
+        if (filter.field) {
+            queryParams.field = filter.field
+        }
+        const queryString = new URLSearchParams(queryParams).toString();
+        const pathWithQuery = `${baseURL}/campaign/getAllCampaignsExplore?${queryString}`;
+        setPathWithQuery(pathWithQuery)
+
     }, [filter])
     useEffect(() => {
-      
-    }, [listFieldGrouByCategory])
-    const handleChangeTime = (e) => {
+        if (pathWithQuery) {
+            getAllCampaign();
+        }
+    }, [pathWithQuery])
+    const getMoreCmapigns = async () => {
+        if (campaigns.length < 200) {
+            try {
+                
+            } catch (error) {
+                
+            }
+        } 
+        else setHasMore(false)
+    }
+    const handleClickShowMore = (index, category) => {
+        if (category !== 'Tất cả') {
+            setListFieldGrouByCategory(prev => {
+                return [...prev].map((item, index2) => {
+                    if (index2 === index) {
+                        return {
+                            ...item,
+                            showMore: !item.showMore
+                        }
+                    }
+                    else return item
+                })
+            })
+        }
+        if (category !== filter.category) {
+            setFilter(prev => {
+                let nextState = { ...prev, category }
+                delete nextState.field
+                return nextState
+            })
+        }
+
+
+    }
+    const handleFilterField = (field) => {
+        if (field !== filter.field) {
+            setFilter(prev => {
+                let nextState = { ...prev, field }
+                delete nextState.category
+                return nextState
+            })
+        }
+    }
+    const handleChangeSearchInput = (e) => {
+        setFilter(prev => ({ ...prev, textSearch: e.target.value }))
+    }
+
+
+  
+    const handleChangeStatus = (e) => {
         setFilter(prev => ({
             ...prev,
-            time: e.target.value
+            status: e.target.value
         }))
     }
     return (
@@ -269,16 +294,17 @@ function Explore() {
 
                     </div>
 
+                 
                     <div className={cx('projectTimingFilter')}>
 
                         <div className={cx('projectTimingFilter-subheader')}>
-                            THỜI GIAN DỰ ÁN
+                            TRẠNG THÁI DỰ ÁN
                         </div>
 
                         <div>
                             <div style={{ marginTop: '16px' }}>
                                 <label className={cx('inputRadioGroup-radio')}>
-                                    <input type="radio" value={'Tất cả'} name="time" defaultChecked onChange={handleChangeTime} />
+                                    <input type="radio" value={'Tất cả'} name="status" defaultChecked onChange={handleChangeStatus} />
                                     <span className={cx('inputRadioGroup-radio-button')}></span>
                                     <span className={cx('inputRadioGroup-radio-label')}>
                                         <span>Tất cả</span>
@@ -286,17 +312,24 @@ function Explore() {
                                 </label>
 
                                 <label className={cx('inputRadioGroup-radio')}>
-                                    <input type="radio" value={'Vừa phát hành'} name="time" onChange={handleChangeTime} />
+                                    <input type="radio" value={'Đang gây quỹ'} name="status" onChange={handleChangeStatus} />
                                     <span className={cx('inputRadioGroup-radio-button')}></span>
                                     <span className={cx('inputRadioGroup-radio-label')}>
-                                        <span>Vừa phát hành</span>
+                                        <span>Đang gây quỹ</span>
                                     </span>
                                 </label>
                                 <label className={cx('inputRadioGroup-radio')}>
-                                    <input type="radio" value={'Sắp kết thúc'} name="time" onChange={handleChangeTime} />
+                                    <input type="radio" value={'InDemand'} name="status" onChange={handleChangeStatus} />
                                     <span className={cx('inputRadioGroup-radio-button')}></span>
                                     <span className={cx('inputRadioGroup-radio-label')}>
-                                        <span>Sắp kết thúc</span>
+                                        <span>InDemand</span>
+                                    </span>
+                                </label>
+                                <label className={cx('inputRadioGroup-radio')}>
+                                    <input type="radio" value={'Đã kết thúc'} name="status" onChange={handleChangeStatus} />
+                                    <span className={cx('inputRadioGroup-radio-button')}></span>
+                                    <span className={cx('inputRadioGroup-radio-label')}>
+                                        <span>Đã kết thúc</span>
                                     </span>
                                 </label>
                             </div>
@@ -309,7 +342,7 @@ function Explore() {
                     <div className={cx('exploreLayout-main-search')}>
                         <span className={cx('exploreLayout-main-icon-search')}><AiOutlineSearch /></span>
                         <input type="text" placeholder="Search for campaigns" className={cx('exploreLayout-main-input')} value={filter.textSearch} onChange={handleChangeSearchInput} />
-                        <span onClick={() => setFilter(prev => ({...prev, textSearch: ''}))} className={cx('exploreLayout-main-icon-close')}><AiOutlineClose /></span>
+                        <span onClick={() => setFilter(prev => ({ ...prev, textSearch: '' }))} className={cx('exploreLayout-main-icon-close')}><AiOutlineClose /></span>
                     </div>
 
                     <div className={cx('exploreLayout-main-separate')}>
@@ -325,7 +358,6 @@ function Explore() {
                                 activeBoxFilter &&
                                 <div className={cx('dropdownBoxFilter')} >
                                     <span onClick={() => setFilter(prev => ({ ...prev, sort: 'Xu hướng' }))} className={cx({ active: filter.sort === 'Xu hướng' })}>Xu hướng</span>
-                                    <span onClick={() => setFilter(prev => ({ ...prev, sort: 'InDemand' }))} className={cx({ active: filter.sort === 'InDemand' })}>InDemand</span>
                                     <span onClick={() => setFilter(prev => ({ ...prev, sort: 'Quyên góp nhiều nhất' }))} className={cx({ active: filter.sort === 'Quyên góp nhiều nhất' })}>Quyên góp nhiều nhất</span>
                                 </div>
                             }
@@ -335,15 +367,16 @@ function Explore() {
                     </div>
 
                     <div className={cx('exploreSearchResults')}>
-                        <ProjectCardItem />
-                        <ProjectCardItem />
-                        <ProjectCardItem />
-                        <ProjectCardItem />
-                        <ProjectCardItem />
-                        <ProjectCardItem />
-                        <ProjectCardItem />
-                        <ProjectCardItem />
-                        <ProjectCardItem />
+                        <InfiniteScroll 
+                        dataLength={campaigns.length}
+                        next={getMoreCmapigns}
+                        hasMore={hasMore}>
+                            {
+                                campaigns?.map((item,index) => {
+                                    return <ProjectCardItem key={index} campaign={item}/>   
+                                })
+                            }
+                        </InfiniteScroll>
                     </div>
 
                     <div className="d-flex justify-content-center">

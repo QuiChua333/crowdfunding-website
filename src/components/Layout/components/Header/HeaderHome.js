@@ -103,7 +103,7 @@ function Header2() {
                 <div className={cx('group')}>
 
                     <div className={cx('nav-list')}>
-                        <div className={cx('create-campaign')}><a href={!user.isAdmin ? '/start-a-campaign' : '#'}>Tạo chiến dịch</a></div>
+                        <div className={cx('create-campaign')}><Link to={!user.isAdmin ? '/start-a-campaign' : '/'}>Tạo chiến dịch</Link></div>
                         {
                             flat===false  &&
                             <>
@@ -132,7 +132,7 @@ function Header2() {
                                             user.isAdmin &&
                                             <span onClick={() => window.location.href = `/admin`}>Đến trang quản lý</span>
                                         }
-                                        <span onClick={handleClickLogout}>Đăng xuất</span>
+                                        <span onClick={handleClickLogout} style={{paddingBottom: '16px'}}>Đăng xuất</span>
                                     </div>
                                 }
                             </div>

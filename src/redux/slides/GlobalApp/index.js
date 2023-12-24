@@ -13,7 +13,10 @@ const initialState = {
         type: '',
         isShow: false
     },
-    previousLink: ''
+    previousLink: '',
+    filterExplore: {
+
+    }
 }
 
 const slice = createSlice({
@@ -32,9 +35,14 @@ const slice = createSlice({
         setPreviousLink: (state,action) => {
             state.previousLink = action.payload;
         },
+        setFilterExplore: (state,action) => {
+            state.filterExplore = {
+                ...action.payload
+            }
+        }
     },
     
 })
 
 export default slice.reducer;
-export const {setLoading, setMessageBox, setPreviousLink} = slice.actions
+export const {setLoading, setMessageBox, setPreviousLink, setFilterExplore} = slice.actions

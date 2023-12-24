@@ -19,7 +19,7 @@ router.get('/forgot-password/:id/verify-link/:tokenVerifyLinkForgotPassword', Us
 router.patch('/forgot-password/update-new-password', UserController.updateNewPassword);
 router.get('/checkAdmin', checkToken,UserController.checkAdmin);
 router.get('/checkIndividualOfUser/:userIdParams', checkToken,UserController.checkIndividualOfUser);
-
+router.patch('/updatePassword',checkToken,UserController.updatePassword)
 
 
 export default router

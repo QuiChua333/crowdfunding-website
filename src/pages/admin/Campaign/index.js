@@ -44,10 +44,11 @@ function CampaignManagement() {
         const queryString = new URLSearchParams(queryParams).toString(); 
         const pathWithQuery = `${baseURL}/campaign/getAllCampaigns?${queryString}`;
         setPathWithQuery(pathWithQuery)
-        getAllCampaigns()
     }, [filter])
     useEffect(() => {
-        getAllCampaigns()
+        if (pathWithQuery) {
+            getAllCampaigns()
+        }
     }, [pathWithQuery])
     const [campaigns, setCampaigns] = useState([])
     // const [campaignsOrigin, setCampaignsOrigin] = useState([])

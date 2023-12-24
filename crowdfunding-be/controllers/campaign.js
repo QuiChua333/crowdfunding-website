@@ -32,6 +32,7 @@ const editCampaign = async (req, res) => {
             tagline,
             location,
             field,
+            category,
             duration,
             videoUrl,
             story,
@@ -60,6 +61,8 @@ const editCampaign = async (req, res) => {
             campaign.goal = goal ?? campaign.goal
             campaign.momoNumber = momoNumber ?? campaign.momoNumber
             campaign.team = team ?? campaign.team
+            campaign.category = category ?? campaign.category
+            
             if (cardImage) {
 
                 if (cardImage.url !== '') {
@@ -486,7 +489,160 @@ const getAllCampaigns = async (req, res) => {
         })
     }
 }
+const getAllCampaignsExplore = async (req,res) => {
+    try {
+        let {  sort = 'Xu hướng', searchString = '', status = 'Tất cả', category, field } = req.query;
+        let filterCampaigns = []
+        if (category) {
+            if (category==='Tất cả') {
+                 filterCampaigns = await Campaign.aggregate([
+                    {
+                        $match: {
+                            $and: [
+                                {
+                                    title: { $regex: `.*${searchString}.*`, $options: 'i' }
+                                },
+                                {
+                                    status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                }
+                            ]
+                        }
+                    }
+                ]);
+            }
+            else {
+                filterCampaigns = await Campaign.aggregate([
+                    {
+                        $match: {
+                            $and: [
+                                {
+                                    title: { $regex: `.*${searchString}.*`, $options: 'i' }
+                                },
+                                {
+                                    category: category
+                                },
+                                {
+                                    status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                }
+                            ]
+                        }
+                    }
+                ]);
+            }
+        }
+        if (field) {
+            filterCampaigns = await Campaign.aggregate([
+                {
+                    $match: {
+                        $and: [
+                            {
+                                title: { $regex: `.*${searchString}.*`, $options: 'i' }
+                            },
+                            {
+                                field: field
+                            },
+                            {
+                                status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                            }
+                        ]
+                    }
+                }
+            ]);
+        }
+        for (let i = 0; i<filterCampaigns.length; i++) {
+            const backers = await Contribution.countDocuments({campaign: filterCampaigns[i]._id.toString()})
+            let result = await Contribution.aggregate([
+                {
+                    $match: { campaign: filterCampaigns[i]._id.toString() }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalMoney: { $sum: "$money" }
+                    }
+                }
+            ])
+            // const totalMoney = result.length > 0 ? result[0].totalMoney : 0;
+            const totalMoney = 4000000 + i
+            filterCampaigns[i].backers = backers
+            filterCampaigns[i].currentMoney = totalMoney
+            filterCampaigns[i].percentProgress =  totalMoney/filterCampaigns[i].goal*100
+            let startDateTime  =  new Date(filterCampaigns[i].startDate) 
+            let endDateTime = startDateTime.getTime() + filterCampaigns[i].duration*24*60*60*1000
+            const currentDateTime = new Date().getTime()
+            const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60*60));
+            let daysLeft = ''
+            if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
+            else daysLeft =  Math.ceil(remainingHours) + " giờ";
+            filterCampaigns[i].daysLeft = daysLeft
+            
+        }
+        if (sort === 'Xu hướng') {
+            filterCampaigns.sort((a,b) => b.backers - a.backers)
+        }
+        if (sort === 'Quyên góp nhiều nhất') {
+            filterCampaigns.sort((a,b) => b.currentMoney - a.currentMoney)
+        }
+        res.status(200).json({
+            message: 'Lấy thông tin chiến dịch thành công',
+            data: filterCampaigns
+        })
 
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
+const getPopulateCampaigns = async (req,res) => {
+    try {
+        let filterCampaigns = []
+        filterCampaigns = await Campaign.aggregate([
+            {
+                $match: {
+                    status:  {$nin: ['Bản nháp','Đang tạm ngưng', 'Đã kết thúc']}
+                }
+            }
+        ]);
+        for (let i = 0; i<filterCampaigns.length; i++) {
+            const backers = await Contribution.countDocuments({campaign: filterCampaigns[i]._id.toString()})
+            let result = await Contribution.aggregate([
+                {
+                    $match: { campaign: filterCampaigns[i]._id.toString() }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalMoney: { $sum: "$money" }
+                    }
+                }
+            ])
+            // const totalMoney = result.length > 0 ? result[0].totalMoney : 0;
+            const totalMoney = 4000000
+            filterCampaigns[i].backers = backers
+            filterCampaigns[i].currentMoney = totalMoney
+            filterCampaigns[i].percentProgress =  totalMoney/filterCampaigns[i].goal*100
+            let startDateTime  =  new Date(filterCampaigns[i].startDate) 
+            let endDateTime = startDateTime.getTime() + filterCampaigns[i].duration*24*60*60*1000
+            const currentDateTime = new Date().getTime()
+            const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60*60));
+            let daysLeft = ''
+            if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
+            else daysLeft =  Math.ceil(remainingHours) + " giờ";
+            filterCampaigns[i].daysLeft = daysLeft
+            
+        }
+        res.status(200).json({
+            message: 'Lấy thông tin chiến dịch thành công',
+            data: filterCampaigns
+        })
+
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
 const checkCampaignOfUser = async (req, res) => {
     try {
         debugger
@@ -527,6 +683,9 @@ const adminChangeStatusCampaign = async (req, res) => {
             const campaign = await Campaign.findById(idCampaign).exec();
             if (campaign) {
                 campaign.status = status;
+                if (status === 'Đang gây quỹ') {
+                    campaign.startDate = new Date()
+                }
                 await campaign.save()
                 res.status(200).json({
                     message: 'Admin change status campaign successfully',
@@ -583,6 +742,8 @@ export default {
     launchCampaign,
     getCampaignsOfUserId,
     getAllCampaigns,
+    getAllCampaignsExplore,
+    getPopulateCampaigns,
     checkCampaignOfUser,
     adminChangeStatusCampaign,
     adminDeleteCampaign

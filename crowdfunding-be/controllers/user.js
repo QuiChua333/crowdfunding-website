@@ -165,7 +165,6 @@ const registerUser = async (req, res) => {
 const getInfoCurrentUser = async (req, res) => {
     try {
         const userId = req.userId;
-        debugger
         const user = await User.findById(userId).exec();
         delete user._doc.password
         delete user._doc.refreshToken
@@ -384,26 +383,33 @@ const checkLinkVerifyUser = async (req, res) => {
         })
     }
 }
-const refreshToken = async ({ refreshToken }) => {
+const refreshToken = async (req, res) => {
     try {
+        const {refreshToken} = req.body;
         const payload = jwt.verify(refreshToken, process.env.JWT_SECRET_REFRESH_TOKEN);
         const userId = payload.id;
         const user = await User.findById(userId).exec()
         if (user.refreshToken === refreshToken) {
             const newAccessToken = generateAccessToken({ email: user.email, id: user._id, isAdmin: user.isAdmin });
-            return {
-                accessToken: newAccessToken,
-                refreshToken: refreshToken
-            }
+            res.status(200).json({
+                data: {
+                    accessToken: newAccessToken,
+                    refreshToken: refreshToken
+                }
+            })
         }
         else throw new Error('Refresh token is invalid')
 
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
 
-            throw new Error('expired')
+            res.status(401).json({
+                message: error.message
+            })
         }
-        else throw new Error(error.message)
+        res.status(400).json({
+            message: error.message
+        })
     }
 }
 const checkAdmin = async (req, res) => {
@@ -437,6 +443,33 @@ const checkIndividualOfUser = async (req, res) => {
         })
     }
 }
+const updatePassword = async (req, res) => {
+    try {
+        debugger
+        const userId = req.userId
+        const {currentPassword, newPassword} = req.body;
+        const user = await User.findById(userId).exec();
+        const isMatched = await bcrypt.compare(currentPassword,user.password)
+        debugger
+        if (!isMatched) {
+            throw new Error('Mật khẩu hiện tại không đúng')
+        }
+        const password = await bcrypt.hash(newPassword,parseInt(process.env.ROUNDS));
+        user.password = password;
+        const accessToken = generateAccessToken({ email: user.email, id: user._id, isAdmin: user.isAdmin });
+        const refreshToken = generateRefreshToken({ email: user.email, id: user._id, isAdmin: user.isAdmin });
+        user.refreshToken = refreshToken
+        await user.save();
+
+        return res.status(200).json({ data: { accessToken, refreshToken }, message: "Cập nhật mật khẩu thành công!" });
+
+    } catch (error) {
+        debugger
+        res.status(400).json({
+            message: error.message
+        })
+    }                        
+}
 export default {
     checkRegisterEmail,
     registerUser,
@@ -452,5 +485,6 @@ export default {
     refreshToken,
     getInfoCurrentUser,
     checkAdmin,
-    checkIndividualOfUser
+    checkIndividualOfUser,
+    updatePassword
 };

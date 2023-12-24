@@ -9,6 +9,8 @@ import { setLoading } from "~/redux/slides/GlobalApp";
 import { useDispatch, useSelector } from "react-redux";
 import baseURL from "~/utils/baseURL";
 import { TiTick } from "react-icons/ti";
+import PageNotFound from "~/pages/PrefixPage/PageNotFound";
+import { toast } from "react-toastify";
 const cx = classNames.bind(styles)
 
 function VerifyUser() {
@@ -63,11 +65,14 @@ function VerifyUser() {
             const infoVerify = { ...user.infoVerify }
             const res = await axios.patch(`${baseURL}/user/editUser/${user._id}`, { infoVerify })
             dispatch(setLoading(false))
+            toast.success('Gửi thông tin xác minh thành công')
             setUser(res.data.data)
 
         } catch (error) {
             console.log(error.message)
             dispatch(setLoading(false))
+            toast.error('Có lỗi trong quá trình gửi thông tin')
+
 
         }
     }
@@ -208,9 +213,7 @@ function VerifyUser() {
             }
             {
                 validLink === false &&
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-                    <span style={{ fontSize: '24px', fontWeight: '700' }}>404 NOT FOUND</span>
-                </div>
+                <PageNotFound />
             }
         </>
     );

@@ -82,6 +82,7 @@ function BasicCampaign() {
                 cardImage: res.data.data.cardImage  || {url: '', public_id: ''},
                 location: res.data.data.location || {country: '', city: ''},
                 field: res.data.data.field || '',
+                category: res.data.data.category || '',
                 duration: res.data.data.duration || '',
                 status: res.data.data.status,
             }
@@ -108,9 +109,9 @@ function BasicCampaign() {
         }
         
     }
-    const handleChangeField = (field) => {
+    const handleChangeField = (field,category) => {
         setCampaignState(prev => {
-            return {...prev, field: field}
+            return {...prev, field: field, category}
         })
     }
     useEffect(() => {
