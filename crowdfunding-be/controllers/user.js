@@ -383,7 +383,7 @@ const checkLinkVerifyUser = async (req, res) => {
         })
     }
 }
-const refreshToken = async (req, res) => {
+
 const refreshToken = async (req, res) => {
     try {
         const { refreshToken } = req.body;
@@ -524,4 +524,4 @@ export default {
     checkIndividualOfUser,
     updatePassword,
     handleFollowedCampaigns
-};
+}
