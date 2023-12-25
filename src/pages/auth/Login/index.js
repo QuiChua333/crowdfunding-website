@@ -5,13 +5,14 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import logoTrangNho from '~/assets/images/logoTrangNho.png'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '~/redux/slides/GlobalApp';
 
 const cx = classNames.bind(styles);
 
 function Login() {
     const dispatch = useDispatch()
+    const prevLink = useSelector(state => state.globalApp.previousLink)
     const [email, setEmail] = useState('');
     const [textValidateEmail, setTextValidateEmail] = useState('');
     const [pass, setPass] = useState('');
@@ -79,7 +80,14 @@ function Login() {
                     window.location.href = "/admin";
                 }
                 else {
-                    window.location.href = "/";
+                    if (prevLink.includes("@report")) {
+                        console.log(prevLink.substring(7))
+                        window.location.href = prevLink.substring(7)
+                    }
+                    else {
+                        window.location.href = "/";
+                    }
+                    
                 }
 
             } catch (error) {

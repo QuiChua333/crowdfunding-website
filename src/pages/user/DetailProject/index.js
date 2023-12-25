@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import classNames from 'classnames/bind';
 import styles from './DetailProject.module.scss';
-import axios from 'axios';
 import baseUrl from '../../../utils/baseURL';
 import defaultAvatar from '~/assets/images/defaultAvt.png';
 import formatMoney from '~/utils/formatMoney.js';
@@ -16,10 +15,27 @@ import formatPercent from '~/utils/formatPercent';
 import formatDate from '~/utils/formatDate';
 import { PiDotsThreeBold } from 'react-icons/pi';
 import DropDown from './Dropdown';
-
+import customAxios from '~/utils/customAxios';
+import ModalTeamMembersDetail from './ModalTeamMembersDetail';
+import ModalReport from './ModalReport';
 const cx = classNames.bind(styles);
 
 function DetailProject() {
+    const { id } = useParams();
+    const [isOpenModalMember, setIsOpenModalMember] = useState(false);
+    const [isOpenModalReport, setIsOpenModalReport] = useState(false);
+    const [ItemProject, setItemProject] = useState({});
+    const [listPerkByCampaignId, setListPerkByCampaignId] = useState([]);
+    const [quantityPeople, setQuantityPeople] = useState(0);
+    const [money, setMoney] = useState(0);
+    const [members, setMembers] = useState([]);
+    const [indexImage, setIndexImage] = useState(0);
+    const [isOpenModal, setIsOpenModal] = useState(false);
+    const [indexTabHeader, setIndexTabHeader] = useState(1);
+    const [isOpenModalOption, setIsOpenModalOption] = useState(false);
+    const [perkInModal, setPerkInModal] = useState(false);
+    const [itemPerkSelected, setItemPerkSelected] = useState({});
+    const [quantityCampaignOfUser, setQuantityCampaignOfUser] = useState(1);
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null);
     useEffect(() => {
@@ -33,20 +49,6 @@ function DetailProject() {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [docElement]);
-
-    const [ItemProject, setItemProject] = useState({});
-    const [listPerkByCampaignId, setListPerkByCampaignId] = useState([]);
-    const [quantityPeople, setQuantityPeople] = useState(0);
-    const [money, setMoney] = useState(0);
-    const [indexImage, setIndexImage] = useState(0);
-    const [isOpenModal, setIsOpenModal] = useState(false);
-    const [indexTabHeader, setIndexTabHeader] = useState(1);
-    const [isOpenModalOption, setIsOpenModalOption] = useState(false);
-    const [perkInModal, setPerkInModal] = useState(false);
-    const [itemPerkSelected, setItemPerkSelected] = useState({});
-    const [quantityCampaignOfUser, setQuantityCampaignOfUser] = useState(1);
-
-    const { id } = useParams();
 
     const project = {
         id: 'project1',
@@ -181,7 +183,7 @@ function DetailProject() {
     const getListPerksByCampaignId = async () => {
         try {
             const config = {};
-            const { data } = await axios.get(`${baseUrl}/perk/getPerksHasListItemsByCampaignId/${id}`, config);
+            const { data } = await customAxios.get(`${baseUrl}/perk/getPerksHasListItemsByCampaignId/${id}`, config);
             setListPerkByCampaignId([...data.data]);
         } catch (error) {
             console.log(error);
@@ -190,7 +192,7 @@ function DetailProject() {
     const getProjectById = async () => {
         try {
             const config = {};
-            const { data } = await axios.get(`${baseUrl}/campaign/getCampaignById/${id}`, config);
+            const { data } = await customAxios.get(`${baseUrl}/campaign/getCampaignById/${id}`, config);
             setItemProject({ ...data.data });
         } catch (error) {
             console.log(error);
@@ -199,7 +201,7 @@ function DetailProject() {
     const getQuantityCampaignOfUser = async () => {
         try {
             const config = {};
-            const { data } = await axios.get(`${baseUrl}/campaign/getQuantityCampaignByUser/${id}`, config);
+            const { data } = await customAxios.get(`${baseUrl}/campaign/getQuantityCampaignByUser/${id}`, config);
             setQuantityCampaignOfUser(data.data);
         } catch (error) {
             console.log(error);
@@ -208,7 +210,7 @@ function DetailProject() {
     const getQuantityPeople = async () => {
         try {
             const config = {};
-            const { data } = await axios.get(`${baseUrl}/contribution/getQuantityPeopleByCampaign/${id}`, config);
+            const { data } = await customAxios.get(`${baseUrl}/contribution/getQuantityPeopleByCampaign/${id}`, config);
             setQuantityPeople(data.data);
         } catch (error) {
             console.log(error);
@@ -217,8 +219,17 @@ function DetailProject() {
     const getMoney = async () => {
         try {
             const config = {};
-            const { data } = await axios.get(`${baseUrl}/contribution/getMoneyByCampaign/${id}`, config);
+            const { data } = await customAxios.get(`${baseUrl}/contribution/getMoneyByCampaign/${id}`, config);
             setMoney(data.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const getTeam = async () => {
+        try {
+            const { data } = await customAxios.get(`${baseUrl}/campaign/getTeamMember/${id}`);
+            setMembers([...data.data]);
+            console.log(members);
         } catch (error) {
             console.log(error);
         }
@@ -231,6 +242,7 @@ function DetailProject() {
         getDeadline();
         getQuantityPeople();
         getMoney();
+        getTeam();
     }, []);
 
     const handleURLImage = (linkURL) => {
@@ -346,7 +358,7 @@ function DetailProject() {
                     <div className={cx('container-layout-info')}>
                         <img className={cx('avatar')} src={ItemProject.owner?.avatar?.url || defaultAvatar} alt="avt" />
                         <div className={cx('container-info')}>
-                            <a href="/" className={cx('name-user')}>
+                            <a href={`/individuals/${ItemProject.owner?._id}/profile`} className={cx('name-user')}>
                                 {ItemProject.owner?.fullName}
                             </a>
                             <div style={{ display: 'flex' }}>
@@ -411,16 +423,21 @@ function DetailProject() {
                                 <AiOutlineHeart className={cx('text-follow')} /> THEO DÕI
                             </button>
                         </div>
-                        <div className={cx('action-doc')}
+                        <div
+                            className={cx('action-doc')}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setOpenDropDown((prev) => !prev);
                             }}
                             ref={docElement}
                         >
-                            <PiDotsThreeBold style={{ fontSize: '20px', color: '#ccc'}} />
+                            <PiDotsThreeBold style={{ fontSize: '20px', color: '#000' }} />
                             <div className={cx('dropdown-wrapper')} style={{ display: openDropDown && 'block' }}>
-                                <DropDown />
+                                <DropDown
+                                    setIsOpenModalMember={setIsOpenModalMember}
+                                    setIsOpenModalReport={setIsOpenModalReport}
+                                    IsOpenModalReport={isOpenModalReport}
+                                />
                             </div>
                         </div>
                     </div>
@@ -541,6 +558,10 @@ function DetailProject() {
                     setPerkInModal={setPerkInModal}
                 />
             )}
+            {isOpenModalMember && (
+                <ModalTeamMembersDetail members={members} setIsOpenModalMember={setIsOpenModalMember} />
+            )}
+            {isOpenModalReport && (<ModalReport setIsOpenModalReport={setIsOpenModalReport}/>)}
         </div>
     );
 }

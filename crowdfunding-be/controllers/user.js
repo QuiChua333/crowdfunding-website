@@ -384,6 +384,7 @@ const checkLinkVerifyUser = async (req, res) => {
     }
 }
 const refreshToken = async (req, res) => {
+const refreshToken = async (req, res) => {
     try {
         const { refreshToken } = req.body;
         const payload = jwt.verify(refreshToken, process.env.JWT_SECRET_REFRESH_TOKEN);
@@ -391,6 +392,7 @@ const refreshToken = async (req, res) => {
         const user = await User.findById(userId).exec()
         if (user.refreshToken === refreshToken) {
             const newAccessToken = generateAccessToken({ email: user.email, id: user._id, isAdmin: user.isAdmin });
+           
             res.status(200).json({
                 data: {
                     accessToken: newAccessToken,

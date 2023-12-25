@@ -18,6 +18,7 @@ import ProfilePersonal from '~/pages/user/Profile/ViewProfile/ProfilePersonal'
 import TemplateEmailVerify from '~/pages/auth/TemplateEmailVerify'
 import ResetPassword from '~/pages/auth/ResetPassword'
 import Contributes from '~/pages/user/Profile/ViewProfile/Contributes'
+import ModalDetailReport from '~/pages/admin/Complaint/ModalDetailReport'
 
 const loginRoutes = [
     { path: '/sign-up', component: SignUp, layout: null },
@@ -38,6 +39,7 @@ const publicRoutes = [
     { path: '/start-a-campaign', component: PrefixCampaign, layout: HeaderOnlyLayout },
     { path: '/givefun/verify-user/:tokenLinkVerifyUser', component: VerifyUser, layout: null },
     { path: '/campaigns/team/invitation/:tokenLinkInvitation', component: SuccessVerifyInvitation, layout: null },
+    { path: '/modal', component: ModalDetailReport, layout: null }
 ]
 const adminRoutes = [
     { path: '/admin/campaigns', component: CampaignManagement, layout: AdminLayout },
@@ -46,7 +48,6 @@ const adminRoutes = [
     { path: '/admin/progress-contribute', component: ProgressAndContributeManagement, layout: AdminLayout },
     { path: '/admin/complaint', component: ComplaintManagement, layout: AdminLayout },
     { path: '/admin', component: CampaignManagement, layout: AdminLayout },
-
 ]
 const privateUserRoutes = {
     campaigns: [
