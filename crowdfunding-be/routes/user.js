@@ -11,7 +11,7 @@ router.get('/getUserByEmail/:email', UserController.getUserByEmail);
 router.get('/getInfoCurrentUser',checkToken, UserController.getInfoCurrentUser);
 
 router.patch('/editUser/:id', UserController.editUser);
-router.get('/getLinkVerifyUser',checkToken, UserController.getLinkVerifyUser);
+router.get('/getLinkVerifyUser/:userId',checkToken, UserController.getLinkVerifyUser);
 router.get('/checkLinkVerifyUser/:tokenLink', UserController.checkLinkVerifyUser);
 router.post('/refreshToken',UserController.refreshToken)
 router.post('/forgot-password', UserController.forgotPassword);
@@ -20,6 +20,7 @@ router.patch('/forgot-password/update-new-password', UserController.updateNewPas
 router.get('/checkAdmin', checkToken,UserController.checkAdmin);
 router.get('/checkIndividualOfUser/:userIdParams', checkToken,UserController.checkIndividualOfUser);
 router.patch('/updatePassword',checkToken,UserController.updatePassword)
+router.patch('/handleFollowedCampaigns',checkToken,UserController.handleFollowedCampaigns)
 
 
 export default router

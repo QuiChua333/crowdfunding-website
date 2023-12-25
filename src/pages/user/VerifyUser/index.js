@@ -28,6 +28,15 @@ function VerifyUser() {
             console.log(error.message)
         }
     }
+    const handleClickBack = () => {
+        if (previousLink.startsWith('@campaignFund')) {
+            const link = previousLink.substring(13);
+            window.location.href = link
+        }
+        else {
+            window.location.href = '/'
+        }
+    }
     const handleChangeInputText = (e) => {
         const name = e.target.name;
         const value = e.target.value
@@ -113,7 +122,7 @@ function VerifyUser() {
                             </div>
 
                             <div className={cx('return')} style={{ marginTop: '28px' }}>
-                                <span onClick={() => window.location.href = previousLink} style={{ fontSize: '14px', fontWeight: '500' }}><IoArrowBackSharp style={{ fontSize: '18px', marginBottom: '4px' }} /> Quay về Give Fun</span>
+                                <span onClick={handleClickBack} style={{ fontSize: '14px', fontWeight: '500' }}><IoArrowBackSharp style={{ fontSize: '18px', marginBottom: '4px' }} /> Quay về Give Fun</span>
                             </div>
 
                             <div className={cx('footer')}>

@@ -315,7 +315,8 @@ const sendInvitation = async (req, res) => {
             await campaign.save();
             res.status(200).json({
                 message: 'Send invitation successfully',
-                email
+                email,
+                url
             })
         }
         else throw new Error('Không tồn tại chiến dịch')
@@ -594,6 +595,193 @@ const getAllCampaignsExplore = async (req,res) => {
         })
     }
 }
+const getMoreCampaigns = async (req,res) => {
+    try {
+        let {  sort = 'Xu hướng', searchString = '', status = 'Tất cả', category, field, page = 1} = req.query;
+        const size = 15;
+        let filterCampaigns = []
+        if (category) {
+            if (category==='Tất cả') {
+                 filterCampaigns = await Campaign.aggregate([
+                    {
+                        $match: {
+                            $and: [
+                                {
+                                    title: { $regex: `.*${searchString}.*`, $options: 'i' }
+                                },
+                                {
+                                    status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                }
+                            ]
+                        }
+                    },        
+                    {
+                        $limit: page*size
+                    }
+                ]);
+            }
+            else {
+                filterCampaigns = await Campaign.aggregate([
+                    {
+                        $match: {
+                            $and: [
+                                {
+                                    title: { $regex: `.*${searchString}.*`, $options: 'i' }
+                                },
+                                {
+                                    category: category
+                                },
+                                {
+                                    status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $limit: page*size
+                    }
+                ]);
+            }
+        }
+        if (field) {
+            filterCampaigns = await Campaign.aggregate([
+                {
+                    $match: {
+                        $and: [
+                            {
+                                title: { $regex: `.*${searchString}.*`, $options: 'i' }
+                            },
+                            {
+                                field: field
+                            },
+                            {
+                                status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                            }
+                        ]
+                    }
+                },
+                {
+                    $limit: page*size
+                }
+            ]);
+        }
+        for (let i = 0; i<filterCampaigns.length; i++) {
+            const backers = await Contribution.countDocuments({campaign: filterCampaigns[i]._id.toString()})
+            let result = await Contribution.aggregate([
+                {
+                    $match: { campaign: filterCampaigns[i]._id.toString() }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalMoney: { $sum: "$money" }
+                    }
+                }
+            ])
+            // const totalMoney = result.length > 0 ? result[0].totalMoney : 0;
+            const totalMoney = 4000000 + i
+            filterCampaigns[i].backers = backers
+            filterCampaigns[i].currentMoney = totalMoney
+            filterCampaigns[i].percentProgress =  totalMoney/filterCampaigns[i].goal*100
+            let startDateTime  =  new Date(filterCampaigns[i].startDate) 
+            let endDateTime = startDateTime.getTime() + filterCampaigns[i].duration*24*60*60*1000
+            const currentDateTime = new Date().getTime()
+            const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60*60));
+            let daysLeft = ''
+            if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
+            else daysLeft =  Math.ceil(remainingHours) + " giờ";
+            filterCampaigns[i].daysLeft = daysLeft
+            
+        }
+        if (sort === 'Xu hướng') {
+            filterCampaigns.sort((a,b) => b.backers - a.backers)
+        }
+        if (sort === 'Quyên góp nhiều nhất') {
+            filterCampaigns.sort((a,b) => b.currentMoney - a.currentMoney)
+        }
+        res.status(200).json({
+            message: 'Lấy thông tin chiến dịch thành công',
+            data: filterCampaigns.slice((page-1)*size)
+        })
+
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
+const getTotalCampaignsExplore = async (req,res) => {
+    try {
+        let {  sort = 'Xu hướng', searchString = '', status = 'Tất cả', category, field } = req.query;
+        let filterCampaigns = []
+        if (category) {
+            if (category==='Tất cả') {
+                 filterCampaigns = await Campaign.aggregate([
+                    {
+                        $match: {
+                            $and: [
+                                {
+                                    title: { $regex: `.*${searchString}.*`, $options: 'i' }
+                                },
+                                {
+                                    status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                }
+                            ]
+                        }
+                    }
+                ]);
+            }
+            else {
+                filterCampaigns = await Campaign.aggregate([
+                    {
+                        $match: {
+                            $and: [
+                                {
+                                    title: { $regex: `.*${searchString}.*`, $options: 'i' }
+                                },
+                                {
+                                    category: category
+                                },
+                                {
+                                    status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                }
+                            ]
+                        }
+                    }
+                ]);
+            }
+        }
+        if (field) {
+            filterCampaigns = await Campaign.aggregate([
+                {
+                    $match: {
+                        $and: [
+                            {
+                                title: { $regex: `.*${searchString}.*`, $options: 'i' }
+                            },
+                            {
+                                field: field
+                            },
+                            {
+                                status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                            }
+                        ]
+                    }
+                }
+            ]);
+        }
+      
+        res.status(200).json({
+            message: 'Lấy thông tin chiến dịch thành công',
+            data: filterCampaigns.length
+        })
+
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
 const getPopulateCampaigns = async (req,res) => {
     try {
         let filterCampaigns = []
@@ -743,6 +931,8 @@ export default {
     getCampaignsOfUserId,
     getAllCampaigns,
     getAllCampaignsExplore,
+    getMoreCampaigns,
+    getTotalCampaignsExplore,
     getPopulateCampaigns,
     checkCampaignOfUser,
     adminChangeStatusCampaign,

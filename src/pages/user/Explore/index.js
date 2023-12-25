@@ -14,11 +14,12 @@ const cx = classNames.bind(styles);
 
 function Explore() {
     const navigate = useNavigate()
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalCampaigns, setTotalCampaigns] = useState(0)
     const filterExplore = useSelector(state => state.globalApp.filterExplore)
     const [listFieldGrouByCategory, setListFieldGrouByCategory] = useState([])
     const [pathWithQuery, setPathWithQuery] = useState('')
     const [campaigns, setCampaigns] = useState([])
-    const [hasMore,setHasMore] = useState(true)
     const [filter, setFilter] = useState(() => {
         const state = {
             textSearch: '',
@@ -32,9 +33,9 @@ function Explore() {
         }
         return state
     })
-    useEffect(() => {
-        console.log(filter)
-    }, [filter])
+    // useEffect(() => {
+    //     console.log(filter)
+    // }, [filter])
     const getListCategory = async () => {
         try {
             const res = await customAxios.get(`${baseURL}/field/getFieldGroupByCategory`)
@@ -157,32 +158,59 @@ function Explore() {
             return nextState
 
         })
-        let queryParams = { searchString: filter.textSearch, sort: filter.sort, status: filter.status };
-        if (filter.category) {
-            queryParams.category = filter.category
-        }
-        if (filter.field) {
-            queryParams.field = filter.field
-        }
-        const queryString = new URLSearchParams(queryParams).toString();
-        const pathWithQuery = `${baseURL}/campaign/getAllCampaignsExplore?${queryString}`;
-        setPathWithQuery(pathWithQuery)
-
+        getTotalCampaignsExplore()
+        getMoreCmapigns('reset')
     }, [filter])
-    useEffect(() => {
-        if (pathWithQuery) {
-            getAllCampaign();
-        }
-    }, [pathWithQuery])
-    const getMoreCmapigns = async () => {
-        if (campaigns.length < 200) {
-            try {
-                
-            } catch (error) {
-                
+    const getTotalCampaignsExplore = async () => {
+        try {
+            let queryParams = { searchString: filter.textSearch, sort: filter.sort, status: filter.status};
+            if (filter.category) {
+                queryParams.category = filter.category
             }
-        } 
-        else setHasMore(false)
+            if (filter.field) {
+                queryParams.field = filter.field
+            }
+            const queryString = new URLSearchParams(queryParams).toString();
+            const pathWithQuery = `${baseURL}/campaign/getTotalCampaignsExplore?${queryString}`;
+            // setPathWithQuery(pathWithQuery)
+            const res = await customAxios.get(pathWithQuery)
+            setTotalCampaigns(prev => ({...prev, total: res.data.data}))
+        } catch (error) {
+
+        }
+    }
+
+
+    useEffect(() => {
+  
+        if (currentPage>1) {
+            getMoreCmapigns('next')
+        }
+    }, [currentPage])
+    const getMoreCmapigns = async (type) => {
+        try {
+            let queryParams = { searchString: filter.textSearch, sort: filter.sort, status: filter.status, page: type==='reset' ? 1 : currentPage };
+            if (filter.category) {
+                queryParams.category = filter.category
+            }
+            if (filter.field) {
+                queryParams.field = filter.field
+            }
+            const queryString = new URLSearchParams(queryParams).toString();
+            const pathWithQuery = `${baseURL}/campaign/getMoreCampaigns?${queryString}`;
+            // setPathWithQuery(pathWithQuery)
+            const res = await customAxios.get(pathWithQuery) 
+            if (type==='reset') {
+                setCampaigns([...res.data.data])
+            }
+            else {
+                setCampaigns(prev => [...prev,...res.data.data])
+            }
+
+            // setCampaigns(res.data.data)
+        } catch (error) {
+
+        }
     }
     const handleClickShowMore = (index, category) => {
         if (category !== 'Tất cả') {
@@ -222,7 +250,7 @@ function Explore() {
     }
 
 
-  
+
     const handleChangeStatus = (e) => {
         setFilter(prev => ({
             ...prev,
@@ -294,7 +322,7 @@ function Explore() {
 
                     </div>
 
-                 
+
                     <div className={cx('projectTimingFilter')}>
 
                         <div className={cx('projectTimingFilter-subheader')}>
@@ -366,14 +394,16 @@ function Explore() {
 
                     </div>
 
-                    <div className={cx('exploreSearchResults')}>
-                        <InfiniteScroll 
-                        dataLength={campaigns.length}
-                        next={getMoreCmapigns}
-                        hasMore={hasMore}>
+                    <div>
+                        <InfiniteScroll
+                            className={cx('exploreSearchResults')}
+                            loader={<p>loading...</p>}
+                            dataLength={campaigns.length}
+                            next={() => setCurrentPage(prev => prev + 1)}
+                            hasMore={campaigns.length < totalCampaigns}>
                             {
-                                campaigns?.map((item,index) => {
-                                    return <ProjectCardItem key={index} campaign={item}/>   
+                                campaigns?.map((item, index) => {
+                                    return <ProjectCardItem key={index} campaign={item} />
                                 })
                             }
                         </InfiniteScroll>

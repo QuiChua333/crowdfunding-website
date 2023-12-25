@@ -1,19 +1,41 @@
 import classNames from "classnames/bind";
 import styles from './ProjectCardItem.module.scss'
-import { AiOutlineHeart } from "react-icons/ai";
+import { FaRegHeart, FaHeart  } from "react-icons/fa";
 import { AiFillClockCircle } from "react-icons/ai";
-import { AiTwotoneHeart } from "react-icons/ai";
-import { useState } from "react";
+import customAxios from '~/utils/customAxios'
+import { useEffect, useState } from "react";
 import formatMoney from "~/utils/formatMoney";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import baseURL from "~/utils/baseURL";
 
 
 const cx = classNames.bind(styles);
 
-function ProjectCardItem({campaign}) {
-
+function ProjectCardItem({campaign, refreshCampaign}) {
+    const currentUser = useSelector(state => state.user.currentUser)
+    const navigate = useNavigate()
     const [favourite, setFavourite] = useState(false);
+    useEffect(() => {
+        if (currentUser.followedCampaigns?.includes(campaign._id)) {
+            setFavourite(true)
+        }
+        else setFavourite(false)
+    },[campaign])
+    const handleClickCampaign = () => {
+        window.location.href = `/project/${campaign._id}/detail`
+    }
+    const handleClickHeart = async (e) => {
+        e.stopPropagation();
+        try {
+            const res = await customAxios.patch(`${baseURL}/user/handleFollowedCampaigns`,{campaignId:campaign._id})
+            setFavourite(res.data.data)
+        } catch (error) {
+            
+        }
+    }
     return (
-        <div className={cx('wrapper')}>
+        <div className={cx('wrapper')} onClick={handleClickCampaign}>
             <div className={cx('card-image')}> 
                 <img src={campaign?.cardImage?.url} alt="project-image"/>
             </div>
@@ -22,7 +44,7 @@ function ProjectCardItem({campaign}) {
                 <div className={cx('card-status')}>
                     <span className={cx('status')}>{campaign?.status}</span>
                     
-                    {favourite?<AiTwotoneHeart className={cx('heart-active')}/> : <AiOutlineHeart className={cx('heart')}/> }
+                    <span onClick={handleClickHeart}>{favourite?<FaHeart className={cx('heart-active')}/> : <FaRegHeart className={cx('heart')}/> }</span>
                       
                        
                     

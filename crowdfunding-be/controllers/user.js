@@ -86,7 +86,7 @@ const forgotPassword = async (req, res) => {
         res.status(200).json({
             message: `Một liên kết cập nhật mật khẩu đã được gửi đến ${emailUser.email}. Liên kết tồn tại trong 5 phút.`,
             data: url
-         });
+        });
 
     } catch (error) {
         return res.status(400).json({
@@ -143,13 +143,13 @@ const registerUser = async (req, res) => {
             const user = await User.create({
                 ...newUser,
                 isVerifiedEmail: true,
-                avatar : {
-                    url : "https://res.cloudinary.com/nqportfolio/image/upload/v1703343774/CROWDFUNDING/lvadocmjdweyplapvtin.png",
-                    public_id : "CROWDFUNDING/lvadocmjdweyplapvtin"
+                avatar: {
+                    url: "https://res.cloudinary.com/nqportfolio/image/upload/v1703343774/CROWDFUNDING/lvadocmjdweyplapvtin.png",
+                    public_id: "CROWDFUNDING/lvadocmjdweyplapvtin"
                 },
-                profileImage : {
-                    url : "https://res.cloudinary.com/nqportfolio/image/upload/v1703343774/CROWDFUNDING/lvadocmjdweyplapvtin.png",
-                    public_id : "CROWDFUNDING/lvadocmjdweyplapvtin"
+                profileImage: {
+                    url: "https://res.cloudinary.com/nqportfolio/image/upload/v1703343774/CROWDFUNDING/lvadocmjdweyplapvtin.png",
+                    public_id: "CROWDFUNDING/lvadocmjdweyplapvtin"
                 }
             })
 
@@ -340,7 +340,7 @@ const editUser = async (req, res) => {
 
 const getLinkVerifyUser = async (req, res) => {
     try {
-        const userId = req.userId;
+        const {userId} = req.params;
         const tokenLink = jwt.sign({
             userId: userId
         },
@@ -349,7 +349,7 @@ const getLinkVerifyUser = async (req, res) => {
                 expiresIn: '10m'
             }
         )
-        const url = `${process.env.FRONT_END_URL}givefun/verify-user/${tokenLink}`;
+        const url = `/givefun/verify-user/${tokenLink}`;
         res.status(200).json({
             message: 'Get user successfully',
             data: url
@@ -385,7 +385,7 @@ const checkLinkVerifyUser = async (req, res) => {
 }
 const refreshToken = async (req, res) => {
     try {
-        const {refreshToken} = req.body;
+        const { refreshToken } = req.body;
         const payload = jwt.verify(refreshToken, process.env.JWT_SECRET_REFRESH_TOKEN);
         const userId = payload.id;
         const user = await User.findById(userId).exec()
@@ -447,14 +447,14 @@ const updatePassword = async (req, res) => {
     try {
         debugger
         const userId = req.userId
-        const {currentPassword, newPassword} = req.body;
+        const { currentPassword, newPassword } = req.body;
         const user = await User.findById(userId).exec();
-        const isMatched = await bcrypt.compare(currentPassword,user.password)
+        const isMatched = await bcrypt.compare(currentPassword, user.password)
         debugger
         if (!isMatched) {
             throw new Error('Mật khẩu hiện tại không đúng')
         }
-        const password = await bcrypt.hash(newPassword,parseInt(process.env.ROUNDS));
+        const password = await bcrypt.hash(newPassword, parseInt(process.env.ROUNDS));
         user.password = password;
         const accessToken = generateAccessToken({ email: user.email, id: user._id, isAdmin: user.isAdmin });
         const refreshToken = generateRefreshToken({ email: user.email, id: user._id, isAdmin: user.isAdmin });
@@ -468,7 +468,41 @@ const updatePassword = async (req, res) => {
         res.status(400).json({
             message: error.message
         })
-    }                        
+    }
+}
+const handleFollowedCampaigns = async (req, res) => {
+    try {
+        let isFollowed;
+        const { campaignId } = req.body;
+        const userId = req.userId;
+        const user = await User.findById(userId).exec();
+        let followedCampaigns = user.followedCampaigns
+        if (followedCampaigns) {
+            if (followedCampaigns.includes(campaignId)) {
+                isFollowed=false
+                followedCampaigns = followedCampaigns.filter(item => item.toString()!==campaignId)
+            }
+            else {
+                isFollowed=true
+                followedCampaigns = [...followedCampaigns, campaignId]
+            }
+        }
+        else {
+            isFollowed=true
+            followedCampaigns = [campaignId]
+        }
+        
+        user.followedCampaigns = followedCampaigns;
+        await user.save()
+        res.status(200).json({
+            message: 'A',
+            data: isFollowed
+        })
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
 }
 export default {
     checkRegisterEmail,
@@ -486,5 +520,6 @@ export default {
     getInfoCurrentUser,
     checkAdmin,
     checkIndividualOfUser,
-    updatePassword
+    updatePassword,
+    handleFollowedCampaigns
 };

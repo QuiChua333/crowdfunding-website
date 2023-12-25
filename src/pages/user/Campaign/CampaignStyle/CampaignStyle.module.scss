@@ -66,6 +66,18 @@
             color: #ffffff;
         }
 }
+.btn-green {
+
+    background-color:     #34ca96;
+    border: none;
+    color: #ffffff;
+    margin-left: 16px;
+
+    &:hover {
+        background-color: #2eb183;
+        color: #ffffff;
+    }
+}
 
 
 .btn-cancel {

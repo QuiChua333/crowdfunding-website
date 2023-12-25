@@ -52,7 +52,7 @@ function ItemCampaign({ item }) {
                     <p className={cx('campaign-tagline')}>
                         {item.fullName}</p>
                     <span className={cx('campaign-id')}>
-                        Campaign ID: {item._id?.substring(10)}</span>
+                        Mã chiến dịch: {item._id?.substring(10)}</span>
                 </div>
             </div>
             <div>

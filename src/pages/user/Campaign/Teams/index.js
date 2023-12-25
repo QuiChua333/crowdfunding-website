@@ -78,7 +78,7 @@ function TeamCampaign() {
             if (!res.data.data) {
                 setContentError('Email người dùng này không tồn tại trong hệ thống')
                 setShowErrorDelete(true)
-        dispatch(setLoading(false))
+                dispatch(setLoading(false))
 
                 return;
             }
@@ -86,7 +86,7 @@ function TeamCampaign() {
             if (members?.some(item => item.user.email === email)) {
                 setContentError('Email người dùng này đã nằm trong team của bạn!')
                 setShowErrorDelete(true)
-        dispatch(setLoading(false))
+                dispatch(setLoading(false))
 
                 return;
             }
@@ -95,12 +95,12 @@ function TeamCampaign() {
                 email,
                 canEdit: isCheckRoleEditing,
             })
-        dispatch(setLoading(false))
-
+            dispatch(setLoading(false))
+            setShowErrorDelete(false)
             setEmail('');
             setCheckRoleEditng(false)
             getTeamMember()
-            setShowErrorDelete(false)
+   
 
         } catch (error) {
             console.log(error.message)
@@ -128,7 +128,7 @@ function TeamCampaign() {
     const handleChangeEdit = (memberId, valueEdit) => {
         setMembers(prev => [...prev].map(item => {
             if (item.user._id === memberId) {
-                return {...item, canEdit: valueEdit}
+                return { ...item, canEdit: valueEdit }
             }
             else return item
         }))
@@ -136,7 +136,7 @@ function TeamCampaign() {
     const handleChangeRole = (memberId, role) => {
         setMembers(prev => [...prev].map(item => {
             if (item.user._id === memberId) {
-                return {...item, role: role}
+                return { ...item, role: role }
             }
             else return item
         }))
@@ -144,8 +144,8 @@ function TeamCampaign() {
     }
     useEffect(() => {
         console.log(members)
-    },[members])
-    
+    }, [members])
+
     useEffect(() => {
         if (messageBox.type === 'deleteMember') {
             if (messageBox.result === true) {
@@ -161,9 +161,9 @@ function TeamCampaign() {
         dispatch(setLoading(true))
         try {
             const res = await customAxios.patch(`${baseURL}/campaign/editCampaign/${id}`, {
-                team: [...members].map(item => ({...item, user: item.user._id}))
+                team: [...members].map(item => ({ ...item, user: item.user._id }))
             })
-        dispatch(setLoading(false))
+            dispatch(setLoading(false))
             window.location.href = `/campaigns/${id}/edit/funding`
         } catch (error) {
             console.log(error.message)
@@ -188,9 +188,9 @@ function TeamCampaign() {
                                 <div className={cx('controlBar-content')}>
                                     Chiến dịch / Team
                                 </div>
-                               
+
                             </div>
-        
+
                             {
                                 showErrorDelete &&
                                 <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#ff324b', paddingLeft: '40px', height: '80px' }}>
@@ -241,7 +241,7 @@ function TeamCampaign() {
                                                 <div style={{ borderTop: '1px solid #C8C8C8' }}></div>
                                                 {
                                                     members?.filter(item => item.isOwner === false).map((item2, index) => {
-                                                        return <TeamMember key={index} member={item2} removeMember={handleRemoveMember} changeEdit={handleChangeEdit} changeRole={handleChangeRole}/>
+                                                        return <TeamMember key={index} member={item2} removeMember={handleRemoveMember} changeEdit={handleChangeEdit} changeRole={handleChangeRole} />
                                                     })
                                                 }
 
@@ -262,7 +262,7 @@ function TeamCampaign() {
 
                 </div>
             </div>
-   
+
         </>
     );
 }

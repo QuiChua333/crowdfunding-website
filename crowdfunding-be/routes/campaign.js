@@ -17,7 +17,13 @@ router.delete('/:id/deleteMember/:memberId',checkToken,CampaignController.delete
 router.get('/getQuantityCampaignByUser/:id',CampaignController.getQuantityCampaingnPerUser)
 router.get('/getCampaignsOfUserId/:id',CampaignController.getCampaignsOfUserId)
 router.get('/getAllCampaigns',checkToken,CampaignController.getAllCampaigns)
+
+//explore
 router.get('/getAllCampaignsExplore',CampaignController.getAllCampaignsExplore)
+router.get('/getMoreCampaigns',CampaignController.getMoreCampaigns)
+router.get('/getTotalCampaignsExplore',CampaignController.getTotalCampaignsExplore)
+
+
 router.get('/getPopulateCampaigns',CampaignController.getPopulateCampaigns)
 
 router.get('/checkCampaignOfUser/:idCampaign',checkToken,CampaignController.checkCampaignOfUser)

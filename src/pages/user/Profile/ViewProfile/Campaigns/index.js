@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 const cx = classNames.bind(styles);
 function ViewCampaigns() {
     const [isHasCampaign, setHasCampaign] = useState(false)
+    const [isHasCampaignMember, setHasCampaignMember] = useState(false)
     const currentUser = useSelector(state => state.user.currentUser)
     const { id } = useParams()
     const [campaignsOfUser, setCampaignOfUser] = useState([])
@@ -94,17 +95,32 @@ function ViewCampaigns() {
                         }
 
                     </div>
-                    <div style={{ marginTop: '32px' }}>
-                        <div style={{ fontSize: '24px', fontWeight: '500', lineHeight: '35px', marginBottom: '16px' }}>
-                            Dự án là thành viên
+                    {
+                        currentUser._id && currentUser._id === id &&
+                        <div style={{ marginTop: '32px' }}>
+                            <div style={{ fontSize: '24px', fontWeight: '500', lineHeight: '35px', marginBottom: '16px' }}>
+                                Dự án là thành viên
+                            </div>
+
+                            {
+                                campaignsOfUser.map((item, index) => {
+                                    if ((currentUser._id && (item.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true })))) {
+                                        if (!isHasCampaignMember) setHasCampaignMember(true)
+                                        return <ItemCampaign key={index} item={item} />
+                                    }
+
+                                    else return <></>
+                                })
+                            }
+                            {
+                                !isHasCampaignMember && <p>
+                                    Bạn hiện chưa là thành viên của chiến dịch nào!</p>
+                            }
+
+
                         </div>
-                        {/* {[1, 2, 3].map((item, index) => {
-                            return <ItemCampaign />;
-                        })} */}
-                        {/* <div className={cx('show-more')}>
-                            <span>Show more</span>
-                        </div> */}
-                    </div>
+                    }
+
                 </div>
             </div>
         </div>

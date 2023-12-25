@@ -104,7 +104,7 @@ function Home() {
 
                             {
                                 campaigns?.map((item,index) => {
-                                    return  <div key={index} style={{ marginLeft: '16px' }}><ProjectCardItem campaign={item}/></div>
+                                    return  <div key={index} style={{ marginLeft: '16px' }}><ProjectCardItem campaign={item} /></div>
                                 })
                             }
                             

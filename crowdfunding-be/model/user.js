@@ -25,7 +25,6 @@ export default mongoose.model('User',
         email: String,
         password: String,
         isVerifiedEmail: { type: Boolean, default: false },
-        
         isVerifiedUser: {
             type: Boolean,
             default: false
@@ -50,6 +49,13 @@ export default mongoose.model('User',
         refreshToken: {
             type: String,
             requried: true
+        },
+        followedCampaigns: {
+            type: [{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Campaign'
+            }],
+            default: []
         }
     })
 )
