@@ -22,7 +22,6 @@ function CampaignManagement() {
         textSearch: '',
         status: 'Tất cả',
         page: 1
-
     })
     const handleClickItemFilter = (item) => {
         setFilter(prev => ({ ...prev, status: item }))
