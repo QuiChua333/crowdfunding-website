@@ -40,7 +40,6 @@ const publicRoutes = [
     { path: '/givefun/verify-user/:tokenLinkVerifyUser', component: VerifyUser, layout: null },
     { path: '/campaigns/team/invitation/:tokenLinkInvitation', component: SuccessVerifyInvitation, layout: null },
     { path: '/payment/thank', component: ThankPayment, layout: null },
-    { path: '/modal', component: ModalDetailReport, layout: null }
 ]
 const adminRoutes = [
     { path: '/admin/campaigns', component: CampaignManagement, layout: AdminLayout },

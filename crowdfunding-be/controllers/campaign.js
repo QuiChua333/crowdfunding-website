@@ -667,13 +667,12 @@ const getMoreCampaigns = async (req, res) => {
             ]);
         }
         for (let i = 0; i < filterCampaigns.length; i++) {
-            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id.toString(), isSuccess: true })
+            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id.toString()})
             let result = await Contribution.aggregate([
                 {
                     $match: {
                         $and: [
-                            { campaign: filterCampaigns[i]._id },
-                            { isSuccess: true }
+                            { campaign: filterCampaigns[i]._id }
                         ]
                     }
                 },
@@ -798,13 +797,12 @@ const getPopulateCampaigns = async (req, res) => {
             }
         ]);
         for (let i = 0; i < filterCampaigns.length; i++) {
-            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id.toString(), isSuccess: true })
+            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id.toString()})
             let result = await Contribution.aggregate([
                 {
                     $match: {
                         $and: [
-                            { campaign: filterCampaigns[i]._id },
-                            { isSuccess: true }
+                            { campaign: filterCampaigns[i]._id }
                         ]
                     }
                 },
