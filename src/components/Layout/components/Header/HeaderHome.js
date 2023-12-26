@@ -55,7 +55,6 @@ function Header2() {
  
     const getUser = async () => {
         try {
-            console.log('header nè')
             const res = await customAxios.get(`${baseURL}/user/getInfoCurrentUser`)
             setFlat(true)
 

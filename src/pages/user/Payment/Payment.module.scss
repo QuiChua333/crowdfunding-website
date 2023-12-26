@@ -16,16 +16,19 @@
             color: #e51075;
         }
     }
-
+    .inner {
+        display: flex;
+        // width: 100%;
+        margin: 32px 200px 160px 260px;
+        gap: 72px;
+    }
     .payment-info {
-        padding-right: 48px;
-        max-width: 732px;
+        width: 800px;
 
         
     }
     .payment-summary {
 
-        flex: 1;
     }
     .payment-backIcon {
         font-weight: 500;

@@ -5,7 +5,7 @@ import Explore from '~/pages/user/Explore'
 import SignUp from '~/pages/auth/SignUp'
 import Login from '~/pages/auth/Login'
 import ForgetPassword from '~/pages/auth/FogetPassword'
-import { BasicCampaign, ContentCampaign, PerksCampaign, NewPerk, ItemsCampaign, NewItem, TeamCampaign, FundingCampaign, SettingCampaign } from '~/pages/user/Campaign'
+import { BasicCampaign, ContentCampaign, PerksCampaign, NewPerk, ItemsCampaign, NewItem, TeamCampaign, FundingCampaign, SettingCampaign, ContributionCampaign } from '~/pages/user/Campaign'
 import Payment from '~/pages/user/Payment'
 import { EditProfile, EditSetting } from '~/pages/user/Profile/EditProfile'
 import { ViewCampaigns } from '~/pages/user/Profile/ViewProfile'
@@ -19,7 +19,7 @@ import TemplateEmailVerify from '~/pages/auth/TemplateEmailVerify'
 import ResetPassword from '~/pages/auth/ResetPassword'
 import Contributes from '~/pages/user/Profile/ViewProfile/Contributes'
 import ModalDetailReport from '~/pages/admin/Complaint/ModalDetailReport'
-
+import ThankPayment from '~/pages/PrefixPage/ThankPayment'
 const loginRoutes = [
     { path: '/sign-up', component: SignUp, layout: null },
     { path: '/login', component: Login, layout: null },
@@ -39,6 +39,7 @@ const publicRoutes = [
     { path: '/start-a-campaign', component: PrefixCampaign, layout: HeaderOnlyLayout },
     { path: '/givefun/verify-user/:tokenLinkVerifyUser', component: VerifyUser, layout: null },
     { path: '/campaigns/team/invitation/:tokenLinkInvitation', component: SuccessVerifyInvitation, layout: null },
+    { path: '/payment/thank', component: ThankPayment, layout: null },
     { path: '/modal', component: ModalDetailReport, layout: null }
 ]
 const adminRoutes = [
@@ -60,6 +61,7 @@ const privateUserRoutes = {
         { path: '/campaigns/:id/edit/team', component: TeamCampaign, layout: null },
         { path: '/campaigns/:id/edit/funding', component: FundingCampaign, layout: null },
         { path: '/campaigns/:id/edit/settings', component: SettingCampaign, layout: null },
+        { path: '/campaigns/:id/edit/contribution', component: ContributionCampaign, layout: null },
     ],
     individuals: [
         { path: '/individuals/:id/edit/profile', component: EditProfile, layout: HeaderOnlyLayout },

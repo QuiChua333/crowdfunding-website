@@ -506,6 +506,35 @@ const handleFollowedCampaigns = async (req, res) => {
         })
     }
 }
+const getCampaignFollowed = async (req, res) => {
+    try {
+        const {userId} = req.params;
+        const user = await User.findById(userId).populate(
+            {
+                path: 'followedCampaigns',
+                model: 'Campaign',
+                populate: {
+                    path: 'owner',
+                    model: 'User'
+                }
+            }
+        ).exec();
+        if (user) {
+            const campaignsFollowed = user.followedCampaigns
+            debugger
+            res.status(200).json({
+                message: 'Lấy các chiến dịch yêu thích thành công',
+                data: campaignsFollowed
+            })
+        }
+        else throw new Error('Tài khoản không tồn tại')
+       
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
 export default {
     checkRegisterEmail,
     registerUser,
@@ -523,5 +552,6 @@ export default {
     checkAdmin,
     checkIndividualOfUser,
     updatePassword,
-    handleFollowedCampaigns
+    handleFollowedCampaigns,
+    getCampaignFollowed
 }

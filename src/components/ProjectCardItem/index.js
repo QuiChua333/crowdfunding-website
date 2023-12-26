@@ -23,7 +23,7 @@ function ProjectCardItem({campaign, refreshCampaign}) {
         else setFavourite(false)
     },[campaign])
     const handleClickCampaign = () => {
-        window.location.href = `/project/${campaign._id}/detail`
+        navigate(`/project/${campaign._id}/detail`)
     }
     const handleClickHeart = async (e) => {
         e.stopPropagation();

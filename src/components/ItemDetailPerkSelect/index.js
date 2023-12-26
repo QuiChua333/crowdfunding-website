@@ -8,18 +8,18 @@ import formatMoney from '~/utils/formatMoney';
 const cx = classNames.bind(styles);
 
 function ItemDetailPerkSelect({
-    setIsOpenModalUpdate,
     setIsOpenModal,
     item,
     setPerkSelected,
     index,
     handleClickRemoveItem,
     handleChangeQuantityOrder,
+    setIsOpenModalUpdate
 }) {
-    const [options, setOptions] = useState('');
+    const [options, setOptions] = useState([]);
     const handleClickEdit = () => {
         setPerkSelected({ ...item, index });
-        setIsOpenModalUpdate(true);
+        setIsOpenModalUpdate(true)
         setIsOpenModal(true);
     };
     const handleClickSub = () => {
@@ -35,28 +35,41 @@ function ItemDetailPerkSelect({
     useEffect(() => {
         setOptions((prev) => {
             const res = item.items.reduce((acc, cur) => {
-                if (cur.optionsSelected) {
+                if (cur.optionsSelected && cur.optionsSelected.length > 0) {
                     return (
-                        acc +
-                        cur.optionsSelected.reduce((acc2, cur2) => {
-                            return acc2 + cur2.value + ' ';
-                        }, '')
-                    );
+
+                        [...acc, {
+                            name: cur.item.name,
+                            optionsString: cur.optionsSelected.map(i => i.value).join('/')
+                        }]
+                    )
                 } else {
-                    return acc + '';
+                    return [...acc, {
+                        name: cur.item.name,
+                        optionsString: ''
+                    }]
                 }
-            }, '');
-            return res;
+            }, []);
+            return [...res];
         });
     }, [item]);
+    // useEffect(() => {
+    //     console.log(options)
+    // },[options])
     return (
         <div className={cx('wrapper')}>
             <div className={cx('container-body')}>
                 <div className={cx('container-1')}>
-                    <img src={item.image.url} alt="img"/>
+                    <img src={item.image.url} alt="img" />
                     <div className={cx('content')}>
                         <span className={cx('title')}>{item.title}</span>
-                        <span className={cx('options')}>{options}</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', fontSize: '14px' }}>
+                            {
+                                options?.map((option, index) => {
+                                    return <span key={index}>{option.name}{option.optionsString && ':'} {option.optionsString}</span>
+                                })
+                            }
+                        </div>
                         <div className={cx('container-item')}>
                             <HiOutlineMinusSm
                                 className={cx('btn-quantity')}

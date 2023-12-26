@@ -21,6 +21,7 @@ router.get('/checkAdmin', checkToken,UserController.checkAdmin);
 router.get('/checkIndividualOfUser/:userIdParams', checkToken,UserController.checkIndividualOfUser);
 router.patch('/updatePassword',checkToken,UserController.updatePassword)
 router.patch('/handleFollowedCampaigns',checkToken,UserController.handleFollowedCampaigns)
+router.get('/getCampaignFollowed/:userId', UserController.getCampaignFollowed);
 
 
 export default router

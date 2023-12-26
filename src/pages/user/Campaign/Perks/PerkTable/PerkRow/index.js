@@ -73,7 +73,7 @@ function PerkRow({ index, perk, setChecked, getPerksByCampaignId }) {
             <td className={cx('type')}>
                 {perk.isFeatured &&
                     <span className={cx('featured')}>
-                        FEATURED
+                        NỔI BẬT
                     </span>
                 }
             </td>

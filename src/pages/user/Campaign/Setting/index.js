@@ -24,7 +24,7 @@ const cx = classNames.bind(styles);
 
 function SettingCampaign() {
     const { id } = useParams();
-    const dispatch = useDispatch(); 
+    const dispatch = useDispatch();
     const [campaginState, setCampaignState] = useState({})
 
     const [campagin, setCampaign] = useState({})
@@ -78,87 +78,82 @@ function SettingCampaign() {
         }
     }
     return (
-       <>
+        <>
             <div className={cx('wrapper')}>
-                 <SidebarCampaign current={7}
-                        status={campagin.status}
-                        title={campagin.title}
-                        cardImage={campagin.cardImage?.url}
-                        id={id}
-                    />
+                <SidebarCampaign current={7}
+                    status={campagin.status}
+                    title={campagin.title}
+                    cardImage={campagin.cardImage?.url}
+                    id={id}
+                />
                 <div style={{ flex: '1' }}>
-    
+
                     <HeaderPage isFixed={false} />
-    
+
                     <div className={cx('content')}>
                         <div className={cx('controlBar')}>
                             <div className={cx('controlBar-container')}>
                                 <div className={cx('controlBar-content')}>
                                     Chiến dịch / Cài đặt
                                 </div>
-                               
+
                             </div>
-                   
+
                         </div>
                         <div className={cx('body')}>
-    
-    
-    
+
+
+
                             <div className={cx('entreSection')}>
                                 <div className={cx('entreField-header')}>
                                     Cài đặt
-    
+
                                 </div>
                                 <div className={cx('entreField-subHeader')}>
-                                Chúng tôi cung cấp cho bạn các tính năng bổ sung có thể giúp củng cố chiến dịch của bạn. Định cấu hình cài đặt chiến dịch tùy chọn bên dưới.
+                                    Phát hành chiến dịch của bạn tại đây!
                                 </div>
-    
-    
-                                <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', textAlign: 'right' }}></div>
-    
+
+
+
+
                             </div>
-    
+
                             <div className={cx('entreSection')}>
-                                <div className={cx('entreField-header')}>
-                                    InDemand
-    
-                                </div>
-                                <div className={cx('entreField-subHeader')}>
-                                InDemand giúp chủ chiến dịch có thể tiếp tục gây quỹ sau khi chiến dịch của họ kết thúc. Với InDemand, bạn có thể chấp nhận đóng góp sau khi chiến dịch kết thúc, phát triển cộng đồng và tiếp cận đối tượng mới, đồng thời được hiển thị liên tục trên nền tảng Indiegogo. Các chiến dịch InDemand trên nền tảng huy động được số tiền trung bình nhiều hơn 123% so với giai đoạn cấp vốn ban đầu. Tìm hiểu thêm
-                                </div>
-    
-                                <div className={cx('entreField')}>
-                                    <label onClick={() => setCampaignState(prev => ({...prev, isIndemand: !prev.isIndemand}))} style={{ display: 'flex', alignItems: 'center', margin: '16px 0', marginLeft: '-2px' }}>
-                                        <span >
-                                            {
-                                                !campaginState.isIndemand ? <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} /> : <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
-                                            }
-                                        </span>
-                                        <span style={{ marginLeft: '8px' }}>Chọn InDemand</span>
-                                    </label>
-                                </div>
-                                <div className={cx('entreField')}>
-                                    <a onClick={handleClickSaveContinue} className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >LƯU CHIẾN DỊCH</a>
-                                </div>
-    
-                                <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                    <a onClick={handleClickLaunchCampaign} className={cx('btn', 'btn-ok')} >PHÁT HÀNH CHIẾN DỊCH</a>
-                                </div>
-    
+
+
+                                {
+                                    campagin.status === 'Bản nháp'&&
+                                    <div style={{ marginTop: '60px', borderBottom: '1px solid #C8C8C8', paddingBottom: '30px', textAlign: 'left' }}>
+                                        <a onClick={handleClickLaunchCampaign} className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >PHÁT HÀNH CHIẾN DỊCH</a>
+                                    </div>
+                                }
+                                {
+                                    campagin.status === 'Đang tạm ngưng'&&
+                                    <div style={{ marginTop: '60px', borderBottom: '1px solid #C8C8C8', paddingBottom: '30px', textAlign: 'left' }}>
+                                        <a onClick={handleClickLaunchCampaign} className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >CHIẾN DỊCH ĐANG BỊ TẠM NGƯNG</a>
+                                    </div>
+                                }
+                                {
+                                    campagin.status === 'Đang gây quỹ'&&
+                                    <div style={{ marginTop: '60px', borderBottom: '1px solid #C8C8C8', paddingBottom: '30px', textAlign: 'left' }}>
+                                        <a  className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >CHIẾN DỊCH ĐÃ PHÁT HÀNH</a>
+                                    </div>
+                                }
+
                             </div>
-    
-    
-    
+
+
+
                         </div>
                     </div>
                     <Footer />
                 </div>
 
-    
+
             </div>
-      
-          
-       </>
+
+
+        </>
     );
 }
 

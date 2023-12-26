@@ -8,7 +8,7 @@ const getQuantityCampaingnPerUser = async (req, res) => {
         const { id } = req.params;
         const campain = await Campaign.findById(id).exec();
         const userId = campain.owner.toString();
-        const campaigns = await Campaign.find({owner: userId}).exec();
+        const campaigns = await Campaign.find({ owner: userId, status: { $ne: 'Bản nháp' } }).exec();
 
         res.status(200).json({
             message: 'Lấy số lượng chiến dịch của user thành công',
@@ -62,7 +62,7 @@ const editCampaign = async (req, res) => {
             campaign.momoNumber = momoNumber ?? campaign.momoNumber
             campaign.team = team ?? campaign.team
             campaign.category = category ?? campaign.category
-            
+
             if (cardImage) {
 
                 if (cardImage.url !== '') {
@@ -136,7 +136,7 @@ const getCampaignById = async (req, res) => {
                     path: 'owner',
                     model: 'User',
                 },
-                
+
             ])
             .exec();
 
@@ -435,7 +435,7 @@ const getAllCampaigns = async (req, res) => {
                 },
                 {
                     $project: {
-                        'owner.password': 0, 
+                        'owner.password': 0,
                         'owner.refreshToken': 0,
                         'owner.isAdmin': 0,
                         'owner.isVerifiedEmail': 0,
@@ -446,7 +446,7 @@ const getAllCampaigns = async (req, res) => {
                     $match: {
                         $and: [
                             {
-                                status: status === 'Tất cả' ? {$nin: ['Tất cả', 'Bản nháp']} : status
+                                status: status === 'Tất cả' ? { $nin: ['Tất cả', 'Bản nháp'] } : status
                             },
                             {
                                 $or: [
@@ -491,13 +491,13 @@ const getAllCampaigns = async (req, res) => {
         })
     }
 }
-const getAllCampaignsExplore = async (req,res) => {
+const getAllCampaignsExplore = async (req, res) => {
     try {
-        let {  sort = 'Xu hướng', searchString = '', status = 'Tất cả', category, field } = req.query;
+        let { sort = 'Xu hướng', searchString = '', status = 'Tất cả', category, field } = req.query;
         let filterCampaigns = []
         if (category) {
-            if (category==='Tất cả') {
-                 filterCampaigns = await Campaign.aggregate([
+            if (category === 'Tất cả') {
+                filterCampaigns = await Campaign.aggregate([
                     {
                         $match: {
                             $and: [
@@ -505,7 +505,7 @@ const getAllCampaignsExplore = async (req,res) => {
                                     title: { $regex: `.*${searchString}.*`, $options: 'i' }
                                 },
                                 {
-                                    status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                    status: status === 'Tất cả' ? { $nin: ['Bản nháp', 'Đang tạm ngưng'] } : status
                                 }
                             ]
                         }
@@ -524,7 +524,7 @@ const getAllCampaignsExplore = async (req,res) => {
                                     category: category
                                 },
                                 {
-                                    status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                    status: status === 'Tất cả' ? { $nin: ['Bản nháp', 'Đang tạm ngưng'] } : status
                                 }
                             ]
                         }
@@ -544,15 +544,15 @@ const getAllCampaignsExplore = async (req,res) => {
                                 field: field
                             },
                             {
-                                status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                status: status === 'Tất cả' ? { $nin: ['Bản nháp', 'Đang tạm ngưng'] } : status
                             }
                         ]
                     }
                 }
             ]);
         }
-        for (let i = 0; i<filterCampaigns.length; i++) {
-            const backers = await Contribution.countDocuments({campaign: filterCampaigns[i]._id.toString()})
+        for (let i = 0; i < filterCampaigns.length; i++) {
+            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id.toString() })
             let result = await Contribution.aggregate([
                 {
                     $match: { campaign: filterCampaigns[i]._id.toString() }
@@ -568,22 +568,22 @@ const getAllCampaignsExplore = async (req,res) => {
             const totalMoney = 4000000 + i
             filterCampaigns[i].backers = backers
             filterCampaigns[i].currentMoney = totalMoney
-            filterCampaigns[i].percentProgress =  totalMoney/filterCampaigns[i].goal*100
-            let startDateTime  =  new Date(filterCampaigns[i].startDate) 
-            let endDateTime = startDateTime.getTime() + filterCampaigns[i].duration*24*60*60*1000
+            filterCampaigns[i].percentProgress = totalMoney / filterCampaigns[i].goal * 100
+            let startDateTime = new Date(filterCampaigns[i].startDate)
+            let endDateTime = startDateTime.getTime() + filterCampaigns[i].duration * 24 * 60 * 60 * 1000
             const currentDateTime = new Date().getTime()
-            const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60*60));
+            const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60 * 60));
             let daysLeft = ''
             if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
-            else daysLeft =  Math.ceil(remainingHours) + " giờ";
+            else daysLeft = Math.ceil(remainingHours) + " giờ";
             filterCampaigns[i].daysLeft = daysLeft
-            
+
         }
         if (sort === 'Xu hướng') {
-            filterCampaigns.sort((a,b) => b.backers - a.backers)
+            filterCampaigns.sort((a, b) => b.backers - a.backers)
         }
         if (sort === 'Quyên góp nhiều nhất') {
-            filterCampaigns.sort((a,b) => b.currentMoney - a.currentMoney)
+            filterCampaigns.sort((a, b) => b.currentMoney - a.currentMoney)
         }
         res.status(200).json({
             message: 'Lấy thông tin chiến dịch thành công',
@@ -596,14 +596,14 @@ const getAllCampaignsExplore = async (req,res) => {
         })
     }
 }
-const getMoreCampaigns = async (req,res) => {
+const getMoreCampaigns = async (req, res) => {
     try {
-        let {  sort = 'Xu hướng', searchString = '', status = 'Tất cả', category, field, page = 1} = req.query;
+        let { sort = 'Xu hướng', searchString = '', status = 'Tất cả', category, field, page = 1 } = req.query;
         const size = 15;
         let filterCampaigns = []
         if (category) {
-            if (category==='Tất cả') {
-                 filterCampaigns = await Campaign.aggregate([
+            if (category === 'Tất cả') {
+                filterCampaigns = await Campaign.aggregate([
                     {
                         $match: {
                             $and: [
@@ -611,13 +611,13 @@ const getMoreCampaigns = async (req,res) => {
                                     title: { $regex: `.*${searchString}.*`, $options: 'i' }
                                 },
                                 {
-                                    status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                    status: status === 'Tất cả' ? { $nin: ['Bản nháp', 'Đang tạm ngưng'] } : status
                                 }
                             ]
                         }
-                    },        
+                    },
                     {
-                        $limit: page*size
+                        $limit: page * size
                     }
                 ]);
             }
@@ -633,13 +633,13 @@ const getMoreCampaigns = async (req,res) => {
                                     category: category
                                 },
                                 {
-                                    status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                    status: status === 'Tất cả' ? { $nin: ['Bản nháp', 'Đang tạm ngưng'] } : status
                                 }
                             ]
                         }
                     },
                     {
-                        $limit: page*size
+                        $limit: page * size
                     }
                 ]);
             }
@@ -656,21 +656,26 @@ const getMoreCampaigns = async (req,res) => {
                                 field: field
                             },
                             {
-                                status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                status: status === 'Tất cả' ? { $nin: ['Bản nháp', 'Đang tạm ngưng'] } : status
                             }
                         ]
                     }
                 },
                 {
-                    $limit: page*size
+                    $limit: page * size
                 }
             ]);
         }
-        for (let i = 0; i<filterCampaigns.length; i++) {
-            const backers = await Contribution.countDocuments({campaign: filterCampaigns[i]._id.toString()})
+        for (let i = 0; i < filterCampaigns.length; i++) {
+            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id.toString(), isSuccess: true })
             let result = await Contribution.aggregate([
                 {
-                    $match: { campaign: filterCampaigns[i]._id.toString() }
+                    $match: {
+                        $and: [
+                            { campaign: filterCampaigns[i]._id },
+                            { isSuccess: true }
+                        ]
+                    }
                 },
                 {
                     $group: {
@@ -679,30 +684,29 @@ const getMoreCampaigns = async (req,res) => {
                     }
                 }
             ])
-            // const totalMoney = result.length > 0 ? result[0].totalMoney : 0;
-            const totalMoney = 4000000 + i
+            const totalMoney = result.length > 0 ? result[0].totalMoney : 0;
             filterCampaigns[i].backers = backers
             filterCampaigns[i].currentMoney = totalMoney
-            filterCampaigns[i].percentProgress =  totalMoney/filterCampaigns[i].goal*100
-            let startDateTime  =  new Date(filterCampaigns[i].startDate) 
-            let endDateTime = startDateTime.getTime() + filterCampaigns[i].duration*24*60*60*1000
+            filterCampaigns[i].percentProgress = totalMoney / filterCampaigns[i].goal * 100
+            let startDateTime = new Date(filterCampaigns[i].startDate)
+            let endDateTime = startDateTime.getTime() + filterCampaigns[i].duration * 24 * 60 * 60 * 1000
             const currentDateTime = new Date().getTime()
-            const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60*60));
+            const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60 * 60));
             let daysLeft = ''
             if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
-            else daysLeft =  Math.ceil(remainingHours) + " giờ";
+            else daysLeft = Math.ceil(remainingHours) + " giờ";
             filterCampaigns[i].daysLeft = daysLeft
-            
+
         }
         if (sort === 'Xu hướng') {
-            filterCampaigns.sort((a,b) => b.backers - a.backers)
+            filterCampaigns.sort((a, b) => b.backers - a.backers)
         }
         if (sort === 'Quyên góp nhiều nhất') {
-            filterCampaigns.sort((a,b) => b.currentMoney - a.currentMoney)
+            filterCampaigns.sort((a, b) => b.currentMoney - a.currentMoney)
         }
         res.status(200).json({
             message: 'Lấy thông tin chiến dịch thành công',
-            data: filterCampaigns.slice((page-1)*size)
+            data: filterCampaigns.slice((page - 1) * size)
         })
 
     } catch (error) {
@@ -711,13 +715,13 @@ const getMoreCampaigns = async (req,res) => {
         })
     }
 }
-const getTotalCampaignsExplore = async (req,res) => {
+const getTotalCampaignsExplore = async (req, res) => {
     try {
-        let {  sort = 'Xu hướng', searchString = '', status = 'Tất cả', category, field } = req.query;
+        let { sort = 'Xu hướng', searchString = '', status = 'Tất cả', category, field } = req.query;
         let filterCampaigns = []
         if (category) {
-            if (category==='Tất cả') {
-                 filterCampaigns = await Campaign.aggregate([
+            if (category === 'Tất cả') {
+                filterCampaigns = await Campaign.aggregate([
                     {
                         $match: {
                             $and: [
@@ -725,7 +729,7 @@ const getTotalCampaignsExplore = async (req,res) => {
                                     title: { $regex: `.*${searchString}.*`, $options: 'i' }
                                 },
                                 {
-                                    status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                    status: status === 'Tất cả' ? { $nin: ['Bản nháp', 'Đang tạm ngưng'] } : status
                                 }
                             ]
                         }
@@ -744,7 +748,7 @@ const getTotalCampaignsExplore = async (req,res) => {
                                     category: category
                                 },
                                 {
-                                    status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                    status: status === 'Tất cả' ? { $nin: ['Bản nháp', 'Đang tạm ngưng'] } : status
                                 }
                             ]
                         }
@@ -764,14 +768,14 @@ const getTotalCampaignsExplore = async (req,res) => {
                                 field: field
                             },
                             {
-                                status: status === 'Tất cả' ? {$nin: ['Bản nháp','Đang tạm ngưng']} : status
+                                status: status === 'Tất cả' ? { $nin: ['Bản nháp', 'Đang tạm ngưng'] } : status
                             }
                         ]
                     }
                 }
             ]);
         }
-      
+
         res.status(200).json({
             message: 'Lấy thông tin chiến dịch thành công',
             data: filterCampaigns.length
@@ -783,21 +787,26 @@ const getTotalCampaignsExplore = async (req,res) => {
         })
     }
 }
-const getPopulateCampaigns = async (req,res) => {
+const getPopulateCampaigns = async (req, res) => {
     try {
         let filterCampaigns = []
         filterCampaigns = await Campaign.aggregate([
             {
                 $match: {
-                    status:  {$nin: ['Bản nháp','Đang tạm ngưng', 'Đã kết thúc']}
+                    status: { $nin: ['Bản nháp', 'Đang tạm ngưng', 'Đã kết thúc'] }
                 }
             }
         ]);
-        for (let i = 0; i<filterCampaigns.length; i++) {
-            const backers = await Contribution.countDocuments({campaign: filterCampaigns[i]._id.toString()})
+        for (let i = 0; i < filterCampaigns.length; i++) {
+            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id.toString(), isSuccess: true })
             let result = await Contribution.aggregate([
                 {
-                    $match: { campaign: filterCampaigns[i]._id.toString() }
+                    $match: {
+                        $and: [
+                            { campaign: filterCampaigns[i]._id },
+                            { isSuccess: true }
+                        ]
+                    }
                 },
                 {
                     $group: {
@@ -806,20 +815,19 @@ const getPopulateCampaigns = async (req,res) => {
                     }
                 }
             ])
-            // const totalMoney = result.length > 0 ? result[0].totalMoney : 0;
-            const totalMoney = 4000000
+            const totalMoney = result.length > 0 ? result[0].totalMoney : 0;
             filterCampaigns[i].backers = backers
             filterCampaigns[i].currentMoney = totalMoney
-            filterCampaigns[i].percentProgress =  totalMoney/filterCampaigns[i].goal*100
-            let startDateTime  =  new Date(filterCampaigns[i].startDate) 
-            let endDateTime = startDateTime.getTime() + filterCampaigns[i].duration*24*60*60*1000
+            filterCampaigns[i].percentProgress = totalMoney / filterCampaigns[i].goal * 100
+            let startDateTime = new Date(filterCampaigns[i].startDate)
+            let endDateTime = startDateTime.getTime() + filterCampaigns[i].duration * 24 * 60 * 60 * 1000
             const currentDateTime = new Date().getTime()
-            const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60*60));
+            const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60 * 60));
             let daysLeft = ''
             if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
-            else daysLeft =  Math.ceil(remainingHours) + " giờ";
+            else daysLeft = Math.ceil(remainingHours) + " giờ";
             filterCampaigns[i].daysLeft = daysLeft
-            
+
         }
         res.status(200).json({
             message: 'Lấy thông tin chiến dịch thành công',
@@ -834,22 +842,18 @@ const getPopulateCampaigns = async (req,res) => {
 }
 const checkCampaignOfUser = async (req, res) => {
     try {
-        debugger
         const isAdmin = req.isAdmin;
         const userId = req.userId;
         const { idCampaign } = req.params;
         const campaign = await Campaign.findById(idCampaign).exec();
         if (campaign) {
-            debugger
-            const matched = campaign.owner.toString() === userId ||  campaign.team.some(item => item.user.toString() === userId && item.isAccepted === true) || isAdmin === true;
-            debugger
+            const matched = campaign.owner.toString() === userId || campaign.team.some(item => item.user.toString() === userId && item.isAccepted === true) || isAdmin === true;
             res.status(200).json({
                 message: 'Matched',
                 data: matched
             })
         }
         else {
-            debugger
             res.status(200).json({
                 message: 'Not matched',
                 data: false
@@ -900,9 +904,9 @@ const adminDeleteCampaign = async (req, res) => {
             const campaign = await Campaign.findById(idCampaign).exec();
             if (campaign) {
                 await campaign.deleteOne();
-                await Item.deleteMany({campaign: idCampaign})
-                await Perk.deleteMany({campaign: idCampaign})
-                await Contribution.deleteMany({campaign: idCampaign})
+                await Item.deleteMany({ campaign: idCampaign })
+                await Perk.deleteMany({ campaign: idCampaign })
+                await Contribution.deleteMany({ campaign: idCampaign })
                 res.status(200).json({
                     message: 'Đã xóa chiến dịch thành công',
                 })
@@ -916,7 +920,7 @@ const adminDeleteCampaign = async (req, res) => {
             message: error.message
         })
     }
-} 
+}
 export default {
     createNewCampaign,
     getCampaignById,

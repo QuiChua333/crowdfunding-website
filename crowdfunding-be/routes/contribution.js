@@ -6,6 +6,11 @@ const router = express.Router();
 
 router.get('/getQuantityPeopleByCampaign/:id', ContributionController.getQuantityPeople);
 router.get('/getMoneyByCampaign/:id', ContributionController.getMoneyByCampaign);
+router.post('/paymentMomo/success',ContributionController.handleSuccess)
+router.post('/paymentMomo/handle',ContributionController.handlePayment)
+
+router.get('/getAllContributionsByCampaign/:id', ContributionController.getAllContributionsByCampaign);
+
 
 
 router.get('/', (req, res) => {

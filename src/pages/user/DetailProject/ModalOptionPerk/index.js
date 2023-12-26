@@ -29,24 +29,28 @@ function ModalOptionPerk({ close, setIsOpenModal, perkInModal, itemPerk }) {
 
         return result;
     });
+    useEffect(() => {
+        console.log(optionsSelectedItems)
+    },[optionsSelectedItems])
     // {name: '', optionsSelected: [{name: '', value:''}]}
     const handleClickPayment = () => {
+        const state = {
+            ...itemPerk,
+            items: [...itemPerk.items].map((i) => {
+                if (i.item.isHasOption && i.item.options.length > 0) {
+                    return {
+                        ...i,
+                        optionsSelected: optionsSelectedItems.find((j) => {
+                            return j.name === i.item.name;
+                        }),
+                    };
+                } else {
+                    return i;
+                }
+            }),
+        }
         navigate(`/project/${id}/perk/detail`, {
-            state: {
-                ...itemPerk,
-                items: [...itemPerk.items].map((i) => {
-                    if (i.item.isHasOption && i.item.options.length > 0) {
-                        return {
-                            ...i,
-                            optionsSelected: optionsSelectedItems.find((j) => {
-                                return j.name === i.item.name;
-                            }),
-                        };
-                    } else {
-                        return i;
-                    }
-                }),
-            },
+            state
         });
     };
 

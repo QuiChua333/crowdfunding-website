@@ -3,11 +3,13 @@ import classNames from 'classnames/bind';
 import styles from './DetailPerk.module.scss';
 import ItemDetailPerk from '~/components/ItemDetailPerk';
 import ItemDetailPerkSelect from '~/components/ItemDetailPerkSelect';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import ModalDetailPerk from './ModalDetailPerk';
 import formatMoney from '~/utils/formatMoney';
 import baseUrl from '../../../utils/baseURL';
 import customAxios from '~/utils/customAxios'
+import { useDispatch } from 'react-redux';
+import { setPayment } from '~/redux/slides/Payment';
 const cx = classNames.bind(styles);
 
 function DetailPerk() {
@@ -21,10 +23,9 @@ function DetailPerk() {
     const [listSelected, setListSelected] = useState([]);
     const [listPerkByCampaignId, setListPerkByCampaignId] = useState([]);
     const [perkSelected, setPerkSelected] = useState({});
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
-    useEffect(() => {
-        console.log(itemPerkSelectedFirst)  // lag quá
-    },[])
 
     const getListPerksByCampaignId = async () => {
         try {
@@ -38,7 +39,7 @@ function DetailPerk() {
                         isSelected: true,
                         items: item.items.map((itemInclude) => {
                             if (itemInclude.item.isHasOption && itemInclude.item.options.length > 0) {
-                                const optionSelected = itemPerkSelectedFirst.items.find(x => x.name === itemInclude.name).optionsSelected.optionsSelected;
+                                const optionSelected = itemPerkSelectedFirst.items.find(x => x.item.name === itemInclude.item.name).optionsSelected.optionsSelected;
                                 return {
                                     ...itemInclude,
                                     optionsSelected: optionSelected
@@ -89,7 +90,7 @@ function DetailPerk() {
         });
         addItemIntoListSelected({ ...newItem }, index);
     };
-    
+
 
     useEffect(() => {
         for (let i = 0; i < listPerkByCampaignId.length; i++) {
@@ -148,7 +149,45 @@ function DetailPerk() {
             });
         });
     };
+    const handleClickPayment = () => {
+        const listPayment = listSelected.map(item => {
+            return {
+                perkId: item._id,
+                listShippingFee: item.listShippingFee || [],
+                perkImage: item.image.url,
+                perkTitle: item.title,
+                quantity: item.quantityOrder,
+                price: item.price,
+                options: item.items.reduce((acc, cur) => {
+                    if (cur.optionsSelected && cur.optionsSelected.length > 0) {
+                        return (
 
+                            [...acc, {
+                                name: cur.item.name,
+                                optionsString: cur.optionsSelected.map(i => i.value).join('/')
+                            }]
+                        )
+                    } else {
+                        return [...acc, {
+                            name: cur.item.name,
+                            optionsString: ''
+                        }]
+                    }
+                }, [])
+            }
+        })
+        dispatch(setPayment({
+            total: total,
+            listPerkPayment: listPayment
+        }))
+        const state = {
+            total: total,
+            listPerkPayment: listPayment
+        }
+        navigate(`/project/${id}/payments/new/checkout`, {
+            state
+        })
+    }
     const handleClickRemoveItem = (index) => {
         for (let i = 0; i < listPerkByCampaignId.length; i++) {
             if (listPerkByCampaignId[i]._id === listSelected[index]._id) {
@@ -228,7 +267,7 @@ function DetailPerk() {
 
                         <div className={cx('separate')}></div>
 
-                        <button className={cx('btn-checkout')} type="button">
+                        <button onClick={handleClickPayment} className={cx('btn-checkout')} type="button">
                             TIẾP TỤC THANH TOÁN
                         </button>
                     </div>

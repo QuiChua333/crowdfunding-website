@@ -5,56 +5,50 @@ import { AiFillLock } from "react-icons/ai";
 import { FaAngleDown } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import { IoSquareOutline, IoCheckboxSharp } from "react-icons/io5";
-
-
+import axios from "axios";
+import customAxios from '~/utils/customAxios'
 import DropDown from "../Campaign/Perks/NewPerk/ItemShipping/DropDown";
 import ItemPayment from "./ItemPayment";
 import Footer from "~/components/Layout/components/Footer";
-
+import { useSelector } from "react-redux";
+import baseURL from "~/utils/baseURL";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import formatMoney from "~/utils/formatMoney";
+import PaymentModal from "./PaymentModal";
 
 
 const cx = classNames.bind(styles);
 
 function Payment() {
+    const [currentUser, setCurrentUser] = useState({})
+    const navigate = useNavigate()
+    const lct = useLocation()
+    const payment = lct.state
+    const { id } = useParams()
+    const [campaign, setCampaign] = useState({})
     const [showLocation, setShowLocation] = useState(false);
-    const [showLocationShipFee, setShowLocationShipFee] = useState(false);
-    const [showLocationShipFee0, setShowLocationShipFee0] = useState(false);
+    const [listLocationShip, setListLocationShip] = useState([])
+    const [shipFee, setShipFee] = useState(0)
     const [location, setLocation] = useState('');
-    const [locationShipFee, setLocationShipFee] = useState('');
     const [isAcceptRule, setAcceptRule] = useState(false);
-    const listLocation = ['Việt Nam', 'Hàn Quốc', 'Nhật Bản', 'Việt Nam', 'Hàn Quốc', 'Nhật Bản', 'Việt Nam', 'Hàn Quốc', 'Nhật Bản']
-    const listLocationShipFee = ['United States (+$10)', 'United States (+$10)']
-    const element0 = useRef(null)
-    const element1 = useRef(null)
-    const element2 = useRef(null)
+    const element = useRef(null)
+    const [showPaymentModal,setShowPaymentModal] = useState(false)
+    const [contribution,setContribution] = useState({
+        shippingInfo: {
+
+        },
+        campaign: id,
+        perks: payment.listPerkPayment.map(item => {
+            const newItem = {...item}
+            delete newItem.listShippingFee;
+            delete newItem.perkImage;
+            return newItem
+        })
+    })
     useEffect(() => {
         function handleClickOutside(event) {
-            if (element0.current && !element0.current.contains(event.target)) {
-                setShowLocationShipFee0(false);
-            }
-        
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [element0]);
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (element1.current && !element1.current.contains(event.target)) {
+            if (element.current && !element.current.contains(event.target)) {
                 setShowLocation(false);
-            }
-        
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [element1]);
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (element2.current && !element2.current.contains(event.target)) {
-                setShowLocationShipFee(false);
             }
 
         }
@@ -62,139 +56,157 @@ function Payment() {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [element2]);
+    }, [element]);
+
+    const getUser = async () => {
+        try {
+            const res = await customAxios.get(`${baseURL}/user/getInfoCurrentUser`)
+            setCurrentUser(res.data.data)
+        } catch (error) {
+
+        }
+    }
+    const getInfoCampaign = async () => {
+        try {
+            const res = await customAxios.get(`${baseURL}/campaign/getCampaignById/${id}`)
+            setCampaign(res.data.data)
+        } catch (error) {
+            console.log(error.response.data.message)
+        }
+    }
+    const getListLocationShip = async () => {
+        try {
+            const res = await axios.get('https://provinces.open-api.vn/api/p');
+            setListLocationShip(res.data.map(item => item.name));
+        } catch (error) {
+
+        }
+    }
+    useEffect(() => {
+        getInfoCampaign()
+        getListLocationShip();
+        const token = localStorage.getItem('accessToken') || false
+        if (token) {
+            getUser()
+        }
+    }, [])
+    useEffect(() => {
+        let max = 0;
+        if (location) {
+            for (let i = 0; i < payment.listPerkPayment.length; i++) {
+                const perk = payment.listPerkPayment[i]
+                let fee = perk.listShippingFee.find(x => x.location === location)?.fee || 0
+                if (!fee) {
+                    fee = perk.listShippingFee.find(x => x.location === 'Các tỉnh thành còn lại' || x.location === 'Tất cả các tỉnh thành')?.fee
+                }
+                max = fee > max ? fee : max
+            }
+            setShipFee(max)
+            setContribution(prev => ({
+                ...prev,
+                shippingInfo: {
+                    ...prev.shippingInfo,
+                    province: location
+                }
+            }))
+        }
+        
+    }, [location])
+    useEffect(() => {
+        setContribution(prev => ({...prev,
+        money: payment.total + shipFee}))
+    },[shipFee])
+    const handleChangeInput = (e) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        setContribution(prev => ({
+            ...prev,
+            shippingInfo: {
+                ...prev.shippingInfo,
+                [name]: value
+            }
+        }))
+    }
+    useEffect(() => {
+        console.log(contribution)
+    },[contribution])
+
+    const handlePaymentMethod =  (method) => {
+        if (method === 'momo') {
+            momoMethod()
+        }
+    }
+    const momoMethod = async () => {
+        try {
+            contribution.user = currentUser._id;
+            const res = await customAxios.post(`${baseURL}/contribution/paymentMomo/handle`,contribution)
+            window.location.href = res.data.data
+        } catch (error) {
+            
+        }
+    }
     return (
         <div className={cx('wrapper')}>
             <div className={cx('header')}>
-                <a className={cx('logo')}>INDIEGOGO</a>
+                <a className={cx('logo')}>GIVEFUN</a>
             </div>
 
-            <div style={{ margin: '32px 200px 160px 260px', display: 'flex' }}>
+            <div className={cx('inner')}>
                 <div className={cx('payment-info')}>
-                    <div className={cx('payment-backIcon')}>
+                    <div className={cx('payment-backIcon')} onClick={() => navigate(-1)}>
                         <span><IoChevronBack style={{ fontSize: '24px', fontWeight: 'bold' }} /> </span> Back
                     </div>
-                    <div style={{ color: '#6a6a6a', fontWeight: '700', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>YOU'RE CONTRIBUTING TO</div>
+                    <div style={{ color: '#6a6a6a', fontWeight: '700', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>BẠN ĐANG ĐÓNG GÓP CHO</div>
                     <div style={{ fontSize: '24px', fontWeight: '600' }}>
-                        Neakasa M1: Open-Top Self-Cleaning Cat Litter Box
+                        {campaign.title}
                     </div>
 
                     <div className={cx('user-info')}>
-                        <img className={cx('user-img')} src="https://c3.iggcdn.com/indiegogo-media-prod-cld/image/upload/c_fill,w_40,g_center,q_auto:best,dpr_1.3,f_auto,h_40/rxs9ldiorhnxnj5p25mf"></img>
+                        <img className={cx('user-img')} src={campaign.owner?.avatar?.url}></img>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <div className={cx('user-name')}>Neakasa</div>
-                            <span className={cx('user-detail')}>1 Campaign | SANTA MONICA, United States</span>
+                            <div className={cx('user-name')}>{campaign.owner?.fullName}</div>
+                            <span className={cx('user-detail')}>1 Campaign | <span style={{ textTransform: 'uppercase' }}>{campaign.owner?.address?.province}</span>{campaign.owner?.address?.district && ', ' + campaign.owner?.address?.district}</span>
                         </div>
                     </div>
 
                     <div className={cx('my-user-info')}>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <div style={{ display: 'inline-block', fontWeight: '700' }}>Ngọc Quí Huỳnh</div>
-                            <div style={{ display: 'inline-block' }}>quichua333@gmail.com</div>
+                            <div style={{ display: 'inline-block', fontWeight: '700' }}>{currentUser.fullName}</div>
+                            <div style={{ display: 'inline-block' }}>{currentUser.email}</div>
                         </div>
                         <div className={cx('my-user-logout')}>
-                            Log out
+                            Đăng xuất
                         </div>
                     </div>
 
                     <div className={cx('shipping-address')}>
                         <div className={cx('title')}>
-                            Shipping address
+                            Địa chỉ nhận hàng
                         </div>
                         <div className={cx('entreField')}>
-                            <label className={cx('entreField-label')}>Full name <span className={cx('entreField-required')}>*</span></label>
+                            <label className={cx('entreField-label')}>Họ và tên <span className={cx('entreField-required')}>*</span></label>
 
-                            <input type="text" className={cx('itext-field')} />
-
-                        </div>
-                        <div className={cx('entreField')}>
-                            <label className={cx('entreField-label')}>Country <span className={cx('entreField-required')}>*</span></label>
-
-                            <div onClick={() => setShowLocationShipFee0(prev => !prev)} style={{ position: 'relative' }} ref={element0} >
-                                <input   value={locationShipFee} type="text" className={cx('itext-field')} style={{ marginTop: '8px' }} />
-                                {
-                                    showLocationShipFee0 &&
-                                    <div className={cx('dropdown-outer')}>
-                                        <DropDown listItem={listLocationShipFee} onClickItem={location => setLocationShipFee(location)} />
-                                    </div>
-                                }
-                            </div>
+                            <input type="text" className={cx('itext-field')} name="fullName" value={contribution.shippingInfo?.fullName} onChange={handleChangeInput}/>
 
                         </div>
-                        <div className={cx('entreField')}>
-                            <div style={{ display: 'flex', gap: '16px' }}>
-                                <div style={{ flex: '1' }}>
-                                    <label className={cx('entreField-label')}>Street address<span className={cx('entreField-required')}> *</span></label>
-                                    <input type="text" maxLength="50" className={cx('itext-field')} />
-                                </div>
-                                <div style={{ flex: '1' }}>
-                                    <label className={cx('entreField-label')}>Address line 2 (optional)</label>
-                                    <input type="text" maxLength="50" className={cx('itext-field')} />
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('entreField')}>
-                            <div style={{ display: 'flex', gap: '16px' }}>
-                                <div style={{ flex: '1' }}>
-                                    <label className={cx('entreField-label')}>City<span className={cx('entreField-required')}> *</span></label>
-                                    <input type="text" maxLength="50" className={cx('itext-field')} />
-                                </div>
-                                <div style={{ flex: '1' }}>
 
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('entreField')}>
-                            <div style={{ display: 'flex', gap: '16px' }}>
-                                <div style={{ flex: '1' }}>
-                                    <label className={cx('entreField-label')}>Postal code<span className={cx('entreField-required')}> *</span></label>
-                                    <input type="text" maxLength="50" className={cx('itext-field')} />
-                                </div>
-                                <div style={{ flex: '1' }}>
-                                    <label className={cx('entreField-label')}>Phone number<span className={cx('entreField-required')}> *</span></label>
-                                    <input type="text" maxLength="50" className={cx('itext-field')} />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className={cx('shipping-address')}>
-                        <div className={cx('title')} style={{ display: 'flex', alignItems: 'center' }}>
-                            Secure payments <AiFillLock style={{ marginLeft: '8px', color: '#1e76d5' }} />
-                        </div>
 
                         <div className={cx('entreField')}>
-                            <div style={{ display: 'flex', gap: '16px' }}>
-                                <div style={{ flex: '6' }}>
-                                    <label className={cx('entreField-label')}>Số thẻ</label>
-                                    <input type="text" maxLength="50" className={cx('itext-field')} placeholder="1234 1234 1234 1234" />
-                                </div>
-                                <div style={{ flex: '3' }}>
-                                    <label className={cx('entreField-label')}>Ngày hết hạn</label>
-                                    <input type="text" maxLength="50" className={cx('itext-field')} placeholder="MM / YY" />
-                                </div>
-                                <div style={{ flex: '3' }}>
-                                    <label className={cx('entreField-label')}>CVC</label>
-                                    <input type="text" maxLength="50" className={cx('itext-field')} placeholder="CVC" />
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('entreField')}>
-                            <label className={cx('entreField-label')}>Quốc gia <span className={cx('entreField-required')}>*</span></label>
+                            <label className={cx('entreField-label')}>Tỉnh / Thành phố <span className={cx('entreField-required')}>*</span></label>
 
                             <div className={cx('entreField-select')}>
                                 <a className={cx('entreDropdown-select', 'itext-field', {
                                     borderInput: showLocation
-                                })} onClick={() => setShowLocation(prev => !prev)} ref={element1}>
+                                })} onClick={() => setShowLocation(prev => !prev)} ref={element}>
                                     <span>
-                                        {location || 'Select location'}
+                                        {contribution.shippingInfo?.province || 'Chọn Tỉnh / Thành phố'}
                                     </span>
 
                                     <FaAngleDown className={cx('icon', 'icon-down')} />
                                     {
                                         showLocation &&
                                         <div className={cx('dropdown-outer')} style={{ top: '-8px', transform: 'translateY(-100%)' }}>
-                                            <DropDown listItem={listLocation} onClickItem={location => setLocation(location)} />
+                                            <DropDown listItem={listLocationShip} onClickItem={(item) => setLocation(item)} listLocationShipChoosen={[contribution.shippingInfo?.province]} />
                                         </div>
                                     }
 
@@ -204,61 +216,76 @@ function Payment() {
 
                         </div>
 
+
+                        <div className={cx('entreField')}>
+                            <div style={{ display: 'flex', gap: '16px' }}>
+                                <div style={{ flex: '1' }}>
+                                    <label className={cx('entreField-label')}>Quận / Huyện<span className={cx('entreField-required')}> *</span></label>
+                                    <input type="text" maxLength="50" className={cx('itext-field')} name="district" value={contribution.shippingInfo?.district} onChange={handleChangeInput}/>
+                                </div>
+                                <div style={{ flex: '1' }}>
+                                    <label className={cx('entreField-label')}>Xã / Phường<span className={cx('entreField-required')}> *</span></label>
+                                    <input type="text" maxLength="50" className={cx('itext-field')} name="ward" value={contribution.shippingInfo?.ward} onChange={handleChangeInput}/>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={cx('entreField')}>
+                            <div style={{ display: 'flex', gap: '16px' }}>
+                                <div style={{ flex: '1' }}>
+                                    <label className={cx('entreField-label')}>Chi tiết địa chỉ<span className={cx('entreField-required')}> *</span></label>
+                                    <input type="text" maxLength="50" className={cx('itext-field')} name="detail" value={contribution.shippingInfo?.detail} onChange={handleChangeInput}/>
+                                </div>
+                                <div style={{ flex: '1' }}>
+                                    <label className={cx('entreField-label')}>Số điện thoại<span className={cx('entreField-required')}> *</span></label>
+                                    <input type="text" maxLength="50" className={cx('itext-field')} name="phoneNumber" value={contribution.shippingInfo?.phoneNumber} onChange={handleChangeInput}/>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+
                 </div>
                 <div className={cx('payment-summary')}>
                     <div className={cx('shipping-address')}>
                         <div className={cx('title')}>
-                            Contribution summary
+                            Tóm tắt đóng góp
                         </div>
 
                         <div style={{ marginTop: '32px' }}>
+
                             {
-                                [1, 2, 3].map((item, index) => {
-                                    return <ItemPayment key={index} />
+                                payment.listPerkPayment.map((item, index) => {
+                                    return <ItemPayment item={item} key={index} />
                                 })
+
                             }
                         </div>
 
                         <div className={cx('separate')}></div>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '16px' }}>
-                            <span>Subtotal</span>
-                            <span>$349</span>
+                            <span>Tiền đặc quyền</span>
+                            <span>{formatMoney(payment.total)}VNĐ</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '16px', marginTop: '6px' }}>
-                            <span>Shipping</span>
-                            <span>$10</span>
+                            <span>Tiền ship</span>
+                            <span>{formatMoney(shipFee)}VNĐ</span>
                         </div>
 
-                        <div onClick={() => setShowLocationShipFee(prev => !prev)} style={{ position: 'relative' }} ref={element2}>
-                            <input   value={locationShipFee} type="text" className={cx('itext-field')} style={{ marginTop: '8px' }} />
-                            {
-                                showLocationShipFee &&
-                                <div className={cx('dropdown-outer')}>
-                                    <DropDown listItem={listLocationShipFee} onClickItem={location => setLocationShipFee(location)} />
-                                </div>
-                            }
-                        </div>
+
 
                         <div style={{ fontSize: '20px', fontWeight: '600', margin: '32px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <span>Total</span>
-                            <span>$429 USD</span>
+                            <span>Tổng tiền</span>
+                            <span>{formatMoney(payment.total + shipFee)}VNĐ</span>
                         </div>
 
                         <div style={{ padding: '16px', marginTop: '24px', border: '1px solid #c8c8c8', borderRadius: '2px' }}>
                             <div style={{ fontWeight: '700', fontSize: '14px' }}>
-                                Crowdfunding is not shopping.
+                                Give Fun không phải là nơi mua sắm.
                             </div>
                             <p style={{ fontSize: '11px', lineHeight: '1.5', margin: '11px 0' }}>
-                                Your contribution is a way to support an entrepreneur, but does not guarantee that you will receive a perk.
+                                Đóng góp của bạn là một cách để hỗ trợ một cá nhân/tổ chức là chủ sở hữu chiến dịch nhưng không đảm bảo rằng bạn sẽ nhận được phần thưởng.
                             </p>
-                            <p style={{ fontSize: '11px', lineHeight: '1.5', marginTop: '11px' }}>Any
-                                refunds
-                                after
-                                November 17, 2023
-                                are the responsibility of the campaign owner,
-                                Neakasa
-                                , at their discretion.</p>
+                           
                         </div>
 
                         <label onClick={() => setAcceptRule(prev => !prev)} style={{ display: 'flex', alignItems: 'center', margin: '24px 0', marginLeft: '-2px' }}>
@@ -267,21 +294,24 @@ function Payment() {
                                     !isAcceptRule ? <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} /> : <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
                                 }
                             </span>
-                            <span style={{ marginLeft: '8px', color: '#777', fontSize: '13px' }}>I agree to the Terms of Use and have read and understand the Privacy Policy</span>
+                            <span style={{ marginLeft: '8px', color: '#777', fontSize: '13px' }}>Tôi đồng ý với Điều khoản sử dụng và đã đọc và hiểu Chính sách quyền riêng tư</span>
                         </label>
 
-                        <div className={cx('btn-payment')} style={{
+                        <div onClick={() => setShowPaymentModal(true)} className={cx('btn-payment')} style={{
                             fontSize: '16px', fontWeight: '700', textTransform: 'uppercase', color: 'white', backgroundColor: '#e51075', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                             cursor: 'pointer', letterSpacing: '1px'
                         }}>
-                            Submit Payment
+                            Thanh Toán
                         </div>
                     </div>
                 </div>
             </div>
             <Footer />
 
-
+        {
+            showPaymentModal &&
+            <PaymentModal setShowPaymentModal={setShowPaymentModal} handlePaymentMethod={handlePaymentMethod}/>
+        }
         </div>
     );
 }

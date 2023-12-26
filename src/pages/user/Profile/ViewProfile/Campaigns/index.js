@@ -13,9 +13,11 @@ const cx = classNames.bind(styles);
 function ViewCampaigns() {
     const [isHasCampaign, setHasCampaign] = useState(false)
     const [isHasCampaignMember, setHasCampaignMember] = useState(false)
+    const [isHasCampaignFollowed, setHasCampaignFollowed] = useState(false)
     const currentUser = useSelector(state => state.user.currentUser)
     const { id } = useParams()
     const [campaignsOfUser, setCampaignOfUser] = useState([])
+    const [campaignsFollowed,setCampaignsFollowed] = useState([])
     const [user, setUser] = useState({})
     const getCampaigns = async () => {
         try {
@@ -33,9 +35,18 @@ function ViewCampaigns() {
 
         }
     }
+    const getCampaignsFollowed = async () => {
+        try {
+            const res = await customAxios.get(`${baseURL}/user/getCampaignFollowed/${id}`)
+            setCampaignsFollowed(res.data.data)
+        } catch (error) {
+
+        }
+    }
     useEffect(() => {
         getCampaigns()
         getInfoUser()
+        getCampaignsFollowed()
     }, [])
     return (
         <div className={cx('wrapper')}>
@@ -79,7 +90,7 @@ function ViewCampaigns() {
 
                     <div style={{ marginTop: '32px' }}>
                         <div style={{ fontSize: '24px', fontWeight: '500', lineHeight: '35px', marginBottom: '16px' }}>
-                            Dự án là chủ sở hữu
+                             <span className={cx('titleCampaign')} style={{display: 'inline-block', padding: '8px 16px', backgroundColor: '#ccc', borderRadius: '4px', color: '#212121'}}>Dự án là chủ sở hữu</span>
                         </div>
                         {campaignsOfUser.map((item, index) => {
                             if ((currentUser._id && (item.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true }) || item.owner?._id === currentUser._id)) || item.status === 'Đang gây quỹ') {
@@ -99,7 +110,7 @@ function ViewCampaigns() {
                         currentUser._id && currentUser._id === id &&
                         <div style={{ marginTop: '32px' }}>
                             <div style={{ fontSize: '24px', fontWeight: '500', lineHeight: '35px', marginBottom: '16px' }}>
-                                Dự án là thành viên
+                                 <span className={cx('titleCampaign')} style={{display: 'inline-block', padding: '8px 16px', backgroundColor: '#ccc', borderRadius: '4px', color: '#212121'}}>Dự án là thành viên</span>
                             </div>
 
                             {
@@ -114,6 +125,27 @@ function ViewCampaigns() {
                             }
                             {
                                 !isHasCampaignMember && <p>
+                                    Bạn hiện chưa là thành viên của chiến dịch nào!</p>
+                            }
+
+
+                        </div>
+                    }
+                    {
+                        currentUser._id && currentUser._id === id &&
+                        <div style={{ marginTop: '32px' }}>
+                            <div style={{ fontSize: '24px', fontWeight: '500', lineHeight: '35px', marginBottom: '16px' }}>
+                                <span className={cx('titleCampaign')} style={{display: 'inline-block', padding: '8px 16px', backgroundColor: '#ccc', borderRadius: '4px', color: '#212121'}}>Dự án đang theo dõi</span>
+                            </div>
+
+                            {
+                                campaignsFollowed.map((item, index) => {
+                                    if (!isHasCampaignFollowed) setHasCampaignFollowed(true)
+                                    return <ItemCampaign key={index} item={item} />
+                                })
+                            }
+                            {
+                                !isHasCampaignFollowed && <p>
                                     Bạn hiện chưa là thành viên của chiến dịch nào!</p>
                             }
 
