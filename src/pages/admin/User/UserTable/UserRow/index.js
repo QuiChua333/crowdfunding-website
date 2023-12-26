@@ -9,14 +9,10 @@ import { useRef, useState, useEffect } from 'react';
 
 const cx = classNames.bind(styles);
 
-function UserRow({ index, item, setChecked }) {
+function UserRow({ index, item }) {
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null);
-    const handleClickChecked = (e, index) => {
-        e.stopPropagation();
-        setChecked(index, !item.isChecked);
-    };
-
+   
     useEffect(() => {
         function handleClickOutside(event) {
             if (docElement.current && !docElement.current.contains(event.target)) {
@@ -31,17 +27,24 @@ function UserRow({ index, item, setChecked }) {
 
     return (
         <tr>
-            <td className={cx('checkbox')}>
-                <span onClick={(e) => handleClickChecked(e, index)}>
-                    {!item.isChecked ? (
-                        <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} />
-                    ) : (
-                        <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
-                    )}
-                </span>
+            <td>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <img className={cx('avatar')} src="https://png.pngtree.com/png-clipart/20190629/original/pngtree-vector-administration-icon-png-image_4090499.jpg" alt="avt" />
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            marginLeft: '10px',
+                            alignItems: 'flex-start',
+                        }}
+                    >
+                        <span style={{ fontSize: '14px' }}>{item.name}</span>
+                        <span style={{ fontSize: '10px', fontStyle: 'italic' }}>{item.email}</span>
+                    </div>
+                </div>
             </td>
-            <td>{item.name}</td>
-            <td>{item.email}</td>
+            <td>{item.phone}</td>
+            <td>096203012684</td>
             <td style={{ width: '300px', textAlign: 'center' }}>
                 {item.isVerify ? (
                     <div className={cx('verify')}>Đã xác minh</div>

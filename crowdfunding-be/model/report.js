@@ -13,7 +13,7 @@ export default mongoose.model('Report',
         responsed: {
             content: String,
             date: Date,
-            images: [],
+            images: [String],
         },
         images: [String],
         user: {

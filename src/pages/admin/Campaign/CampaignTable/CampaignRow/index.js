@@ -6,8 +6,6 @@ import { IoSquareOutline, IoCheckboxSharp } from "react-icons/io5";
 import { PiDotsThreeBold } from "react-icons/pi";
 import DropDown from "../Dropdown";
 import { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 
 const cx = classNames.bind(styles)
@@ -15,7 +13,6 @@ function CampaignRow({ index, campaign, setChecked, getAllCampaigns }) {
     
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null)
-    const navigate = useNavigate();
     const handleClickChecked = (e, index) => {
         e.stopPropagation()
         setChecked(index, !campaign.isChecked)

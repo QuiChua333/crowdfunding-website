@@ -50,7 +50,7 @@ function CampaignManagement() {
         }
     }, [pathWithQuery])
     const [campaigns, setCampaigns] = useState([])
-    // const [campaignsOrigin, setCampaignsOrigin] = useState([])
+    
     const getAllCampaigns = async () => {
         // setLoadingData(true)
         try {

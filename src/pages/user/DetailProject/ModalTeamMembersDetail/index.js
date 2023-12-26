@@ -19,7 +19,6 @@ function ModalTeamMembersDetail({ setIsOpenModalMember, members }) {
                 </div>
 
                 <div className={cx('separate')}></div>
-
                 <div className={cx('content-modal')}>
                     {members.map((item) => {
                         if (item.isAccepted) {
@@ -28,7 +27,9 @@ function ModalTeamMembersDetail({ setIsOpenModalMember, members }) {
                                     <div className={cx('info-members')}>
                                         <img src={item.user.avatar.url} alt="avt" />
                                         <div className={cx('info')}>
-                                            <a href={`/individuals/${item.user._id}/profile`} className={cx('name')}>{item.user.fullName}</a>
+                                            <a href={`/individuals/${item.user._id}/profile`} className={cx('name')}>
+                                                {item.user.fullName}
+                                            </a>
                                             <a href={`mailto:${item.user?.fullName}`} className={cx('email')}>
                                                 {item.user.email}
                                             </a>

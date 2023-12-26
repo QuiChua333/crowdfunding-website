@@ -29,6 +29,10 @@ export default mongoose.model('User',
             type: Boolean,
             default: false
         },
+        status: {
+            type: Boolean,
+            default: true
+        },
         infoVerify: {
             fullName: String,
             phoneNumber: String,

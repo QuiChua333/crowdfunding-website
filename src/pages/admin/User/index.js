@@ -4,12 +4,11 @@ import { useState } from 'react';
 import UserTable from './UserTable';
 import Filter from '../components/Filter';
 import Search from '../components/Search';
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa6';
 const cx = classNames.bind(styles);
 
 function UserManagement() {
     const [isOpenDropdownAction, setOpenDropdownAction] = useState(false);
-    const [numberSelected, setNumberSelected] = useState(1);
     const handleClickItemFilterVerify = (item) => {
         console.log(item);
     };
@@ -22,26 +21,9 @@ function UserManagement() {
 
     return (
         <div className={cx('wrapper')}>
-            <div style={{ marginBottom: '24px', maxWidth: '600px' }}>
-                <Search handleChangeInput={handleChangeSearchInput} />
-            </div>
             <div className={cx('table-action')}>
-                <div style={{ opacity: numberSelected == 0 && '0' }}>
-                    <span>
-                        <strong style={{ display: 'inline-block', minWidth: '12px' }}>{numberSelected}</strong> đã chọn
-                    </span>
-                    <div style={{ display: 'inline-block', marginLeft: '24px', position: 'relative' }}>
-                        <a
-                            onClick={(e) => {
-                                e.preventDefault();
-                                setOpenDropdownAction((prev) => !prev);
-                            }}
-                            href="#"
-                            className={cx('btn', 'btn-ok')}
-                        >
-                            Xóa
-                        </a>
-                    </div>
+                <div style={{ maxWidth: '600px', width: '500px' }}>
+                    <Search handleChangeInput={handleChangeSearchInput} />
                 </div>
                 <div style={{ display: 'flex', gap: '30px' }}>
                     <Filter
@@ -65,7 +47,7 @@ function UserManagement() {
                             <FaAngleLeft style={{ color: '#7a69b3' }} />
                         </span>
                         <span className={cx('curent')}>1 của 10</span>
-                        <span className={cx('icon')} >
+                        <span className={cx('icon')}>
                             <FaAngleRight style={{ color: '#7a69b3' }} />
                         </span>
                     </div>

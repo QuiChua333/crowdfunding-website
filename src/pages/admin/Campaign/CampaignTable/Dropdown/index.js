@@ -116,6 +116,7 @@ function DropDown({ menu, onClickItem, index, campaign, getAllCampaigns }) {
             }
         }
     }, [messageBox.result])
+    
     return (
         <div className={cx('wrapper')}>
             <div className={cx('action')} onClick={() => window.location.href = `/campaigns/${campaign.id}/edit/basic`}>

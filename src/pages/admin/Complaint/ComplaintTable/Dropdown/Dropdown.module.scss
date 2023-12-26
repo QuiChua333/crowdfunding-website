@@ -1,6 +1,6 @@
 .wrapper {
     border: 1px solid #949494;
-    width: 180px;
+    width: 150px;
     background-color: #fff;
     box-shadow: 0 0 8px #ccc;
 
@@ -9,18 +9,12 @@
         text-align: left;
         padding: 14px 16px;
         letter-spacing: 0;
-
+        color: #414141;
         &:hover {
             background-color: #f5f5f5;
         }
-
-        &.action-delete {
-            color: #e21941;
-
-            &:hover {
-                color: #fff;
-                background-color: #e21941;
-            }
+        a {
+            color: #414141;
         }
     }
 }
