@@ -1,0 +1,227 @@
+.wrapper {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    top: 0;
+    z-index: 1000;
+
+    .modal {
+        width: 60%;
+        background-color: #fff;
+        border-radius: 4px;
+        display: flex;
+        flex-direction: column;
+        padding: 10px 30px;
+        margin-top: 40px;
+
+        .header-modal {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .title {
+                font-size: 25px;
+                color: #000;
+                font-weight: 400;
+            }
+
+            .close {
+                font-size: 32px;
+                padding: 0 15px;
+                border-radius: 50%;
+                color: #000;
+                font-weight: 500;
+                user-select: none;
+
+                &:hover {
+                    background-color: #f4f4f4;
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .separate {
+            height: 6px;
+            border-radius: 10px;
+            background-color: #009f6d;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .content-modal {
+            display: flex;
+            padding: 10px 20px;
+
+            .content-left {
+                display: flex;
+                flex-direction: column;
+                width: 55%;
+                margin-right: 50px;
+
+                .container-input {
+                    display: flex;
+                    flex-direction: column;
+                    margin: 5px 0;
+
+                    .title {
+
+                        font-size: 16px;
+                        font-weight: 600;
+                    }
+
+                    input {
+                        border: 1.5px solid #ccc;
+                        margin: 5px 0;
+                        padding: 8px 10px;
+                        border-radius: 2px;
+                        color: #747474;
+                    }
+                    input::-webkit-outer-spin-button,
+                    input::-webkit-inner-spin-button {
+                        -webkit-appearance: none;
+                        margin: 0;
+                    }
+                    input[type=number] {
+                        -moz-appearance: textfield;
+                    }
+                    input[type=date] {
+                        user-select: none;
+                    }
+
+                    .text-validate {
+                        color: red;
+                        font-size: 13px;
+                        font-style: italic;
+                        font-weight: 200;
+                    }
+
+                    .input-autosize {
+                        resize: none;
+                        border: 1.5px solid #ccc;
+                        margin: 5px 0;
+                        padding: 8px 10px;
+                        border-radius: 2px;
+                        color: #747474;
+                        outline: none;
+                        overflow-y: hidden;
+                    }
+                }
+            }
+
+            .content-right {
+                display: flex;
+                flex-direction: column;
+                width: 45%;
+                margin-left: 20px;
+
+                .container-input {
+                    display: flex;
+                    flex-direction: column;
+                    margin: 5px 0;
+
+                    .title {
+                        font-size: 16px;
+                        font-weight: 600;
+                    }
+
+                    input {
+                        border: 1.5px solid #ccc;
+                        margin: 5px 0;
+                        padding: 8px 10px;
+                        border-radius: 2px;
+                        color: #747474;
+                    }
+
+                    input::-webkit-outer-spin-button,
+                    input::-webkit-inner-spin-button {
+                        -webkit-appearance: none;
+                        margin: 0;
+                    }
+                    input[type=number] {
+                        -moz-appearance: textfield;
+                    }
+
+                    .text-validate {
+                        color: red;
+                        font-size: 13px;
+                        font-style: italic;
+                        font-weight: 200;
+                    }
+
+                    .input-autosize {
+                        resize: none;
+                        border: 1.5px solid #ccc;
+                        margin: 5px 0;
+                        padding: 8px 10px;
+                        border-radius: 2px;
+                        color: #747474;
+                        outline: none;
+                        overflow-y: hidden;
+                    }
+                }
+
+                .container-img {
+                    margin: 5px 0;
+                    .title {
+                        font-size: 16px;
+                        font-weight: 600;
+                    }
+                    .frame-img {
+                        width: 100%;
+                        height: 180px;
+                        border-radius: 10px;
+                        margin: 5px 0;
+                        border: 1px solid #ccc;
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            border-radius: 10px;
+                        }
+                    }
+
+                    .btn-add {
+                        display: flex;
+                        align-items: center;
+                        justify-content: right;
+                        width: 140px;
+                        float: right;
+                        margin: 10px 0;
+                        border-radius: 6px;
+                        color: #009f6d;
+                        font-weight: 300;
+                        font-size: 14px;
+                        font-style: italic;
+                        text-decoration: underline;
+                        user-select: none;
+                        &:hover {
+                            cursor: pointer;
+                            color: #006746;
+                        }
+                    }
+                }
+            }
+        }
+
+        .btn-confirm {
+            width: 140px;
+            background-color: #000;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: 550;
+            display: flex;
+            padding: 8px;
+            margin: 10px 0 20px;
+            justify-content: center;
+            float: right;
+            &:hover {
+                cursor: pointer;
+                opacity: 0.9;
+            }
+        }
+
+    }
+}

@@ -1,16 +1,18 @@
+import React from 'react';
+
 import classNames from 'classnames/bind';
-import styles from '../ComplaintTable.module.scss';
+import styles from './UserRow.module.scss';
 import { IoSquareOutline, IoCheckboxSharp } from 'react-icons/io5';
 import { PiDotsThreeBold } from 'react-icons/pi';
 import DropDown from '../Dropdown';
 import { useRef, useState, useEffect } from 'react';
-import formatDate from '~/utils/formatDate';
 
 const cx = classNames.bind(styles);
-function ComplaintRow({index, report, getAllReports, handleViewReport }) {
+
+function UserRow({ index, item }) {
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null);
-
+   
     useEffect(() => {
         function handleClickOutside(event) {
             if (docElement.current && !docElement.current.contains(event.target)) {
@@ -23,19 +25,11 @@ function ComplaintRow({index, report, getAllReports, handleViewReport }) {
         };
     }, [docElement]);
 
-    const handleView = () => {
-        handleViewReport(index)
-    }
-
-
     return (
         <tr>
-            <td style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', maxWidth: '300px' }}>
-                {report.title}
-            </td>
             <td>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <img className={cx('avatar')} src={report.userInfo.avatar.url} alt="avt" />
+                    <img className={cx('avatar')} src="https://png.pngtree.com/png-clipart/20190629/original/pngtree-vector-administration-icon-png-image_4090499.jpg" alt="avt" />
                     <div
                         style={{
                             display: 'flex',
@@ -44,22 +38,27 @@ function ComplaintRow({index, report, getAllReports, handleViewReport }) {
                             alignItems: 'flex-start',
                         }}
                     >
-                        <span style={{ fontSize: '14px' }}>{report.userInfo.fullName}</span>
-                        <span style={{ fontSize: '10px', fontStyle: 'italic' }}>{report.userInfo.email}</span>
+                        <span style={{ fontSize: '14px' }}>{item.name}</span>
+                        <span style={{ fontSize: '10px', fontStyle: 'italic' }}>{item.email}</span>
                     </div>
                 </div>
             </td>
-            <td>{formatDate(report.date)}</td>
-            {report.isResponsed === false ? (
-                <td>
-                    <div className={cx('un-response')}>Chưa phản hồi</div>
-                </td>
-            ) : (
-                <td>
-                    <div className={cx('responsed')}>Đã phản hồi</div>
-                </td>
-            )}
-
+            <td>{item.phone}</td>
+            <td>096203012684</td>
+            <td style={{ width: '300px', textAlign: 'center' }}>
+                {item.isVerify ? (
+                    <div className={cx('verify')}>Đã xác minh</div>
+                ) : (
+                    <div className={cx('unverify')}>Chưa xác minh</div>
+                )}
+            </td>
+            <td>
+                {item.isActive ? (
+                    <div className={cx('status-active')}>Đang hoạt động</div>
+                ) : (
+                    <div className={cx('status-unactive')}>Đang bị khóa</div>
+                )}
+            </td>
             <td className={cx('action')}>
                 <div
                     className={cx('action-doc')}
@@ -71,7 +70,7 @@ function ComplaintRow({index, report, getAllReports, handleViewReport }) {
                 >
                     <PiDotsThreeBold style={{ fontSize: '20px', color: '#7a69b3' }} />
                     <div className={cx('dropdown-wrapper')} style={{ display: openDropDown && 'block' }}>
-                        <DropDown handleView={handleView} report={report}/>
+                        <DropDown item={item}/>
                     </div>
                 </div>
             </td>
@@ -79,4 +78,4 @@ function ComplaintRow({index, report, getAllReports, handleViewReport }) {
     );
 }
 
-export default ComplaintRow;
+export default UserRow;

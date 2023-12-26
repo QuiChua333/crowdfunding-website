@@ -18,7 +18,7 @@ import ProfilePersonal from '~/pages/user/Profile/ViewProfile/ProfilePersonal'
 import TemplateEmailVerify from '~/pages/auth/TemplateEmailVerify'
 import ResetPassword from '~/pages/auth/ResetPassword'
 import Contributes from '~/pages/user/Profile/ViewProfile/Contributes'
-import ModalDetailReport from '~/pages/admin/Complaint/ModalDetailReport'
+
 import ThankPayment from '~/pages/PrefixPage/ThankPayment'
 const loginRoutes = [
     { path: '/sign-up', component: SignUp, layout: null },

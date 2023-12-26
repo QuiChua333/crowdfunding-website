@@ -535,6 +535,77 @@ const getCampaignFollowed = async (req, res) => {
         })
     }
 }
+
+const getAllUser = async (req, res) => {
+    try {
+        const isAdmin = req.isAdmin;
+        if (isAdmin) {
+            let { page = 1, size = 15, status = 'Tất cả', isVerifiedUser = 'Tất cả', searchString = '' } = req.query;
+            page = parseInt(page);
+            size = parseInt(size);
+            size = size >= 15 ? 15 : size;
+            const filterUsers = await User.aggregate([
+                {
+                    $lookup: {
+                        from: 'campaigns',
+                        localField: 'followedCampaigns',
+                        foreignField: '_id',
+                        as: 'followedCampaignsInfo',
+                    },
+                },
+                {
+                    $unwind: '$followedCampaignsInfo',
+                },
+                {
+                    $match: {
+                        $and: [
+                            {
+                                status:
+                                    status === 'Tất cả' ? { $ne: 'Tất cả' } : status === 'Đang bị khóa' ? false : true,
+                            },
+                            {
+                                isVerifiedUser:
+                                    isVerifiedUser === 'Tất cả' ? { $ne: 'Tất cả' } : isVerifiedUser === 'Chưa xác minh' ? false : true,
+                            },
+                            {
+                                $or: [
+                                    {
+                                        fullName: { $regex: `.*${searchString}.*`, $options: 'i' },
+                                    },
+                                    {
+                                        email: { $regex: `.*${searchString}.*`, $options: 'i' },
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                },
+                {
+                    $skip: (page - 1) * size,
+                },
+                {
+                    $limit: size,
+                },
+            ]);
+            const totalRecords = await User.countDocuments();
+            const totalPages = Math.ceil(totalRecords / size);
+
+            res.status(200).json({
+                message: 'Lấy thông tin tất cả người dùng thành công',
+                data: {
+                    users: filterUsers,
+                    totalPages,
+                },
+            });
+        } else throw new Error('Bạn không có quyền truy cập');
+    } catch (error) {
+        res.status(400).json({
+            message: error.message,
+        });
+    }
+}
+
+
 export default {
     checkRegisterEmail,
     registerUser,
@@ -553,5 +624,6 @@ export default {
     checkIndividualOfUser,
     updatePassword,
     handleFollowedCampaigns,
-    getCampaignFollowed
+    getCampaignFollowed,
+    getAllUser
 }

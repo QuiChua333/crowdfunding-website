@@ -22,7 +22,6 @@ function CampaignManagement() {
         textSearch: '',
         status: 'Tất cả',
         page: 1
-
     })
     const handleClickItemFilter = (item) => {
         setFilter(prev => ({ ...prev, status: item }))
@@ -51,7 +50,7 @@ function CampaignManagement() {
         }
     }, [pathWithQuery])
     const [campaigns, setCampaigns] = useState([])
-    // const [campaignsOrigin, setCampaignsOrigin] = useState([])
+    
     const getAllCampaigns = async () => {
         // setLoadingData(true)
         try {

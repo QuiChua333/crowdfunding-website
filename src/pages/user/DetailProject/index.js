@@ -38,6 +38,10 @@ function DetailProject() {
     const [quantityCampaignOfUser, setQuantityCampaignOfUser] = useState(1);
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null);
+
+
+
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (docElement.current && !docElement.current.contains(event.target)) {
@@ -179,7 +183,6 @@ function DetailProject() {
             },
         ],
     };
-
     const getListPerksByCampaignId = async () => {
         try {
             const config = {};
@@ -229,7 +232,6 @@ function DetailProject() {
         try {
             const { data } = await customAxios.get(`${baseUrl}/campaign/getTeamMember/${id}`);
             setMembers([...data.data]);
-            console.log(members);
         } catch (error) {
             console.log(error);
         }
