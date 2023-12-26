@@ -7,7 +7,7 @@ import { useRef, useState, useEffect } from 'react';
 import formatDate from '~/utils/formatDate';
 
 const cx = classNames.bind(styles);
-function ComplaintRow({index, report, getAllReports, handleViewReport }) {
+function ComplaintRow({index, report, handleViewReport }) {
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null);
 

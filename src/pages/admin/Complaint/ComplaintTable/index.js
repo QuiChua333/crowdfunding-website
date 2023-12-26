@@ -6,20 +6,11 @@ import { useEffect, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-function ComplaintTable({reports, getAllReports, handleViewReport}) {
+function ComplaintTable({reports, handleViewReport}) {
 
     const [listReports, setListReports] = useState([]);
     useEffect(() => {
-        setListReports(prev => {
-            const state = [...reports].map(item => {
-                return {
-                    ...item,
-                    isChecked: false
-                    
-                }
-            })
-            return state
-        })
+        setListReports(reports);
     },[reports])
 
     return (
@@ -34,7 +25,7 @@ function ComplaintTable({reports, getAllReports, handleViewReport}) {
                 </thead>
                 <tbody>
                     {listReports?.map((item, index) => {
-                        return <ComplaintRow key={index} report={item} index={index} getAllReports={getAllReports} handleViewReport={handleViewReport}/>;
+                        return <ComplaintRow key={index} report={item} index={index} handleViewReport={handleViewReport}/>;
                     })}
                 </tbody>
             </table>

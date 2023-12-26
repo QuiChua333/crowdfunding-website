@@ -6,44 +6,12 @@ import { useEffect, useState } from 'react';
 import UserRow from './UserRow';
 const cx = classNames.bind(styles)
 
-function UserTable() {
+function UserTable({allUsers, handleStatusUser}) {
 
-    const listUserDefault = [
-        {
-            id: '1',
-            name: 'Phan Trọng Tính',
-            email: '21522683@gm.uit.edu.vn',
-            phone: '0379361210',
-            isVerify: false,
-            isActive: true,
-        },
-        {
-            id: '2',
-            name: 'Huỳnh Ngọc quí',
-            email: '21520417@gm.uit.edu.vn',
-            phone: '0379361210',
-            isVerify: true,
-            isActive: true,
-        },
-        {
-            id: '3',
-            name: 'Lê Quang Nhân',
-            email: '21520412@gm.uit.edu.vn',
-            phone: '0379361210',
-            isVerify: true,
-            isActive: false,
-        },
-        {
-            id: '4',
-            name: 'Nguyễn Văn Phát',
-            email: 'phat@gm.uit.edu.vn',
-            phone: '0379361210',
-            isVerify: false,
-            isActive: false,
-        }
-    ];
-    const [listUser, setListUser] = useState([...listUserDefault]);
-   
+    const [listUser, setListUser] = useState([]);
+    useEffect(() => {
+        setListUser(allUsers);
+    }, [allUsers])
 
   return (
     <div className={cx('wrapper')}>
@@ -57,8 +25,8 @@ function UserTable() {
                     <th></th>
                 </thead>
                 <tbody>
-                    {listUser.map((item, index) => {
-                        return <UserRow key={index} item={item} index={index}/>;
+                    {listUser?.map((item, index) => {
+                        return <UserRow key={index} user={item} index={index} handleStatusUser={handleStatusUser}/>;
                     })}
                 </tbody>
             </table>
