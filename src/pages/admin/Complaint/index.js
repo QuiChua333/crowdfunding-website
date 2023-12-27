@@ -82,7 +82,6 @@ function ComplaintManagement() {
                     <ComplaintTable
                         setIsOpenModalSeeDetail={setIsOpenModalSeeDetail}
                         reports={reports}
-                        getAllReports={getAllReports}
                         handleViewReport={handleViewReport}
                     />
                 </div>

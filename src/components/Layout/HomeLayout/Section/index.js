@@ -43,7 +43,7 @@ function Section() {
             </div>
 
             <div ref={box2Ref}>
-                <img src={images.imageSection} className={cx('image-section')} alt="Section Image"/>
+                <img src="https://purepng.com/public/uploads/thumbnail//purepng.com-paper-planepaper-planeaeroplanepaper-gliderpaper-dartaircraftfolded-paperpaperboardclipart-1421526589499uaw0v.png" className={cx('image-section')} alt="Section Image"/>
             </div>
         </section>
     );

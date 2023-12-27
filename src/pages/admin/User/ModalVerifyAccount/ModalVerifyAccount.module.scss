@@ -7,6 +7,9 @@
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.5);
     top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 1000;
 
     .modal {
@@ -17,6 +20,8 @@
         flex-direction: column;
         padding: 10px 30px;
         margin-top: 40px;
+        position: absolute;
+        margin-left: 200px;
 
         .header-modal {
             display: flex;
@@ -68,7 +73,6 @@
                     margin: 5px 0;
 
                     .title {
-
                         font-size: 16px;
                         font-weight: 600;
                     }
@@ -76,7 +80,7 @@
                     input {
                         border: 1.5px solid #ccc;
                         margin: 5px 0;
-                        padding: 8px 10px;
+                        padding: 6px 10px;
                         border-radius: 2px;
                         color: #747474;
                     }
@@ -92,18 +96,12 @@
                         user-select: none;
                     }
 
-                    .text-validate {
-                        color: red;
-                        font-size: 13px;
-                        font-style: italic;
-                        font-weight: 200;
-                    }
-
                     .input-autosize {
                         resize: none;
                         border: 1.5px solid #ccc;
                         margin: 5px 0;
                         padding: 8px 10px;
+                        text-align: justify;
                         border-radius: 2px;
                         color: #747474;
                         outline: none;
@@ -131,7 +129,7 @@
                     input {
                         border: 1.5px solid #ccc;
                         margin: 5px 0;
-                        padding: 8px 10px;
+                        padding: 6px 10px;
                         border-radius: 2px;
                         color: #747474;
                     }
@@ -143,13 +141,6 @@
                     }
                     input[type=number] {
                         -moz-appearance: textfield;
-                    }
-
-                    .text-validate {
-                        color: red;
-                        font-size: 13px;
-                        font-style: italic;
-                        font-weight: 200;
                     }
 
                     .input-autosize {
@@ -182,46 +173,43 @@
                             border-radius: 10px;
                         }
                     }
-
-                    .btn-add {
-                        display: flex;
-                        align-items: center;
-                        justify-content: right;
-                        width: 140px;
-                        float: right;
-                        margin: 10px 0;
-                        border-radius: 6px;
-                        color: #009f6d;
-                        font-weight: 300;
-                        font-size: 14px;
-                        font-style: italic;
-                        text-decoration: underline;
-                        user-select: none;
-                        &:hover {
-                            cursor: pointer;
-                            color: #006746;
-                        }
-                    }
                 }
             }
         }
 
-        .btn-confirm {
-            width: 140px;
-            background-color: #000;
-            border-radius: 4px;
-            color: #fff;
-            font-weight: 550;
+        .footer {
             display: flex;
-            padding: 8px;
-            margin: 10px 0 20px;
-            justify-content: center;
-            float: right;
-            &:hover {
-                cursor: pointer;
-                opacity: 0.9;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            span {
+                font-weight: bold;
+            }
+            .btn-confirm {
+                width: 140px;
+                background-color: #000;
+                border-radius: 4px;
+                color: #fff;
+                font-weight: 550;
+                justify-content: center;
+                display: flex;
+                padding: 8px;
+                &:hover {
+                    cursor: pointer;
+                    opacity: 0.9;
+                }
             }
         }
 
+        .not-verify {
+            height: 300px;
+            width: 100%;
+            font-size: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ccc;
+            text-transform: uppercase;
+        }
     }
 }

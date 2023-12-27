@@ -64,9 +64,7 @@ function CampaignManagement() {
 
         }
     }
-    useEffect(() => {
-        getAllCampaigns()
-    }, [])
+
     const handleChangStateListCampaign = (listCampaign) => {
         setNumberSelected(prev => {
             const num = listCampaign.reduce((acc, cur) => acc + cur.isChecked ? 1 : 0, 0);

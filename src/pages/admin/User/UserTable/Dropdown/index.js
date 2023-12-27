@@ -3,37 +3,35 @@ import classNames from 'classnames/bind';
 import styles from './Dropdown.module.scss';
 const cx = classNames.bind(styles);
 
-function DropDown({ item, onClickItem, index }) {
-    const handleClickItem = (item) => {
-        onClickItem(item, index);
-    };
+function DropDown({ user, handleStatus, handlVerify}) {
+
     return (
         <div>
-            {item.isVerify && item.isActive && (
+            {user.isVerifiedUser && user.status && (
                 <div className={cx('wrapper')}>
-                    <div className={cx('action', 'action-delete')}>Khóa tài khoản</div>
+                    <div className={cx('action', 'action-delete')} onClick={handleStatus}>Khóa tài khoản</div>
                 </div>
             )}
 
-            {item.isVerify === false && item.isActive && (
+            {user.isVerifiedUser === false && user.status && (
                 <div className={cx('wrapper')}>
-                    <div className={cx('action')}>Xác minh tài khoản</div>
+                    <div className={cx('action')} onClick={handlVerify}>Xác minh tài khoản</div>
                     <div style={{ height: '1px', background: '#ccc' }}></div>
-                    <div className={cx('action', 'action-delete')}>Khóa tài khoản</div>
+                    <div className={cx('action', 'action-delete')} onClick={handleStatus}>Khóa tài khoản</div>
                 </div>
             )}
 
-            {item.isVerify && item.isActive === false && (
+            {user.isVerifiedUser && user.status === false && (
                 <div className={cx('wrapper')}>
-                    <div className={cx('action', 'action-active')}>Kích hoạt lại</div>
+                    <div className={cx('action', 'action-active')} onClick={handleStatus}>Kích hoạt lại</div>
                 </div>
             )}
 
-            {item.isVerify === false && item.isActive === false && (
+            {user.isVerifiedUser === false && user.status === false && (
                 <div className={cx('wrapper')}>
-                    <div className={cx('action')}>Xác minh tài khoản</div>
+                    <div className={cx('action')} onClick={handlVerify}>Xác minh tài khoản</div>
                     <div style={{ height: '1px', background: '#ccc' }}></div>
-                    <div className={cx('action', 'action-active')}>Kích hoạt lại</div>
+                    <div className={cx('action', 'action-active')} onClick={handleStatus}>Kích hoạt lại</div>
                 </div>
             )}
         </div>
