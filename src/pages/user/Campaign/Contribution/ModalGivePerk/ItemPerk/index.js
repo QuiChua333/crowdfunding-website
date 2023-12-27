@@ -13,7 +13,7 @@ function ItemPerk({ item, handleClickItem }) {
             <img src={item.image?.url} alt="img"/>
             <div className={cx('content')}>
                 <span className={cx('name')}>{item.title}</span>
-                <span className={cx('price')}>{formatMoney(item.price)}</span>
+                <span className={cx('price')}>{formatMoney(item.price)}VNĐ</span>
                 <span className={cx('quantity')}>
                     {item.claimed}/{item.quantity} <span style={{ fontWeight: '350' }}>đã được yêu cầu</span>
                 </span>

@@ -95,9 +95,10 @@ function ModalGivePerk({ setShowModalGivePerk, contribution, handleChangeStatus,
     const handleClickAddItemSelected = (id) => {
         setListPerksSelected(prev => [...prev].map(item => {
             if (item.perkId === id) {
+                const quantityAvailable = listPerks.find(i=> i._id === id).quantity
                 return {
                     ...item,
-                    quantity: item.quantity + 1
+                    quantity: item.quantity === quantityAvailable ? item.quantity : item.quantity + 1
                 }
             }
             else return item

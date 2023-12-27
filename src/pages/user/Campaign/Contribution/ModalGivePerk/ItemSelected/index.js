@@ -30,6 +30,7 @@ function ItemSelected({ item, handleClickSub, handleClickAdd, handleRemove}) {
                             justifyContent: 'space-evenly',
                             alignItems: 'center',
                             padding: '2px 10px',
+                            userSelect: 'none'
                         }}>
                             <HiOutlineMinusSm
                                 
