@@ -41,7 +41,6 @@ function Payment() {
         perks: payment.listPerkPayment.map(item => {
             const newItem = {...item}
             delete newItem.listShippingFee;
-            delete newItem.perkImage;
             return newItem
         })
     })

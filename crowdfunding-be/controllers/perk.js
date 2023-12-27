@@ -19,7 +19,7 @@ const getPerksByCampaignId = async (req, res) => {
 const getPerksHasListItemsByCampaignId = async (req, res) => {
     try {
         const { id } = req.params;
-        const listPerk = await Perk.find({ campaign: id }).populate(
+        const listPerk = await Perk.find({ campaign: id, isVisible: true }).populate(
             [
                 {
                     path: 'items.item',

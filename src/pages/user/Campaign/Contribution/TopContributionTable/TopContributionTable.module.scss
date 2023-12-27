@@ -33,51 +33,37 @@
         }
     }
 
-    th.checkbox, td.checkbox {
-        width: 40px;
-        padding-left: 16px;
+    th.top, td.top {
+        width: 100px;
+        padding-left: 32px;
         padding-right: 16px;
         
     }
 
-    th.user, td.user {
+    th.email, td.email {
         width: auto;;
         padding-left: 48px;
     }
-    th.email, td.email {
+    th.num, td.num {
         width: 200px;
 
     }
-    th.perk, td.perk {
-        width: 200px;
-        padding-left: 12px;
-        white-space: nowrap;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
+    td.num {
+        padding-left: 24px;
+
     }
-
-    // td.title span {
-    //     color: rgb(106, 106, 106);
-    //     font-size: 12px;
-    // }
-
-    th.money, td.money {
-        width: 180px;
-        padding-left: 12px;
-    }
-    
-
-    th.date, td.date {
-        width: 180px;
+    th.total, td.total {
+        width: 300px;
         padding-left: 12px;
     }
 
-    th.status, td.status {
-        width: 140px;
+    th.action, td.action {
+        width: 100px;
         padding-left: 12px;
-        padding-right: 30px;
-    }
+        padding-right: 8px;
+        text-align: right;
 
+    }
 
 
     .featured {

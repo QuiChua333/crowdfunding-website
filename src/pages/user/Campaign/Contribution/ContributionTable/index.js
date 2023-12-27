@@ -3,13 +3,13 @@ import classNames from "classnames/bind";
 import styles from './ContributionTable.module.scss'
 import ContributionRow from "./ContributionRow";
 import { IoSquareOutline, IoCheckboxSharp } from "react-icons/io5";
-import { useEffect, useState } from "react";
-import convertDate from "~/utils/convertDate";
+import { useState, useEffect } from "react";
 import formatMoney from "~/utils/formatMoney";
+import convertDate from "~/utils/convertDate2";
 
 const cx = classNames.bind(styles)
 
-function ContributionTable({contributions, onContributionTableChange, getAllContributions}) {
+function ContributionTable({contributions, onContributionTableChange, getAllContributions, openDetailContribution}) {
     const [listContributions,setlistContributions] = useState([]);
     const [isCheckAll,setCheckAll] = useState(false) 
     useEffect(() => {
@@ -78,7 +78,7 @@ function ContributionTable({contributions, onContributionTableChange, getAllCont
                 <tbody>
                     {
                         listContributions?.map((item, index) => {
-                            return <ContributionRow key={index} contribution={item} index={index} setChecked={handleSetChecked} getAllContributions={getAllContributions}/>
+                            return <ContributionRow key={index} contribution={item} index={index} setChecked={handleSetChecked} getAllContributions={getAllContributions} openDetailContribution={openDetailContribution}/>
                         })
                     }
                 </tbody>

@@ -24,10 +24,12 @@ export default mongoose.model('Contribution',
             type: Object
         }],
         money: Number,
+        estDelivery: String,
         date: Date,
         isFinish: {
             type: Boolean,
             default: false
         }
+      
     })
 )

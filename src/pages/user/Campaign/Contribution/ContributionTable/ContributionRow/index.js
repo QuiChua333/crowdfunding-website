@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 
 
 const cx = classNames.bind(styles)
-function ContributionRow({ index, contribution, setChecked, getAllContributions }) {
+function ContributionRow({ index, contribution, setChecked, getAllContributions, openDetailContribution }) {
     
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null)
@@ -37,7 +37,7 @@ function ContributionRow({ index, contribution, setChecked, getAllContributions 
 
     return (
 
-        <tr>
+        <tr onClick={() => openDetailContribution(index)}>
             {/* <Link to='/campaigns/:id/edit/perks/new' style={{position: 'relative', zIndex: '10'}}></Link> */}
             <td className={cx('user')}>{contribution.userName}</td>
             <td className={cx('email')}>{contribution.email}</td>

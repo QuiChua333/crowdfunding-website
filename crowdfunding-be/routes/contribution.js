@@ -10,7 +10,10 @@ router.post('/paymentMomo/success',ContributionController.handleSuccess)
 router.post('/paymentMomo/handle',ContributionController.handlePayment)
 
 router.get('/getAllContributionsByCampaign/:id', ContributionController.getAllContributionsByCampaign);
+router.patch('/editStatus/:id',ContributionController.editStatus)
 
+
+router.get('/getTopUserContributionByCampaign/:id', ContributionController.getTopUserContributionByCampaign);
 
 
 router.get('/', (req, res) => {

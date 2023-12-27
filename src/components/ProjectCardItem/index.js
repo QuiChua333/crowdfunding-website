@@ -1,6 +1,6 @@
 import classNames from "classnames/bind";
 import styles from './ProjectCardItem.module.scss'
-import { FaRegHeart, FaHeart  } from "react-icons/fa";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { AiFillClockCircle } from "react-icons/ai";
 import customAxios from '~/utils/customAxios'
 import { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ import baseURL from "~/utils/baseURL";
 
 const cx = classNames.bind(styles);
 
-function ProjectCardItem({campaign, refreshCampaign}) {
+function ProjectCardItem({ campaign, refreshCampaign }) {
     const currentUser = useSelector(state => state.user.currentUser)
     const navigate = useNavigate()
     const [favourite, setFavourite] = useState(false);
@@ -21,40 +21,40 @@ function ProjectCardItem({campaign, refreshCampaign}) {
             setFavourite(true)
         }
         else setFavourite(false)
-    },[campaign])
+    }, [campaign])
     const handleClickCampaign = () => {
         navigate(`/project/${campaign._id}/detail`)
     }
     const handleClickHeart = async (e) => {
         e.stopPropagation();
         try {
-            const res = await customAxios.patch(`${baseURL}/user/handleFollowedCampaigns`,{campaignId:campaign._id})
+            const res = await customAxios.patch(`${baseURL}/user/handleFollowedCampaigns`, { campaignId: campaign._id })
             setFavourite(res.data.data)
         } catch (error) {
-            
+
         }
     }
     return (
         <div className={cx('wrapper')} onClick={handleClickCampaign}>
-            <div className={cx('card-image')}> 
-                <img src={campaign?.cardImage?.url} alt="project-image"/>
+            <div className={cx('card-image')}>
+                <img src={campaign?.cardImage?.url} alt="project-image" />
             </div>
 
             <div className={cx('card-info')}>
                 <div className={cx('card-status')}>
                     <span className={cx('status')}>{campaign?.status}</span>
-                    
-                    <span onClick={handleClickHeart}>{favourite?<FaHeart className={cx('heart-active')}/> : <FaRegHeart className={cx('heart')}/> }</span>
-                      
-                       
-                    
+
+                    <span onClick={handleClickHeart}>{favourite ? <FaHeart className={cx('heart-active')} /> : <FaRegHeart className={cx('heart')} />}</span>
+
+
+
                 </div>
 
                 <h2 className={cx('card-title')}>{campaign.title}</h2>
                 <p className={cx('card-description')}>{campaign.tagline}</p>
                 <p className={cx('card-category')}>{campaign.field}</p>
 
-                <div className={cx('card-progress')}> 
+                <div className={cx('card-progress')}>
                     <div className={cx('money-info')}>
                         <div className={cx('money')}>
                             <span className={cx('current-money')}>{formatMoney(campaign.currentMoney)}</span>
@@ -63,15 +63,15 @@ function ProjectCardItem({campaign, refreshCampaign}) {
                         <span className={cx('percent')}>{(campaign.percentProgress % 100 === 0) ? campaign.percentProgress : campaign.percentProgress.toFixed(2)}%</span>
                     </div>
                     <div className={cx('progressbar')}>
-                        <div className={cx('progressbar-value')} style={{width: campaign.percentProgress >= 100 ? '100%' : `${campaign.percentProgress}%`}}>
+                        <div className={cx('progressbar-value')} style={{ width: campaign.percentProgress >= 100 ? '100%' : `${campaign.percentProgress}%` }}>
 
                         </div>
                     </div>
 
                     <div className={cx('days-left')}>
-                         <AiFillClockCircle style={{color: 'rgb(173 172 172)'}}/>
-                        <span>Còn {campaign.daysLeft}</span> 
-                        
+                        <AiFillClockCircle style={{ color: 'rgb(173 172 172)' }} />
+                        <span>Còn {campaign.daysLeft}</span>
+
                     </div>
 
                 </div>

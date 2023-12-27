@@ -1,4 +1,5 @@
 import { Contribution, User } from "../model/index.js";
+import mongoose from "mongoose"
 import { Buffer } from "buffer";
 import crypto from 'crypto'
 import https from 'https'
@@ -178,7 +179,7 @@ const handleSuccess = async (req, res) => {
 const getAllContributionsByCampaign = async (req, res) => {
     try {
         const { id } = req.params
-        let { page = 1, size = 15, status = 'Tất cả', searchString = '' } = req.query;
+        let { page = 1, size = 15, status = 'Tất cả', searchString = '', time = 'Tất cả', money = 'Tất cả' } = req.query;
         page = parseInt(page);
         size = parseInt(size)
         size = size >= 15 ? 15 : size
@@ -198,6 +199,9 @@ const getAllContributionsByCampaign = async (req, res) => {
                                     email: { $regex: `.*${searchString}.*`, $options: 'i' }
                                 }
                             ]
+                        },
+                        {
+                            campaign: new mongoose.Types.ObjectId(id)
                         }
                     ]
 
@@ -249,27 +253,36 @@ const getAllContributionsByCampaign = async (req, res) => {
                 $unset: "hasUser"
             }
         );
+        if (time === 'Tất cả') {
+            aggregationStages.push(
+                {
+                    $sort: {
+                        date: -1
+                    }
+                }
+            );
+        }
 
         // Thực hiện sắp xếp theo trường date giảm dần
-        aggregationStages.push(
-            // {
-            //     $match: {
-            //         $or: [
-            //             {
-            //                 title: { $regex: `.*${searchString}.*`, $options: 'i' }
-            //             },
-            //             {
-            //                 'user.fullName': { $regex: `.*${searchString}.*`, $options: 'i' }
-            //             }
-            //         ]
-            //     }
-            // },
-            {
-                $sort: {
-                    date: -1
+        if (time !== 'Tất cả') {
+            aggregationStages.push(
+                {
+                    $sort: {
+                        date: time === 'Gần nhất' ? -1 : 1
+                    }
                 }
-            }
-        );
+            );
+        }
+        if (money !== 'Tất cả') {
+            aggregationStages.push(
+                {
+                    $sort: {
+                        money: money === 'Tăng dần' ? 1 : -1
+                    }
+                }
+            );
+        }
+
 
         const filterContributions = await Contribution.aggregate(aggregationStages);
 
@@ -292,11 +305,82 @@ const getAllContributionsByCampaign = async (req, res) => {
     }
 }
 
+const editStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { isFinish } = req.body;
+        await Contribution.findByIdAndUpdate(id, { isFinish }).exec()
+        res.status(200).json({
+            message: 'Cập nhật trạng thái gửi đặc quyền thành công'
+        })
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
+
+const getTopUserContributionByCampaign = async (req, res) => {
+    try {
+        const { id } = req.params
+        const listUserContribution = await Contribution.aggregate([
+            {
+                $match: {
+                    campaign: new mongoose.Types.ObjectId(id),
+                    user: { $ne: null }
+                }
+            },
+            {
+                $group: {
+                    _id: "$user",
+                    totalMoney: { $sum: "$money" },
+                    totalCount: { $sum: 1 }
+                }
+            },
+            {
+                $lookup: {
+                    from: "users", // Tên của collection User
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "userData"
+                }
+            },
+            {
+                $unwind: "$userData" // Unwind để có thể truy cập các trường của user
+            },
+            {
+                $project: {
+                    _id: 1,
+                    totalMoney: 1,
+                    totalCount: 1,
+                    user: "$userData" // Gán thông tin user vào trường user
+                }
+            },
+            {
+                $sort: { totalMoney: -1 } // Sắp xếp theo tổng tiền giảm dần
+            },
+            {
+                $limit: 5 // Giới hạn kết quả thành top 5
+            }
+        ])
+
+        res.status(200).json({
+            message: 'Lấy danh sách top 5 thành công',
+            data: listUserContribution
+        })
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
 export default {
     getQuantityPeople,
     getMoneyByCampaign,
     handlePayment,
     handleSuccess,
 
-    getAllContributionsByCampaign
+    getAllContributionsByCampaign,
+    editStatus,
+    getTopUserContributionByCampaign
 }

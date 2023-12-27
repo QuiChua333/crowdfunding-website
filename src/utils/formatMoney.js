@@ -1,4 +1,4 @@
-const formatMoney = (monney) => {
+const formatMoney = (monney = 0) => {
     const formatter = new Intl.NumberFormat('de-VN', {
         style: 'currency',
         currency: 'VND',

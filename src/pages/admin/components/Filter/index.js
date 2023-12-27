@@ -4,9 +4,16 @@ import { useRef, useState, useEffect } from "react";
 
 import styles from './Filter.module.scss'
 const cx = classNames.bind(styles)
-function Filter({ listConditions, handleClickItem }) {
+function Filter({ listConditions, handleClickItem, valueShow }) {
     const [showDropDown, setShowDropDown] = useState(false)
-    const [value, setValue] = useState(listConditions[0] || 'Lọc')
+    const [value, setValue] = useState(() => {
+        let state
+        if (!valueShow) {
+            state = listConditions[0] || 'Lọc'
+        }
+        else state = valueShow
+        return state
+    })
     const refElement = useRef(null)
     useEffect(() => {
         function handleClickOutside(event) {
@@ -22,7 +29,7 @@ function Filter({ listConditions, handleClickItem }) {
     return (
         <div className={cx('wrapper')}>
             <div ref={refElement} onClick={() => setShowDropDown(prev => !prev)} className={cx('filter')}>
-                <span>{value} </span>
+                <span>{valueShow ? valueShow : value} </span>
                 {
                     !showDropDown &&
                     <FaAngleDown />
@@ -37,7 +44,7 @@ function Filter({ listConditions, handleClickItem }) {
                     <div className={cx('conditions-wrapper')}>
                         {
                             listConditions.map((item, index) => {
-                                return <div onClick={() => { setValue(item); handleClickItem(item) }} index={index}>{item}</div>
+                                return <div key={index} onClick={() => { setValue(item); handleClickItem(item) }} index={index}>{item}</div>
                             })
                         }
                     </div>
