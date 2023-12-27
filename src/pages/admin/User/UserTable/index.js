@@ -1,12 +1,11 @@
 import React from 'react'
 import classNames from 'classnames/bind';
 import styles from './UserTable.module.scss';
-import { IoSquareOutline, IoCheckboxSharp } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
 import UserRow from './UserRow';
 const cx = classNames.bind(styles)
 
-function UserTable({allUsers, handleStatusUser}) {
+function UserTable({allUsers, handleStatusUser, handlVerifyUser}) {
 
     const [listUser, setListUser] = useState([]);
     useEffect(() => {
@@ -18,15 +17,15 @@ function UserTable({allUsers, handleStatusUser}) {
             <table>
                 <thead>
                     <th>NGƯỜI DÙNG</th>
-                    <th>ĐIỆN THOẠI</th>
-                    <th>CĂN CƯỚC</th>
-                    <th>THÔNG TIN XÁC MINH</th>
-                    <th>TRẠNG THÁI HOẠT ĐỘNG</th>
+                    <th>SỐ LƯỢNG CHIẾN DỊCH</th>
+                    <th>SỐ LƯỢT ĐÓNG GÓP</th>
+                    <th>XÁC MINH</th>
+                    <th>TRẠNG THÁI</th>
                     <th></th>
                 </thead>
                 <tbody>
                     {listUser?.map((item, index) => {
-                        return <UserRow key={index} user={item} index={index} handleStatusUser={handleStatusUser}/>;
+                        return <UserRow key={index} user={item} index={index} handleStatusUser={handleStatusUser} handlVerifyUser={handlVerifyUser}/>;
                     })}
                 </tbody>
             </table>

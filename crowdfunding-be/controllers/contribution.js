@@ -297,6 +297,5 @@ export default {
     getMoneyByCampaign,
     handlePayment,
     handleSuccess,
-
     getAllContributionsByCampaign
 }

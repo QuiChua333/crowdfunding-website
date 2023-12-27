@@ -30,7 +30,10 @@ function ComplaintRow({index, report, handleViewReport }) {
 
     return (
         <tr>
-            <td style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', maxWidth: '300px' }}>
+            <td style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', maxWidth: '250px', padding: '0 30px'}}>
+                {report.campaignInfo.title}
+            </td>
+            <td style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', maxWidth: '150px' }}>
                 {report.title}
             </td>
             <td>

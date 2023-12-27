@@ -9,6 +9,7 @@ import baseURL from '~/utils/baseURL';
 import customAxios from '~/utils/customAxios';
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setMessageBox } from "~/redux/slides/GlobalApp";
+import ModalVerifyAccount from './ModalVerifyAccount';
 
 
 const cx = classNames.bind(styles);
@@ -17,6 +18,7 @@ function UserManagement() {
 
     const dispatch = useDispatch()
     const messageBox = useSelector(state => state.globalApp.messageBox);
+    const [isOpenModalVerify, setIsOpenModalVerify] = useState(false);
     const [indexOfRow, setIndexOfRow] = useState(null);
     const [allUsers, setAllUsers] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
@@ -57,6 +59,8 @@ function UserManagement() {
         }
     }
 
+    
+
     const handleStatusUser = (index) => {
         setIndexOfRow(index);
         dispatch(setMessageBox({
@@ -70,6 +74,12 @@ function UserManagement() {
         }));
     };
 
+    const handlVerifyUser = (index) => {
+        setIndexOfRow(index);
+        // bật modal lên 
+        setIsOpenModalVerify(true);
+    }
+
 
     const handleChangeStatus = async () => {
         if (messageBox.result) {
@@ -81,6 +91,8 @@ function UserManagement() {
                         const id = allUsers[indexOfRow]._id;
                         await customAxios.put(`${baseURL}/user/changeStatusUser/${id}`);
                         getAllUsers();
+                        // điếm thúi z cho nó chắc 
+                        window.location.reload();
                         dispatch(setLoading(false))
                       } catch (error) {
                         dispatch(setLoading(false))
@@ -106,9 +118,6 @@ function UserManagement() {
             getAllUsers();
         }
     }, [pathWithQuery]);
-    useEffect(() => {
-        getAllUsers();
-    }, []);
 
     return (
         <div className={cx('wrapper')}>
@@ -129,7 +138,7 @@ function UserManagement() {
             </div>
             <div style={{ marginTop: '40px' }}>
                 <div className={cx('table-wrapper')}>
-                    <UserTable allUsers={allUsers} handleStatusUser={handleStatusUser}/>
+                    <UserTable allUsers={allUsers} handleStatusUser={handleStatusUser} handlVerifyUser={handlVerifyUser}/>
                 </div>
 
                 <div className={cx('pagination-wrapper')}>
@@ -144,6 +153,9 @@ function UserManagement() {
                     </div>
                 </div>
             </div>
+            {
+                isOpenModalVerify && <ModalVerifyAccount setIsOpenModalVerify={setIsOpenModalVerify} user={allUsers[indexOfRow]} getAllUsers={getAllUsers}/>
+            }
         </div>
     );
 }

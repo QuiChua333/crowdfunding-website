@@ -17,8 +17,9 @@ function ComplaintTable({reports, handleViewReport}) {
         <div className={cx('wrapper')}>
             <table>
                 <thead>
+                    <th>CHIẾN DỊCH</th>
                     <th>TIÊU ĐỀ</th>
-                    <th>THÔNG TIN NGƯỜI DÙNG</th>
+                    <th>NGƯỜI GỬI</th>
                     <th>NGÀY</th>
                     <th>TRẠNG THÁI</th>
                     <th></th>

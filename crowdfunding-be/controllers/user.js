@@ -1,4 +1,4 @@
-import { User } from '../model/index.js';
+import { Campaign, Contribution, User } from '../model/index.js';
 import bcrypt from 'bcrypt';
 import sendEmail from '../utils/sendEmail.js';
 import jwt from 'jsonwebtoken';
@@ -568,6 +568,15 @@ const getAllUser = async (req, res) => {
             const totalRecords = await User.countDocuments();
             const totalPages = Math.ceil(totalRecords / size);
 
+            for (let i = 0; i < filterUsers.length; i++) {
+                const quantityCampaign = await Campaign.countDocuments({ owner: filterUsers[i]._id });
+                filterUsers[i].quantityCampaign = quantityCampaign;
+            }
+            for (let i = 0; i < filterUsers.length; i++) {
+                const quantityContribute = await Contribution.countDocuments({ user: filterUsers[i]._id });
+                filterUsers[i].quantityContribute = quantityContribute;
+            }
+            
             res.status(200).json({
                 message: 'Lấy thông tin tất cả người dùng thành công',
                 data: {
@@ -590,8 +599,7 @@ const changeStatusUser = async (req, res) => {
             const user = await User.findById(req.params.id).exec();
             if (user) {
                 user.status = !user.status;
-            }
-            else {
+            } else {
                 res.status(400).json({
                     message: error.message,
                 });
@@ -609,6 +617,33 @@ const changeStatusUser = async (req, res) => {
         });
     }
 };
+const VerifiedInfoOfUser = async (req, res) => {
+    try {
+        const isAdmin = req.isAdmin;
+        if (isAdmin) {
+            const user = await User.findById(req.params.id).exec();
+            if (user) {
+                user.isVerifiedUser = true;
+            } else {
+                res.status(400).json({
+                    message: error.message,
+                });
+            }
+            user.save();
+
+            res.status(200).json({
+                message: 'Xác minh thông tin người dùng thành công',
+                data: user,
+            });
+        } else throw new Error('Bạn không có quyền truy cập');
+    } catch (error) {
+        res.status(400).json({
+            message: error.message,
+        });
+    }
+};
+
+
 export default {
     checkRegisterEmail,
     registerUser,
@@ -630,4 +665,5 @@ export default {
     getCampaignFollowed,
     getAllUser,
     changeStatusUser,
+    VerifiedInfoOfUser,
 };

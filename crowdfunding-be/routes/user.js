@@ -4,6 +4,8 @@ import checkToken from '../middlewares/auth.js'
 const router = express.Router();
 
 
+
+router.put('/VerifiedInfoOfUser/:id', checkToken, UserController.VerifiedInfoOfUser);
 router.put('/changeStatusUser/:id', checkToken, UserController.changeStatusUser);
 router.get('/getAllUser', checkToken, UserController.getAllUser);
 router.post('/checkRegisterEmail', UserController.checkRegisterEmail);

@@ -2,14 +2,13 @@ import React from 'react';
 
 import classNames from 'classnames/bind';
 import styles from './UserRow.module.scss';
-import { IoSquareOutline, IoCheckboxSharp } from 'react-icons/io5';
 import { PiDotsThreeBold } from 'react-icons/pi';
 import DropDown from '../Dropdown';
 import { useRef, useState, useEffect } from 'react';
 
 const cx = classNames.bind(styles);
 
-function UserRow({ index, user, handleStatusUser }) {
+function UserRow({ index, user, handleStatusUser, handlVerifyUser }) {
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null);
 
@@ -28,60 +27,65 @@ function UserRow({ index, user, handleStatusUser }) {
     const handleStatus = () => {
         handleStatusUser(index);
     };
+    const handlVerify = () => {
+        handlVerifyUser(index);
+    }
 
     return (
         <tr>
-            <td>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <img className={cx('avatar')} src={user.avatar.url} alt="avt" />
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            marginLeft: '10px',
-                            alignItems: 'flex-start',
-                        }}
-                    >
-                        <span style={{ fontSize: '14px' }}>{user.fullName}</span>
-                        <span style={{ fontSize: '10px', fontStyle: 'italic' }}>{user.email}</span>
-                    </div>
-                </div>
-            </td>
-            <td>{user?.infoVerify?.identifyCode || 'Chưa cập nhật'}</td>
-            <td>{user?.infoVerify?.phoneNumber || 'Chưa cập nhật'}</td>
-            <td style={{ width: '300px', textAlign: 'center' }}>
-                {user.isVerifiedUser ? (
-                    <div className={cx('verify')}>Đã xác minh</div>
-                ) : (
-                    <div className={cx('unverify')}>Chưa xác minh</div>
-                )}
-            </td>
-            <td>
-                {user.status ? (
-                    <div className={cx('status-active')}>Đang hoạt động</div>
-                ) : (
-                    <div className={cx('status-unactive')}>Đã bị khóa</div>
-                )}
-            </td>
-
-            <td className={cx('action')}>
-                {user.isAdmin === false && (
-                    <div
-                        className={cx('action-doc')}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            console.log('cc nè: ', user);
-                            setOpenDropDown((prev) => !prev);
-                        }}
-                        ref={docElement}
-                    >
-                        <PiDotsThreeBold style={{ fontSize: '20px', color: '#7a69b3' }} />
-                        <div className={cx('dropdown-wrapper')} style={{ display: openDropDown && 'block' }}>
-                            <DropDown user={user} handleStatus={handleStatus} />
+            {user.isAdmin === false && (
+                <>
+                    <td>
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                            <img className={cx('avatar')} src={user.avatar.url} alt="avt" />
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    marginLeft: '10px',
+                                    alignItems: 'flex-start',
+                                }}
+                            >
+                                <span style={{ fontSize: '14px' }}>{user.fullName}</span>
+                                <span style={{ fontSize: '10px', fontStyle: 'italic' }}>{user.email}</span>
+                            </div>
                         </div>
-                    </div>
-                )}
-            </td>
+                    </td>
+                    <td>{user.quantityCampaign} chiến dịch</td>
+                    <td>{user.quantityContribute} lượt</td>
+                    <td>
+                        {user.isVerifiedUser ? (
+                            <div className={cx('verify')}>Đã xác minh</div>
+                        ) : (
+                            <div className={cx('unverify')}>Chưa xác minh</div>
+                        )}
+                    </td>
+                    <td>
+                        {user.status ? (
+                            <div className={cx('status-active')}>Đang hoạt động</div>
+                        ) : (
+                            <div className={cx('status-unactive')}>Đã bị khóa</div>
+                        )}
+                    </td>
+
+                    <td className={cx('action')}>
+                        <div
+                            className={cx('action-doc')}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                console.log('cc nè: ', user);
+                                setOpenDropDown((prev) => !prev);
+                            }}
+                            ref={docElement}
+                        >
+                            <PiDotsThreeBold style={{ fontSize: '20px', color: '#7a69b3' }} />
+                            <div className={cx('dropdown-wrapper')} style={{ display: openDropDown && 'block' }}>
+                                <DropDown user={user} handleStatus={handleStatus} handlVerify={handlVerify}/>
+                            </div>
+                        </div>
+                    </td>
+                </>
+            )}
         </tr>
     );
 }
