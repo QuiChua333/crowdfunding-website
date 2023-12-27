@@ -11,6 +11,12 @@ const images = {
     logoHongLon: require('~/assets/images/logoHongLon.png'),
     logoTrangNho: require('~/assets/images/logoTrangNho.png'),
     logoTrangLon: require('~/assets/images/logoTrangLon.png'),
+    logo1: require('~/assets/images/img/bg1.png'),
+    logo2: require('~/assets/images/img/bg2.jpg'),
+    logo3: require('~/assets/images/img/bg3.jpg'),
+    logo4: require('~/assets/images/img/bg4.jpg'),
+    logo5: require('~/assets/images/img/bg5.jpg'),
+    logo6: require('~/assets/images/img/bg6.jpg'),
 };
 
 export default images;
