@@ -127,6 +127,8 @@ function BasicCampaign() {
         const id = body.id;
         delete body.id
         delete body.status
+
+        // VALIDATE
         dispatch(setLoading(true))
         try {
             const res = await customAxios.patch(`${baseURL}/campaign/editCampaign/${id}`,body)
@@ -278,7 +280,7 @@ function BasicCampaign() {
                             </div>
 
                             <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                <a onClick={handleClickSaveContinue} className={cx('btn','btn-ok')} >SAVE & CONTINUE</a>
+                                <a onClick={handleClickSaveContinue} className={cx('btn','btn-ok')} >LƯU & TIẾP TỤC</a>
                             </div>
 
                         </div>

@@ -147,7 +147,7 @@ function Payment() {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('header')}>
-                <a className={cx('logo')}>GIVEFUN</a>
+                <a href="/" className={cx('logo')}>GIVEFUN</a>
             </div>
 
             <div className={cx('inner')}>
@@ -173,9 +173,7 @@ function Payment() {
                             <div style={{ display: 'inline-block', fontWeight: '700' }}>{currentUser.fullName}</div>
                             <div style={{ display: 'inline-block' }}>{currentUser.email}</div>
                         </div>
-                        <div className={cx('my-user-logout')}>
-                            Đăng xuất
-                        </div>
+                       
                     </div>
 
                     <div className={cx('shipping-address')}>

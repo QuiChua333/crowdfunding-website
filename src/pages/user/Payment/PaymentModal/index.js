@@ -17,8 +17,7 @@ function PaymentModal({ setShowPaymentModal, handlePaymentMethod }) {
         <div className={cx('wrapper')}>
             <div className={cx('body')}>
                 <h3 className={cx('title')}>CHỌN CÁCH THỨC THANH TOÁN</h3>
-                <p className={cx('description')}>Vui lòng chọn một trong 2 cách sau:</p>
-                <div style={{ marginBottom: '32px' }}>
+                <div style={{ marginBottom: '32px', marginTop: '36px' }}>
                     <label className={cx('inputRadioGroup-radio')} onClick={() => setMethod('momo')}>
                         <input type="radio" value={'VSBL'} name="perkVisibility" defaultChecked />
                         <span className={cx('inputRadioGroup-radio-button')}></span>

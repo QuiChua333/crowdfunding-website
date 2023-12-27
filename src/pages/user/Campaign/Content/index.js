@@ -186,6 +186,8 @@ function ContentCampaign() {
         delete body.status
         delete body.title
         delete body.cardImage
+
+        // VALIDATE
         dispatch(setLoading(true))
         try {
             const res = await customAxios.patch(`${baseURL}/campaign/editCampaign/${id}`, body)
@@ -462,7 +464,7 @@ function ContentCampaign() {
 
 
                             <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
-                                <a onClick={handleClickSaveContinue} className={cx('btn', 'btn-ok')} >SAVE & CONTINUE</a>
+                                <a onClick={handleClickSaveContinue} className={cx('btn', 'btn-ok')} >LƯU & TIẾP TỤC</a>
                             </div>
                         </div>
 
