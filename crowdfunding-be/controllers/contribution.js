@@ -4,6 +4,79 @@ import { Buffer } from "buffer";
 import crypto from 'crypto'
 import https from 'https'
 import moment from "moment";
+
+const getAllContributionsOfUser = async (req, res) => {
+    try {
+        let { page = 1, size = 15, status = 'Tất cả', searchString = '' } = req.query;
+            page = parseInt(page);
+            size = parseInt(size);
+            size = size >= 15 ? 15 : size;
+            const filterContributes = await Contribution.aggregate([
+                {
+                    $lookup: {
+                        from: 'campaigns',
+                        localField: 'campaign',
+                        foreignField: '_id',
+                        as: 'campaignInfo',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user',
+                        foreignField: '_id',
+                        as: 'userInfo',
+                    },
+                },
+                {
+                    $unwind: '$campaignInfo',
+                },
+                {
+                    $unwind: '$userInfo',
+                },
+                {
+                    $match: {
+                        $and: [
+                            {
+                                isFinish:
+                                    status === 'Tất cả' ? { $ne: 'Tất cả' } : status === 'Chưa nhận' ? false : true,
+                            },
+                            {
+                                $or: [
+                                    {
+                                        'campaignInfo.title': { $regex: `.*${searchString}.*`, $options: 'i' },
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                },
+                {
+                    $skip: (page - 1) * size,
+                },
+                {
+                    $limit: size,
+                },
+            ]);
+
+            const totalRecords = await Contribution.countDocuments();
+            const totalPages = Math.ceil(totalRecords / size);
+
+            res.status(200).json({
+                message: 'Lấy thông tin các đóng góp của người dùng thành công',
+                data: {
+                    contributions: filterContributes,
+                    totalPages,
+                },
+            });
+    } catch (error) {
+        res.status(400).json({
+            message: error.message,
+        });
+    }
+};
+
+
 const getQuantityPeople = async (req, res) => {
     try {
         const { id } = req.params;
@@ -374,13 +447,32 @@ const getTopUserContributionByCampaign = async (req, res) => {
         })
     }
 }
+
+
+const getQuantityContributeOfUserId = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const contributes = await Contribution.find({ user: id }).exec();
+
+        res.status(200).json({
+            message: 'Lấy số lượt đóng góp của user thành công',
+            data: contributes.length,
+        });
+    } catch (error) {
+        res.status(400).json({
+            message: error.message,
+        });
+    }
+};
+
 export default {
     getQuantityPeople,
     getMoneyByCampaign,
     handlePayment,
     handleSuccess,
-
     getAllContributionsByCampaign,
     editStatus,
-    getTopUserContributionByCampaign
+    getTopUserContributionByCampaign,
+    getQuantityContributeOfUserId,
+    getAllContributionsOfUser,
 }

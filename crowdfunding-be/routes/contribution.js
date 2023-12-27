@@ -1,9 +1,11 @@
 import express from 'express'
 import { ContributionController } from "../controllers/index.js";
+import checkToken from '../middlewares/auth.js';
 
 const router = express.Router();
 
-
+router.get('/getAllContributionsOfUser/:id', checkToken, ContributionController.getAllContributionsOfUser);
+router.get('/getQuantityContributeOfUserId/:id', ContributionController.getQuantityContributeOfUserId);
 router.get('/getQuantityPeopleByCampaign/:id', ContributionController.getQuantityPeople);
 router.get('/getMoneyByCampaign/:id', ContributionController.getMoneyByCampaign);
 router.post('/paymentMomo/success',ContributionController.handleSuccess)

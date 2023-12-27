@@ -35,6 +35,7 @@ function ComplaintManagement() {
         if (filter.page === totalPages) return;
         setFilter((prev) => ({ ...prev, page: prev.page + 1 }));
     };
+    
     useEffect(() => {
         const queryParams = { page: filter.page, searchString: filter.textSearch, status: filter.status };
         const queryString = new URLSearchParams(queryParams).toString();
