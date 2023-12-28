@@ -1,39 +1,92 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from '../../Profile.module.scss';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
-import Search from '~/pages/admin/components/Search/index.js';
-import formatMoney from '~/utils/formatMoney';
-import Filter from '~/pages/admin/components/Filter';
-import baseURL from "~/utils/baseURL";
-import customAxios from '~/utils/customAxios'
+import baseURL from '~/utils/baseURL';
+import customAxios from '~/utils/customAxios';
 import { useSelector } from 'react-redux';
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa6';
+import ContributeTable from './ContributeTable';
+import Search from '~/pages/admin/components/Search';
+import Filter from '~/pages/admin/components/Filter';
+import ModalDetailContribution from './ModalDetailContribution';
+
 const cx = classNames.bind(styles);
 
 function Contributes() {
-    const { id } = useParams()
-    const [textSearch, setTextSearch] = useState('');
-    const [user, setUser] = useState({})
-    const currentUser = useSelector(state => state.user.currentUser)
-    useEffect(() => {
-        console.log(textSearch);
-    }, [textSearch]);
-    const handleClickItemFilter = (item) => {
-        console.log(item)
-    }
+    const { id } = useParams();
+    const [user, setUser] = useState({});
+    const currentUser = useSelector((state) => state.user.currentUser);
+
     const getInfoUser = async () => {
         try {
-            const res = await customAxios.get(`${baseURL}/user/getInfoUser/${id}`)
-            setUser(res.data.data)
-        } catch (error) {
-
-        }
-    }
+            const res = await customAxios.get(`${baseURL}/user/getInfoUser/${id}`);
+            setUser(res.data.data);
+        } catch (error) {}
+    };
     useEffect(() => {
-        getInfoUser()
-    }, [])
+        getInfoUser();
+    }, []);
+
+
+    const [totalPages, setTotalPages] = useState(0);
+    const [pathWithQuery, setPathWithQuery] = useState('');
+    const [filter, setFilter] = useState({
+        textSearch: '',
+        status: 'Tất cả',
+        page: 1,
+    });
+    const handleClickItemFilter = (item) => {
+        setFilter((prev) => ({ ...prev, status: item }));
+    };
+    const handleChangeSearchInput = (value) => {
+        setFilter((prev) => ({ ...prev, textSearch: value }));
+    };
+    const handleClickPreviousPage = () => {
+        if (filter.page === 1) return;
+        setFilter((prev) => ({ ...prev, page: prev.page - 1 }));
+    };
+    const handleClickNextPage = () => {
+        if (filter.page === totalPages) return;
+        setFilter((prev) => ({ ...prev, page: prev.page + 1 }));
+    };
+    
+    useEffect(() => {
+        const queryParams = { page: filter.page, searchString: filter.textSearch, status: filter.status };
+        const queryString = new URLSearchParams(queryParams).toString();
+        const pathWithQuery = `${baseURL}/contribution/getAllContributionsOfUser/${id}/?${queryString}`;
+        setPathWithQuery(pathWithQuery);
+    }, [filter]);
+
+    useEffect(() => {
+        if (pathWithQuery) {
+            getAllContributesOfUer();
+        }
+    }, [pathWithQuery]);
+
+    const [contributesOfUer, setContributesOfUer] = useState([]);
+    const getAllContributesOfUer = async () => {
+        try {
+            const res = await customAxios.get(pathWithQuery);
+            setContributesOfUer(res.data.data.contributions);
+            setTotalPages(res.data.data.totalPages);
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+    useEffect(() => {
+        getAllContributesOfUer();
+    }, []);
+
+    const [isOpenModalDetail, setIsOpenModalDetail] = useState(false);
+    const [indexOfRow, setIndexOfRow] = useState(null);
+    const handleViewContribution = (index) => {
+        setIndexOfRow(index);
+        setIsOpenModalDetail(true);
+    };
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('navbar')}>
@@ -63,58 +116,53 @@ function Contributes() {
                         <a href={`/individuals/${id}/campaigns`} className={cx('tab')}>
                             Chiến dịch
                         </a>
-                        {
-                            currentUser._id && currentUser._id === id &&
+                        {currentUser._id && currentUser._id === id && (
                             <a href={`/individuals/${id}/contributions`} className={cx('tab', 'active')}>
                                 Đóng góp của tôi
                             </a>
-                        }
+                        )}
                     </div>
 
                     <div className={cx('container-body-profile')}>
                         <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                             <h2 style={{ fontWeight: '600', fontSize: '24px' }}>Những đóng góp của tôi</h2>
-                            <div style={{marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
-                                <div style={{ width: '50%'}}>
-                                    <Search className={cx('search')} handleChangeInput={(value) => setTextSearch(value)} />
-                                    <div style={{marginTop: '10px'}}>Kết quả: 10</div>
+
+                            <div className={cx('wrapper-container')}>
+                                <div style={{display: 'flex', alignItems: 'end', justifyContent: 'space-between', margin: '10px 0 40px 0'}}>
+                                    <div style={{maxWidth: '600px', width: '500px' }}>
+                                        <Search handleChangeInput={handleChangeSearchInput}/>
+                                    </div>
+
+                                    <div>
+                                        <span style={{fontSize: '16px', color: '#888', fontWeight: '550', display: 'block', marginBottom: '8px'}}>Trạng thái: </span>
+                                        <Filter handleClickItem={handleClickItemFilter} listConditions={['Tất cả', 'Đã nhận', 'Chưa nhận']} />
+                                    </div>
                                 </div>
-                                <select style={{padding: '10px 30px', outline: 'none', border: '1.5px solid #c8c8c8'}}>
-                                    <option selected value="All">Tất cả</option>
-                                    <option value="Received">Đã nhận</option>
-                                    <option value="UnReceived">Chưa nhận</option>
-                                </select>
+                                <div style={{ marginTop: '20px' }}>
+                                    <div className={cx('table-wrapper')}>
+                                        <ContributeTable contributesOfUer={contributesOfUer} handleViewContribution={handleViewContribution}/>
+                                    </div>
+
+                                    <div className={cx('pagination-wrapper')}>
+                                        <div className={cx('pagination')}>
+                                            <span className={cx('icon')} onClick={handleClickPreviousPage}>
+                                                <FaAngleLeft style={{ color: '#7a69b3' }} />
+                                            </span>
+                                            <span className={cx('curent')}>{`${filter.page} của ${totalPages}`}</span>
+                                            <span className={cx('icon')} onClick={handleClickNextPage}>
+                                                <FaAngleRight style={{ color: '#7a69b3' }} />
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <table className={cx('table-campaigns')}>
-                                <thead>
-                                    <th>Ngày</th>
-                                    <th>Chiến dịch</th>
-                                    <th>Tổng tiền</th>
-                                    <th>Trạng thái</th>
-                                    <th>Chi tiết</th>
-                                </thead>
-                                <tbody>
-                                    {[1, 2, 3, 4, 5, 6, 7].map((item) => {
-                                        return (
-                                            <tr>
-                                                <td>11/12/2023</td>
-                                                <td>
-                                                    <a href='/'>DỰ ÁN XÂY 1200 BIỆT THỰ ĐỂ NUÔI 1200 CON GÀ CON</a>
-                                                </td>
-                                                <td>{formatMoney(5000000)}</td>
-                                                <td>Đã nhận</td>
-                                                <td>
-                                                    <div className={cx('btn-detail')}>Xem chi tiết</div>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
             </div>
+            {
+                isOpenModalDetail && <ModalDetailContribution contribution={contributesOfUer[indexOfRow]} setIsOpenModalDetail={setIsOpenModalDetail}/>
+            }
         </div>
     );
 }

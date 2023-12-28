@@ -53,7 +53,9 @@ function Footer() {
                     <MdEmail className={cx('icon-mail')}/>
                     <b>Tìm nó đầu tiên trên GIVEFUN</b>
                     <span>Khám phá những sản phẩm mới và thông minh trong bản tin GIVEFUN</span>
-                    <div className={cx('btn-signup')}>ĐĂNG KÝ</div>
+                    <div className={cx('btn-signup')}>
+                        <a href='/' style={{color: '#fff'}}>KHÁM PHÁ</a>
+                    </div>
                 </div>
             </div>
 

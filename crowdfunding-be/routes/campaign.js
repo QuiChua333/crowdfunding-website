@@ -3,7 +3,7 @@ import { CampaignController } from "../controllers/index.js";
 import checkToken from '../middlewares/auth.js'
 const router = express.Router();
 
-
+router.get('/getQuantityCampaignOfUserId/:id',CampaignController.getQuantityCampaignOfUserId)
 router.get('/getCampaignById/:id',CampaignController.getCampaignById)
 router.patch('/CKEUpload',CampaignController.CKEUpload)
 router.patch('/editCampaign/:id',checkToken,CampaignController.editCampaign)

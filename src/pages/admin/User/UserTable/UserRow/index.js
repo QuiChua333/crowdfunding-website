@@ -73,7 +73,6 @@ function UserRow({ index, user, handleStatusUser, handlVerifyUser }) {
                             className={cx('action-doc')}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                console.log('cc nè: ', user);
                                 setOpenDropDown((prev) => !prev);
                             }}
                             ref={docElement}

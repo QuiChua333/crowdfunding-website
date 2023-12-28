@@ -1,4 +1,4 @@
-const convertDate = (d) => {
+const convertDate3 = (d) => {
     const date = new Date(d);
 
     // Lấy thông tin ngày, tháng, năm
@@ -10,4 +10,4 @@ const convertDate = (d) => {
     const formattedDate = `${month}/${year}`;
     return formattedDate;
 }
-export default convertDate;
+export default convertDate3;

@@ -18,9 +18,11 @@ import ProfilePersonal from '~/pages/user/Profile/ViewProfile/ProfilePersonal'
 import TemplateEmailVerify from '~/pages/auth/TemplateEmailVerify'
 import ResetPassword from '~/pages/auth/ResetPassword'
 import Contributes from '~/pages/user/Profile/ViewProfile/Contributes'
-
 import ThankPayment from '~/pages/PrefixPage/ThankPayment'
-import ModalVerifyAccount from '~/pages/admin/User/ModalVerifyAccount'
+import AboutUs from '~/pages/user/AboutUs'
+
+
+
 const loginRoutes = [
     { path: '/sign-up', component: SignUp, layout: null },
     { path: '/login', component: Login, layout: null },
@@ -41,7 +43,7 @@ const publicRoutes = [
     { path: '/givefun/verify-user/:tokenLinkVerifyUser', component: VerifyUser, layout: null },
     { path: '/campaigns/team/invitation/:tokenLinkInvitation', component: SuccessVerifyInvitation, layout: null },
     { path: '/payment/thank', component: ThankPayment, layout: null },
-    { path: '/modal', component: ModalVerifyAccount, layout: null },
+    { path: '/about-us', component: AboutUs, layout: HeaderOnlyLayout },
 ]
 const adminRoutes = [
     { path: '/admin/campaigns', component: CampaignManagement, layout: AdminLayout },

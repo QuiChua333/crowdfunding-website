@@ -3,6 +3,23 @@ import cloudinary from '../utils/cloudinary.js';
 import jwt from 'jsonwebtoken';
 import sendEmail from '../utils/sendEmail.js';
 
+
+const getQuantityCampaignOfUserId = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const campaigns = await Campaign.find({ owner: id, status: { $ne: 'Bản nháp' } }).exec();
+
+        res.status(200).json({
+            message: 'Lấy số lượng chiến dịch của user thành công',
+            data: campaigns.length,
+        });
+    } catch (error) {
+        res.status(400).json({
+            message: error.message,
+        });
+    }
+};
+
 const getQuantityCampaingnPerUser = async (req, res) => {
     try {
         const { id } = req.params;
@@ -937,5 +954,6 @@ export default {
     getPopulateCampaigns,
     checkCampaignOfUser,
     adminChangeStatusCampaign,
-    adminDeleteCampaign
+    adminDeleteCampaign,
+    getQuantityCampaignOfUserId,
 }
