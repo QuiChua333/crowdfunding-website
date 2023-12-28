@@ -93,15 +93,8 @@
         }
     }
 
-
-
-
-
-
-
     .entreField {
-        margin: 40px 0;
-        margin-top: 10px;
+        margin-top: 20px;
     }
     
     .entreField-label {
@@ -169,10 +162,44 @@
     }
 
     .btn-payment {
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #fff;
+        background-color: #e51075;
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        align-self: center;
+        cursor: pointer;
+        letter-spacing: 1px;
         &:hover {
             background-color: #cf0c67;
             opacity: 0.9;
         }
     }
+    .btn-payment-dis {
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #fff;
+        background-color: #e51075;
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        align-self: center;
+        letter-spacing: 1px;
+        opacity: 0.5;
+    }
    
+}
+
+.entreField-error {
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 21px;
+    color: #ff001e;
+    margin-top: 5px;
 }

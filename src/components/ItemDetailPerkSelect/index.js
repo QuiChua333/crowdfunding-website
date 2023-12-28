@@ -95,7 +95,10 @@ function ItemDetailPerkSelect({
                             Remove
                         </span>
                     </div>
-                    <span className={cx('money')}>{formatMoney(item.price)}</span>
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                        <span className={cx('money')}>{formatMoney(item.price)}</span>
+                        <span>VND</span>
+                    </div>
                 </div>
             </div>
             {item.quantityOrder === item.quantity - item.claimed && (

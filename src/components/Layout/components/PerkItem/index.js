@@ -49,7 +49,10 @@ function PerkItem({
             <img src={item.image.url} alt="img" />
             <div className={cx('container-body')}>
                 <h2 style={{ fontSize: '24px' }}>{item.title}</h2>
-                <b className={cx('price')}>{formatMoney(item.price)}</b>
+                <div style={{display: 'flex', alignItems: 'center'}}>
+                    <b className={cx('price')}>{formatMoney(item.price)}</b>
+                    <span style={{ fontWeight: '50', color: '#7D7D7D', fontSize: '22px' }}>VND</span>
+                </div>
                 <p className={cx('des')}>{item.description}</p>
 
                 {showMore && (

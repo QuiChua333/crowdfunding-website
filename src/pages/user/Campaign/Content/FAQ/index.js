@@ -6,7 +6,7 @@ import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scs
 
 const cx =classNames.bind(styles)
 
-function FAQ({ isShowClose, index, removeFAQ, handleChangeFAQ, item}) {
+function FAQ({ isShowClose, index, removeFAQ, handleChangeFAQ, item, isClicked, setIsClicked, setFlagFaqs}) {
 
     const handleChange = (e, type) => {
         const newItem = {
@@ -20,6 +20,35 @@ function FAQ({ isShowClose, index, removeFAQ, handleChangeFAQ, item}) {
     const handleClickClose = () => {
         removeFAQ(index)
     }
+    const [textValidateQuestion, setTextValidateQuestion] = useState('');
+    const validateQuestion = (value) => {
+        if (value?.trim().length === 0 || value?.trim() === '') {
+            setTextValidateQuestion('* Vui lòng nhập nội dung câu hỏi');
+            return false;
+        } else {
+            setTextValidateQuestion('');
+            return true;
+        }
+    };
+    const [textValidateAnswer, setTextValidateAnswer] = useState('');
+    const validateAnswer = (value) => {
+        if (value?.trim().length === 0 || value?.trim() === '') {
+            setTextValidateAnswer('* Vui lòng nhập câu trả lời cho câu hỏi');
+            return false;
+        } else {
+            setTextValidateAnswer('');
+            return true;
+        }
+    };
+
+    useEffect(() => {
+        if (isClicked) {
+            let flagQuestion = validateQuestion(item.question);
+            let flagAnswer = validateAnswer(item.answer);
+            setIsClicked(false);
+            setFlagFaqs(flagQuestion && flagAnswer);
+        }
+    }, [isClicked])
 
 
     return (
@@ -31,7 +60,7 @@ function FAQ({ isShowClose, index, removeFAQ, handleChangeFAQ, item}) {
                         Câu hỏi
                     </div>
                     <input onChange={(e) => handleChange(e,'question')} value={item.question} type="text" className={cx('itext-field')} />
-                    <div className={cx('entreField-validationLabel')}>200</div>
+                    <span className={cx('entreField-validationLabel')}>{textValidateQuestion}</span>
                 </div>
 
                 <div className={cx('row')}>
@@ -39,7 +68,7 @@ function FAQ({ isShowClose, index, removeFAQ, handleChangeFAQ, item}) {
                         Trả lời
                     </div>
                     <textarea onChange={(e) => handleChange(e,'answer')} value={item.answer} className={cx('itext-field')} style={{ minHeight: '60px', paddingTop: '10px' }}></textarea>
-                    <div className={cx('entreField-validationLabel')}>500</div>
+                    <span className={cx('entreField-validationLabel')}>{textValidateAnswer}</span>
                 </div>
             </div>
             {

@@ -35,12 +35,9 @@ function DetailProject() {
     const [isOpenModalOption, setIsOpenModalOption] = useState(false);
     const [perkInModal, setPerkInModal] = useState(false);
     const [itemPerkSelected, setItemPerkSelected] = useState({});
-    const [quantityCampaignOfUser, setQuantityCampaignOfUser] = useState(1);
+    const [quantityCampaignOfUser, setQuantityCampaignOfUser] = useState(0);
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null);
-
-
-
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -367,14 +364,17 @@ function DetailProject() {
                                 <span>{quantityCampaignOfUser} chiến dịch</span>
                                 <div className={cx('seprate')}></div>
                                 <span>
-                                    {ItemProject.location?.city} | {ItemProject.location?.country}
+                                    {ItemProject.location?.city}, {ItemProject.location?.country}
                                 </span>
                             </div>
                         </div>
                     </div>
                     <div className={cx('container-layout-money')}>
                         <div className={cx('container-money')}>
-                            <b className={cx('text-current-money')}>{formatMoney(money)}</b>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <b className={cx('text-current-money')}>{formatMoney(money)}</b>
+                                <span style={{ fontWeight: '50', color: '#3d3d3d', fontSize: '16px' }}>VND</span>
+                            </div>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <span className={cx('container-people')}>{quantityPeople}</span>
                                 <span className={cx('text-people')}>người đóng góp</span>
@@ -400,7 +400,10 @@ function DetailProject() {
                                     {formatPercent((money / ItemProject.goal) * 100) + ' %'}
                                 </b>
                                 <span className={cx('text-of')}>của</span>
-                                <b className={cx('text-money-total')}>{formatMoney(ItemProject.goal)}</b>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <b className={cx('text-money-total')}>{formatMoney(ItemProject.goal)}</b>
+                                    <span style={{ fontWeight: '50', color: '#3d3d3d', fontSize: '16px' }}>VND</span>
+                                </div>
                             </div>
 
                             <b className={cx('container-people')}>
@@ -563,7 +566,7 @@ function DetailProject() {
             {isOpenModalMember && (
                 <ModalTeamMembersDetail members={members} setIsOpenModalMember={setIsOpenModalMember} />
             )}
-            {isOpenModalReport && (<ModalReport setIsOpenModalReport={setIsOpenModalReport}/>)}
+            {isOpenModalReport && <ModalReport setIsOpenModalReport={setIsOpenModalReport} />}
         </div>
     );
 }

@@ -270,7 +270,7 @@ function DetailPerk() {
                     <div className={cx('container-2')}>
                         <div className={cx('container-total')}>
                             <span>Tổng tiền: </span>
-                            <span>{formatMoney(total)}</span>
+                            <b>{formatMoney(total)} VND</b>
                         </div>
 
                         <div className={cx('separate')}></div>

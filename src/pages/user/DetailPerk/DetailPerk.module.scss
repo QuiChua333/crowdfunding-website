@@ -7,7 +7,7 @@
     margin: 6px 0 20px;
     font-size: 28px;
     font-weight: bold;
-    color: #207d5d;
+    color: #e20d74;
     border-bottom: 1px solid #ccc;
   }
 
@@ -124,8 +124,10 @@
           padding: 10px 0;
           align-self: center;
           border-radius: 4px;
-          background-color: #000;
+          background-color: #e20d74;
           color: #fff;
+          font-size: 14px;
+          font-weight: bold;
 
           &:hover {
             opacity: 0.7;

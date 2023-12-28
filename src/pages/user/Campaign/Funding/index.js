@@ -4,16 +4,9 @@ import { HeaderPage } from "~/components/Layout/components/Header";
 
 import Footer from "~/components/Layout/components/Footer";
 import { FaCheck } from "react-icons/fa6";
-import { FaAngleDown } from "react-icons/fa";
-
-import images from "~/assets/images";
-
-
-
-
 import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import customAxios from '~/utils/customAxios'
 import baseURL from "~/utils/baseURL";
@@ -55,9 +48,7 @@ function Funding() {
     useEffect(() => {
         getCampaign()
     }, [])
-    useEffect(() => {
-        console.log(campaginState)
-    }, [campaginState])
+
     const handleClickVerifyUser = async () => {
         try {
             dispatch(setPreviousLink('@campaignFund' + window.location.href))
@@ -67,6 +58,69 @@ function Funding() {
 
         }
     }
+
+    const [textValidateGoal, setTextValidateGoal] = useState('');
+    const validateGoal = (value) => {
+        value = value.toString();
+        if (value?.trim().length === 0 || value?.trim() === '') {
+            setTextValidateGoal('* Vui lòng nhập số tiền mục tiêu của chiến dịch');
+            return false;
+        } else {
+            if (!/^\d+$/.test(value)) {
+                if (value[0] === '-' && /^\d+$/.test(value.split('-').join('')) ) {
+                    setTextValidateGoal('* Số tiền phải là một số nguyên lớn hơn 0');
+                    return false;
+                }
+                else {
+                    setTextValidateGoal('* Số tiền phải là một số nguyên');
+                    return false;
+                }
+            } else {
+                if (value <= 0) {
+                    setTextValidateGoal('* Số tiền phải là một số nguyên lớn hơn 0');
+                    return false;
+                } else {
+                    setTextValidateGoal('');
+                    return true;
+                }
+            }
+        }
+    };
+
+    const [textValidateMomo, setTextValidateMomo] = useState('');
+    const validateMomo = (value) => {
+        if (value?.trim().length === 0 || value?.trim() === '') {
+            setTextValidateMomo('* Vui lòng nhập số tài khoản momo của bạn');
+            return false;
+        } else {
+            var vnf_regex = /((09|03|07|08|05)+([0-9]{8})\b)/g;
+            if (vnf_regex.test(value?.trim()) === false) {
+                setTextValidateMomo('* Số tài khoản momo không hợp lệ ');
+                return false;
+            } else {
+                setTextValidateMomo('');
+                    return true;
+                } 
+            }
+        }
+
+        const [textValidateMomoConfirm, setTextValidateMomoConfirm] = useState('');
+    const validateMomoConfirm = (value, sdt) => {
+        if (value?.trim().length === 0 || value?.trim() === '') {
+            setTextValidateMomoConfirm('* Vui lòng nhập lại số tài khoản momo của bạn');
+            return false;
+        } 
+        else {
+            if (value?.trim() !== sdt) {
+                setTextValidateMomoConfirm('* Số tài khoản momo không khớp');
+                return false;
+            } else {
+                setTextValidateMomoConfirm('');
+                    return true;
+                } 
+            }
+        }
+
     const handleClickSaveContinue = async () => {
         const body = { ...campaginState }
         const id = body.id;
@@ -74,15 +128,24 @@ function Funding() {
         delete body.status
         delete body.title
         delete body.cardImage
-        dispatch(setLoading(true))
+
+        let flagGoal = validateGoal(body.goal);
+        let flagMomo = validateMomo(body.momoNumber);
+        let flagMomoConfirm = validateMomoConfirm(body.momoNumberConfirm, body.momoNumber);
+
+        if (flagGoal && flagMomo && flagMomoConfirm) {
+            dispatch(setLoading(true))
         try {
             const res = await customAxios.patch(`${baseURL}/campaign/editCampaign/${id}`, body)
             dispatch(setLoading(false))
             window.location.href = `/campaigns/${id}/edit/settings`
         } catch (error) {
+            dispatch(setLoading(false))
             console.log(error.message)
         }
+        }
     }
+
     return (
         <>
             <div className={cx('wrapper')}>
@@ -120,11 +183,11 @@ function Funding() {
                                 </div>
 
                                 <div className={cx('entreField')}>
-                                    <div className={cx('inputCurrencyField')} style={{ width: '100%' }}>
-                                        <span className={cx('inputCurrencyField-symbol')}>$</span>
-                                        <input placeholder={"10000000"} type="text" maxlength="50" className={cx('itext-field', 'inputCurrencyField-input')} value={campaginState.goal} onChange={handleChangeInputText} name="goal" />
+                                    <div className={cx('inputCurrencyField')} style={{ width: '50%' }}>
+                                        <input placeholder={"Ví dụ: 10000000"} type="text" maxlength="50" className={cx('itext-field', 'inputCurrencyField-input')} value={campaginState.goal} onChange={handleChangeInputText} name="goal" />
                                         <span className={cx('inputCurrencyField-isoCode')}>VNĐ</span>
                                     </div>
+                                    <span className={cx('entreField-validationLabel')}>{textValidateGoal}</span>
                                 </div>
 
                                 <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', textAlign: 'right' }}></div>
@@ -170,19 +233,14 @@ function Funding() {
                                         Nhập số tài khoản mà bạn muốn nhận tiền. Hãy đảm bảo số tài khoản thật chính xác, nếu không chúng tôi sẽ không thể chuyển tiền cho bạn.
                                     </div>
                                     <input type="text" className={cx('itext-field')} placeholder="000000000000" value={campaginState.momoNumber} onChange={handleChangeInputText} name="momoNumber" />
-
+                                    <span className={cx('entreField-validationLabel')}>{textValidateMomo}</span>
 
                                     <div className={cx('entreField-subLabel')} style={{ marginTop: '16px' }}>
                                         Nhập lại số tài khoản.
                                     </div>
                                     <input type="text" className={cx('itext-field')} placeholder="000000000000" value={campaginState.momoNumberConfirm} onChange={handleChangeInputText} name="momoNumberConfirm" />
-
+                                    <span className={cx('entreField-validationLabel')}>{textValidateMomoConfirm}</span>
                                 </div>
-                                <div className={cx('entreField')}>
-                                    <a href="#" className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >LƯU THÔNG TIN NGÂN HÀNG</a>
-                                </div>
-
-                                {/* <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', textAlign: 'right' }}></div> */}
                                 <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>
                                     <a onClick={handleClickSaveContinue} className={cx('btn', 'btn-ok')} >LƯU VÀ TIẾP TỤC</a>
                                 </div>
@@ -197,7 +255,10 @@ function Funding() {
             </div>
 
         </>
-    );
-}
+    )
+};
+
+    
+                                
 
 export default Funding;
