@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
 import classNames from 'classnames/bind'
@@ -7,14 +7,13 @@ import { useSelector, useDispatch } from 'react-redux'
 import CommentMenu from '../CommentMenu'
 import customAxios from '~/utils/customAxios'
 import InputComment from '../InputComment'
-import styles from '../comment.module.scss'
+import styles from './CommenCard.module.scss'
 import { setLoading } from '~/redux/slides/GlobalApp'
 import baseURL from '~/utils/baseURL'
 const cx = classNames.bind(styles)
-const CommentCard = ({ children, comment, campaign, commentId, setListComments, handleRemoveComment}) => {
+const CommentCard = ({ children, comment, campaign, commentId, setListComments, handleRemoveComment }) => {
     const currentUser = useSelector(state => state.user.currentUser)
     const dispatch = useDispatch()
-    console.log(comment)
     const [content, setContent] = useState('')
     const [readMore, setReadMore] = useState(false)
 
@@ -34,11 +33,11 @@ const CommentCard = ({ children, comment, campaign, commentId, setListComments, 
         }
     }, [comment, currentUser._id])
 
-    const handleUpdate = async() => {
-        if(comment.content !== content){
+    const handleUpdate = async () => {
+        if (comment.content !== content) {
             dispatch(setLoading(true))
             try {
-                const res = await customAxios.patch(`${baseURL}/comment/updateComment/${comment._id}`,{content})
+                const res = await customAxios.patch(`${baseURL}/comment/updateComment/${comment._id}`, { content })
                 setListComments(prev => [...prev].map(item => {
                     if (item._id === comment._id) {
                         return {
@@ -53,153 +52,175 @@ const CommentCard = ({ children, comment, campaign, commentId, setListComments, 
             } catch (error) {
                 dispatch(setLoading(false))
             }
-         
-        }else{
+
+        } else {
             setOnEdit(false)
         }
     }
 
 
     const handleLike = async () => {
-        if(loadLike) return;
+        if (loadLike) return;
         setLoadLike(true)
 
         try {
-            const res = await customAxios.patch(`${baseURL}/comment/likeComment/${comment._id}`,{})
+            const res = await customAxios.patch(`${baseURL}/comment/likeComment/${comment._id}`, {})
 
             setListComments(prev => [...prev].map(item => {
                 if (item._id === comment._id) {
-                    return {...item, likes: [...item.likes, currentUser]}
+                    return { ...item, likes: [...item.likes, currentUser] }
                 }
                 else return item
             }))
             setLoadLike(false)
         } catch (error) {
-            
+
         }
-        
+
     }
 
     const handleUnLike = async () => {
-        if(loadLike) return;
+        if (loadLike) return;
         setLoadLike(true)
 
         try {
-            const res = await customAxios.patch(`${baseURL}/comment/unLikeComment/${comment._id}`,{})
+            const res = await customAxios.patch(`${baseURL}/comment/unLikeComment/${comment._id}`, {})
 
             setListComments(prev => [...prev].map(item => {
                 if (item._id === comment._id) {
-                    return {...item, likes: [...item.likes].filter(i => i._id !== currentUser._id)}
+                    return { ...item, likes: [...item.likes].filter(i => i._id !== currentUser._id) }
                 }
                 else return item
             }))
             setLoadLike(false)
         } catch (error) {
-            
+
         }
     }
 
 
     const handleReply = () => {
-        if(onReply) return setOnReply(false)
-        setOnReply({...comment, commentId})
+        if (onReply) return setOnReply(false)
+        setOnReply({ ...comment, commentId })
     }
 
     const styleCard = {
         opacity: comment._id ? 1 : 0.5,
         pointerEvents: comment._id ? 'inherit' : 'none'
     }
-
+    const inputElement = useRef(null)
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (inputElement.current && !inputElement.current.contains(event.target)) {
+                setContent(comment.content);
+                setOnEdit(false)
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [inputElement]);
     return (
-        <div className={cx('comment_card')} style={styleCard}>
-            <Link to={`/individuals/${comment.user._id}/profile`} style={{ display: 'flex', color: '#212121' }}>
-                <img src={comment.user.avatar?.url} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '50%' }} />
-                <h6 style={{ margin: '0 4px' }}>{comment.user.fullName}</h6>
-            </Link>
+        <div className={cx('wrapper')} style={styleCard}>
+            <div className={cx('inner')}>
+                <Link to={`/individuals/${comment.user._id}/profile`} className={cx('avatar')}>
+                    <img src={comment.user.avatar?.url} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '50%' }} />
+                </Link>
 
-            <div className={cx('comment_content')}>
-                <div
-                    style={{
-                        filter: 'invert(0)',
-                        color: '#111',
-                        flex: '1'
-                    }}>
-                    {
-                        onEdit
-                            ? <textarea rows="5" value={content}
-                                onChange={e => setContent(e.target.value)} />
+                <div className={cx('content-wrapper')} ref={inputElement}>
+                    <div className={cx('commen-action')}>
+                        <div className={cx('comment_content')}>
+                            <span className={cx('fullName')}>{comment.user.fullName}</span>
+                            <div>
+                                {
+                                    onEdit
+                                        ? <input value={content} className={cx('input-edit')}
+                                            onChange={e => setContent(e.target.value)}  />
 
-                            : <div>
-                                {
-                                    comment.tag && comment.tag._id !== comment.user._id &&
-                                    <Link to={`/profile/${comment.tag._id}`} style={{ marginRight: '4px' }}>
-                                        @{comment.tag.fullName}
-                                    </Link>
+
+                                        : <div>
+                                            {
+                                                comment.tag && comment.tag._id !== comment.user._id &&
+                                                <Link to={`/profile/${comment.tag._id}`} style={{ marginRight: '4px' }}>
+                                                    @{comment.tag.fullName}
+                                                </Link>
+                                            }
+                                            <span style={{ color: '#555' }}>
+                                                {
+                                                    content.length < 100 ? content :
+                                                        readMore ? content + ' ' : content.slice(0, 100) + '....'
+                                                }
+                                            </span>
+                                            {
+                                                content.length > 100 &&
+                                                <span className={cx('readMore')} onClick={() => setReadMore(!readMore)}>
+                                                    {readMore ? <span style={{color: 'crimson', marginLeft: '8px', cursor: 'pointer'}}>Ẩn nội dung</span> : <span style={{color: '#65676b', marginLeft: '8px', cursor: 'pointer'}}>Xem thêm</span>}
+                                                </span>
+                                            }
+                                        </div>
                                 }
-                                <span>
-                                    {
-                                        content.length < 100 ? content :
-                                            readMore ? content + ' ' : content.slice(0, 100) + '....'
-                                    }
-                                </span>
-                                {
-                                    content.length > 100 &&
-                                    <span className={cx('readMore')} onClick={() => setReadMore(!readMore)}>
-                                        {readMore ? 'Hide content' : 'Read more'}
-                                    </span>
-                                }
+
+
+
+
                             </div>
-                    }
 
 
-                    <div style={{ cursor: 'pointer' }}>
-                        <small className="text-muted mr-3">
-                            {moment(comment.createdAt).fromNow()}
-                        </small>
 
-                        <small className="font-weight-bold mr-3">
-                            {comment.likes.length} likes
-                        </small>
+
+                        </div>
+                        <div className={cx('action')}>
+                            <CommentMenu campaign={campaign} comment={comment} setOnEdit={setOnEdit} handleRemoveComment={handleRemoveComment} />
+
+                        </div>
+                    </div>
+                    <div className={cx('like-action')}>
+
+                        <div>
+                            <LikeButton isLike={isLike} handleLike={handleLike} handleUnLike={handleUnLike} />
+                            <small style={{ fontWeight: 'bold', marginLeft: '4px' }}>
+                                {comment.likes.length}
+                            </small>
+                        </div>
+
 
                         {
                             onEdit
                                 ? <>
-                                    <small className="font-weight-bold mr-3"
+                                    <small style={{ fontWeight: 'bold', cursor: 'pointer' }}
                                         onClick={handleUpdate}>
-                                        update
+                                        Cập nhật
                                     </small>
-                                    <small className="font-weight-bold mr-3"
-                                        onClick={() => setOnEdit(false)}>
-                                        cancel
+                                    <small style={{ fontWeight: 'bold', cursor: 'pointer' }}
+                                        onClick={() => { setContent(comment.content); setOnEdit(false) }}>
+                                        Hủy
                                     </small>
                                 </>
 
-                                : <small className="font-weight-bold mr-3"
+                                : <small style={{ fontWeight: 'bold', cursor: 'pointer' }}
                                     onClick={handleReply}>
-                                    {onReply ? 'cancel' : 'reply'}
+                                    {onReply ? 'Hủy' : 'Phản hồi'}
                                 </small>
                         }
+                        <small style={{ color: 'grey' }}>
+                            {moment(comment.createdAt).fromNow()}
+                        </small>
 
                     </div>
-
+                    {
+                        onReply &&
+                        <div style={{marginTop: '8px', marginLeft: '8px'}}>
+                            <InputComment onReply={onReply} setOnReply={setOnReply} campaign={campaign} setListComments={setListComments}>
+                                <Link to={`/profile/${onReply.user._id}`} style={{ marginRight: '4px', color: '#5c9aff' }}>
+                                    @{onReply.user.fullName}:
+                                </Link>
+                            </InputComment>
+                        </div>
+                    }
                 </div>
 
-
-
-                <div className={cx('action')}>
-                    <CommentMenu campaign={campaign} comment={comment} setOnEdit={setOnEdit} handleRemoveComment={handleRemoveComment} />
-                    <LikeButton isLike={isLike} handleLike={handleLike} handleUnLike={handleUnLike} />
-                </div>
             </div>
-
-            {
-                onReply &&
-                <InputComment onReply={onReply} setOnReply={setOnReply} campaign={campaign} setListComments={setListComments}>
-                    <Link to={`/profile/${onReply.user._id}`} style={{marginRight: '4px'}}>
-                        @{onReply.user.fullName}:
-                    </Link>
-                </InputComment>
-            }
 
             {children}
         </div>

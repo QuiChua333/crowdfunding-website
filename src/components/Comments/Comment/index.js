@@ -47,17 +47,17 @@ const Comments = ({ campaign, comments, setListComments }) => {
 
             {
                 commentsOrigin.length - next > 0
-                    ? <div className="p-2 border-top"
-                        style={{ cursor: 'pointer', color: 'crimson' }}
+                    ? <div 
+                        style={{ cursor: 'pointer', color: '#65676b', padding: '8px', borderTop: '1px solid #eee' }}
                         onClick={() => setNext(next + 10)}>
-                        See more comments...
+                        Xem thêm bình luận...
                     </div>
 
                     : commentsOrigin.length > 2 &&
-                    <div className="p-2 border-top"
-                        style={{ cursor: 'pointer', color: 'crimson' }}
+                    <div 
+                  style={{ cursor: 'pointer', color: 'crimson', padding: '8px', borderTop: '1px solid #ccc' }}
                         onClick={() => setNext(2)}>
-                        Hide comments...
+                        Ẩn bình luận...
                     </div>
             }
         </div>

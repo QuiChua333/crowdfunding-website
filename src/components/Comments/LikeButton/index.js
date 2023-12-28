@@ -7,9 +7,9 @@ const LikeButton = ({isLike, handleLike, handleUnLike}) => {
         <>
             {
                 isLike  
-                ? <span onClick={handleUnLike}><FaHeart  style={{color: 'red'}}/></span>
+                ? <span style={{cursor: 'pointer'}} onClick={handleUnLike}><FaHeart  style={{color: 'red'}}/></span>
                 : 
-                <span onClick={handleLike}><FaRegHeart  /></span>
+                <span style={{cursor: 'pointer'}} onClick={handleLike}><FaRegHeart  /></span>
             }
         </>
     )

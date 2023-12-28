@@ -9,7 +9,7 @@ function CommentSection({ campaign, comments, setListComments }) {
             <div>
                 <InputComment setListComments={setListComments}/>
             </div>
-            <div>
+            <div className={cx('comment-wrapper')}>
                 <Comments campaign={campaign} comments={comments} setListComments={setListComments}/>
             </div>
         </div>

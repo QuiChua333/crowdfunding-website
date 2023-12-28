@@ -1,34 +1,52 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import classNames from "classnames/bind"
+import styles from './Icon.module.scss'
 
-const Icons = ({setContent, content}) => {
-    const reactions = [   
+const cx = classNames.bind(styles)
+const Icons = ({ setContent, content }) => {
+    const reactions = [
         '❤️', '😆', '😯', '😢', '😡', '👍', '👎', '😄',
         '😂', '😍', '😘', '😗', '😚', '😳', '😭', '😓',
         '😤', '🤤', '👻', '💀', '🤐', '😴', '😷', '😵'
     ]
-
+    const element = useRef(null)
+    const [isShowDropdown,setShowDropdown]= useState(false);
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (element.current && !element.current.contains(event.target)) {
+                setShowDropdown(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [element]);
     return (
-        <div className="nav-item dropdown" 
-        style={{ opacity: 1}}>
+        <div className={cx('wrapper')}
+            ref={element}
+            onClick={() => setShowDropdown(prev => !prev)}>
             
-            <span id="navbarDropdown" style={{position: 'relative', padding: '4px'}}
-            role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span style={{opacity: 0.4}}>😄</span>
+            <span style={{ padding: '4px' }}>
+                <span style={{ cursor: 'pointer', opacity: '0.8' }}>😄</span>
             </span>
 
-            <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+            {
+                isShowDropdown &&
+                <div className={cx('dropdown')}>
 
-                <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 50px)', textAlign: 'center', cursor: 'pointer'}}>
-                    {
-                        reactions.map(icon => (
-                            <span style={{margin: '3px 0'}} key={icon} onClick={() => setContent(content + icon)}>
-                                {icon}
-                            </span>
-                        ))
-                    }
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 50px)', textAlign: 'center', cursor: 'pointer' }}>
+                        {
+                            reactions.map(icon => (
+                                <span style={{ margin: '3px 0' }} key={icon} onClick={() => setContent(content + icon)}>
+                                    {icon}
+                                </span>
+                            ))
+                        }
+                    </div>
                 </div>
-            </div>
-                
+            }
+
         </div>
     )
 }

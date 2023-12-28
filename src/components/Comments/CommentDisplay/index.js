@@ -1,45 +1,50 @@
 import React, { useState, useEffect } from 'react'
 import CommentCard from '../CommentCard'
+import classNames from 'classnames/bind'
+import styles from './CommentDisplay.module.scss'
 
-const CommentDisplay = ({comment, replyCm, campaign, setListComments, handleRemoveComment}) => {
+const cx = classNames.bind(styles)
+const CommentDisplay = ({ comment, replyCm, campaign, setListComments, handleRemoveComment }) => {
     const [showRep, setShowRep] = useState([])
-    const [next, setNext] = useState(1)
+    const [next, setNext] = useState(2)
 
     useEffect(() => {
         setShowRep(replyCm.slice(replyCm.length - next))
-    },[replyCm, next])
+    }, [replyCm, next])
 
     return (
-        <div className="comment_display">
+        <div className={cx('wrapper')}>
             <CommentCard comment={comment} campaign={campaign} commentId={comment._id} setListComments={setListComments}
-            handleRemoveComment={handleRemoveComment}>
-                <div style={{paddingLeft: '16px'}}>
+                handleRemoveComment={handleRemoveComment}>
+                <div style={{ paddingLeft: '32px', marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {
                         showRep.map((item, index) => (
                             item.reply &&
                             <CommentCard
-                            handleRemoveComment={handleRemoveComment}
-                            key={index}
-                            comment={item}
-                            campaign={campaign}
-                            commentId={comment._id}
-                            setListComments={setListComments}
-                             />
+                                handleRemoveComment={handleRemoveComment}
+                                key={index}
+                                comment={item}
+                                campaign={campaign}
+                                commentId={comment._id}
+                                setListComments={setListComments}
+                            />
                         ))
                     }
 
                     {
-                        replyCm.length - next > 0
-                        ? <div style={{cursor: 'pointer', color: 'crimson'}}
-                        onClick={() => setNext(next + 10)}>
-                            See more comments...
-                        </div>
 
-                        : replyCm.length > 1 &&
-                        <div style={{cursor: 'pointer', color: 'crimson'}}
-                        onClick={() => setNext(1)}>
-                            Hide comments...
-                        </div>
+                        replyCm.length - next > 0
+                            ? <div style={{ cursor: 'pointer', color: '#65676b', marginTop: '12px' }}
+                                onClick={() => setNext(next + 10)}>
+                                Xem thêm bình luận...
+                            </div>
+
+                            : replyCm.length > 1 &&
+                            <div style={{ cursor: 'pointer', color: 'crimson', marginTop: '12px' }}
+                                onClick={() => setNext(2)}>
+                                Ẩn bình luận...
+                            </div>
+
                     }
                 </div>
             </CommentCard>

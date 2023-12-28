@@ -478,25 +478,6 @@ function DetailProject() {
                             className={cx('item-tab-header', { 'item-tab-header-clicked': indexTabHeader === 3 })}
                             onClick={() => setIndexTabHeader(3)}
                         >
-                            <span>UPDATES</span>
-                            <span
-                                style={{
-                                    fontSize: '9px',
-                                    textAlign: 'center',
-                                    backgroundColor: '#f5f5f5',
-                                    padding: '2px 6px',
-                                    borderRadius: '40%',
-                                    marginLeft: '8px',
-                                    fontWeight: '700',
-                                }}
-                            >
-                                1
-                            </span>
-                        </div>
-                        <div
-                            className={cx('item-tab-header', { 'item-tab-header-clicked': indexTabHeader === 4 })}
-                            onClick={() => setIndexTabHeader(4)}
-                        >
                             <span>DISCUSSION</span>
                             <span
                                 style={{
