@@ -18,6 +18,9 @@ import DropDown from './Dropdown';
 import customAxios from '~/utils/customAxios';
 import ModalTeamMembersDetail from './ModalTeamMembersDetail';
 import ModalReport from './ModalReport';
+import FAQSection from './Tab/FAQ';
+import StorySection from './Tab/Story';
+import CommentSection from './Tab/Comment';
 const cx = classNames.bind(styles);
 
 function DetailProject() {
@@ -38,7 +41,7 @@ function DetailProject() {
     const [quantityCampaignOfUser, setQuantityCampaignOfUser] = useState(1);
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null);
-
+    const [listComments,setListComments] = useState([])
 
 
 
@@ -197,6 +200,7 @@ function DetailProject() {
             const config = {};
             const { data } = await customAxios.get(`${baseUrl}/campaign/getCampaignById/${id}`, config);
             setItemProject({ ...data.data });
+            setListComments(data.data.comments)
         } catch (error) {
             console.log(error);
         }
@@ -510,11 +514,10 @@ function DetailProject() {
                         </div>
                     </div>
 
-                    <div style={{ height: '20px', backgroundColor: 'red' }}>
-                        {indexTabHeader === 1 && <>1</>}
-                        {indexTabHeader === 2 && <>2</>}
-                        {indexTabHeader === 3 && <>3</>}
-                        {indexTabHeader === 4 && <>4</>}
+                    <div >
+                        {indexTabHeader === 1 && <StorySection />}
+                        {indexTabHeader === 2 && <FAQSection />}
+                        {indexTabHeader === 3 && <CommentSection campaign={ItemProject} comments={listComments} setListComments={setListComments}/>}
                     </div>
                 </div>
 

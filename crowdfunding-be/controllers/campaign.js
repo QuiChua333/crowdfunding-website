@@ -153,6 +153,13 @@ const getCampaignById = async (req, res) => {
                 },
 
             ])
+            .populate({
+                path: "comments",
+                populate: {
+                    path: "user likes",
+                    select: "-password -refreshToken -isAdmin -isVerifiedEmail -isVerifiedUser"
+                }
+            })
             .exec();
 
         res.status(200).json({

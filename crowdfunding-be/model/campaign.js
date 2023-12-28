@@ -59,7 +59,8 @@ export default mongoose.model('Campaign',
                     default: false
                 }
             }
-        ]
+        ],
+        comments: [{ type: mongoose.Types.ObjectId, ref: 'Comment' }],
         
     })
 )
