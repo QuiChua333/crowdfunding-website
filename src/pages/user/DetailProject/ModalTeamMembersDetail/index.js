@@ -20,7 +20,7 @@ function ModalTeamMembersDetail({ setIsOpenModalMember, members }) {
 
                 <div className={cx('separate')}></div>
                 <div className={cx('content-modal')}>
-                    {members.map((item) => {
+                    {members?.map((item) => {
                         if (item.isAccepted) {
                             return (
                                 <div className={cx('item-members')}>
@@ -30,7 +30,7 @@ function ModalTeamMembersDetail({ setIsOpenModalMember, members }) {
                                             <a href={`/individuals/${item.user._id}/profile`} className={cx('name')}>
                                                 {item.user.fullName}
                                             </a>
-                                            <a href={`mailto:${item.user?.fullName}`} className={cx('email')}>
+                                            <a href={`mailto:${item.user?.email}`} className={cx('email')}>
                                                 {item.user.email}
                                             </a>
                                         </div>
