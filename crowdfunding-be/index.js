@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import 'dotenv/config'
 import connect from './config/database.js'
-import { CampaignRouter, CategoryRouter, ContributionRouter, FieldRouter, ItemRouter, PerkRouter, ReportRouter, UserRouter } from './routes/index.js'
+import { CampaignRouter, CategoryRouter, ContributionRouter, FieldRouter, ItemRouter, PerkRouter, ReportRouter, UserRouter, GiftRouter } from './routes/index.js'
 const PORT = process.env.PORT || 4000
 const app = express();
 
@@ -30,6 +30,7 @@ app.use('/item',ItemRouter)
 app.use('/perk',PerkRouter)
 app.use('/report',ReportRouter)
 app.use('/user',UserRouter)
+app.use('/gift',GiftRouter)
 
 
 app.get('/', (req,res) => {

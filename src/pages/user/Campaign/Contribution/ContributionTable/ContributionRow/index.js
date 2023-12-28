@@ -41,9 +41,10 @@ function ContributionRow({ index, contribution, setChecked, getAllContributions,
             {/* <Link to='/campaigns/:id/edit/perks/new' style={{position: 'relative', zIndex: '10'}}></Link> */}
             <td className={cx('user')}>{contribution.userName}</td>
             <td className={cx('email')}>{contribution.email}</td>
-            <td className={cx('perks')}>{contribution.perks.map(i => i.perkTitle).join(' ')}</td>
+            {/* <td className={cx('perks')}>{contribution.perks.map(i => i.perkTitle).join(', ')}</td> */}
             <td className={cx('money')}>{contribution.money}</td>
             <td className={cx('date')}>{contribution.date}</td>
+            <td className={cx('date')}>{contribution.estDelivery}</td>
             <td className={cx('status')}>
                 <span className={cx('campaign-status')}>
                     {contribution.status}

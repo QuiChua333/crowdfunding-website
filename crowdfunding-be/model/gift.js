@@ -1,13 +1,15 @@
 import mongoose from "mongoose"
 import { Schema, ObjectId } from "mongoose"
-export default mongoose.model('Contribution',
+export default mongoose.model('Gift',
     new Schema({
-        contributionId: String,
         user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         },
-        email: String,
+        campaign: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Campaign'
+        },
         shippingInfo: {
             fullName: String,
             province: String,
@@ -17,15 +19,10 @@ export default mongoose.model('Contribution',
             phoneNumber: String,
             estDelivery: Date,
         },
-        campaign: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Campaign'
-        },
         perks: [{
             type: Object
         }],
         money: Number,
-        date: Date,
         isFinish: {
             type: Boolean,
             default: false

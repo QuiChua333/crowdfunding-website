@@ -33,12 +33,7 @@
         }
     }
 
-    th.checkbox, td.checkbox {
-        width: 40px;
-        padding-left: 16px;
-        padding-right: 16px;
-        
-    }
+
 
     th.user, td.user {
         width: auto;;
@@ -48,9 +43,12 @@
         width: 200px;
 
     }
-    th.perk, td.perk {
-        width: 200px;
-        padding-left: 12px;
+    th.perks, td.perks {
+        width: 150px;
+
+    }
+    td.perks {
+        display: inline-block;
         white-space: nowrap;
         overflow: hidden !important;
         text-overflow: ellipsis;
@@ -62,7 +60,7 @@
     // }
 
     th.money, td.money {
-        width: 180px;
+        width: 160px;
         padding-left: 12px;
     }
     
@@ -70,12 +68,18 @@
     th.date, td.date {
         width: 180px;
         padding-left: 12px;
+
+    }
+    td.date {
+        width: 180px;
+        padding-left: 36px;
+
     }
 
     th.status, td.status {
-        width: 140px;
-        padding-left: 12px;
+        width: 160px;
         padding-right: 30px;
+        padding-left: 12px;
     }
 
 

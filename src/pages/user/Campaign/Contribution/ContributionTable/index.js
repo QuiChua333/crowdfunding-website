@@ -5,7 +5,8 @@ import ContributionRow from "./ContributionRow";
 import { IoSquareOutline, IoCheckboxSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import formatMoney from "~/utils/formatMoney";
-import convertDate from "~/utils/convertDate2";
+import convertDate from "~/utils/convertDate";
+import convertDate3 from "~/utils/convertDate3";
 
 const cx = classNames.bind(styles)
 
@@ -19,6 +20,7 @@ function ContributionTable({contributions, onContributionTableChange, getAllCont
                 return {
                     id: item._id,
                     userName: item.shippingInfo.fullName,
+                    estDelivery: item.shippingInfo?.estDelivery ? convertDate3(item.shippingInfo?.estDelivery) :'',
                     email: item.user[0].email || '',
                     perks: item.perks,
                     money: formatMoney(item.money) + 'VNĐ',
@@ -67,10 +69,11 @@ function ContributionTable({contributions, onContributionTableChange, getAllCont
                     <tr>
                        
                         <th className={cx('user')}>NGƯỜI ĐÓNG GÓP</th>
-                        <th className={cx('email')}>EMAIL</th>
-                        <th className={cx('perks')}>ĐẶC QUYỀN</th>
+                        <th className={cx('email')}>EMAIL HỆ THỐNG</th>
+                        {/* <th className={cx('perks')}>ĐẶC QUYỀN</th> */}
                         <th className={cx('money')}>TIỀN THANH TOÁN</th>
                         <th className={cx('date')}>NGÀY ĐÓNG GÓP</th>
+                        <th className={cx('date')}>NGÀY GIAO DỰ KIẾN</th>
                         <th className={cx('status')}>TRẠNG THÁI</th>
          
                     </tr>

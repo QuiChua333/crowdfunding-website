@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { setLoading } from "~/redux/slides/GlobalApp";
 import axios from "axios";
 import baseURL from "~/utils/baseURL";
+import convertDate from "~/utils/convertDate3";
 const cx = classNames.bind(styles)
 function PerkRow({ index, perk, setChecked, getPerksByCampaignId }) {
     const dispatch = useDispatch()
@@ -78,7 +79,7 @@ function PerkRow({ index, perk, setChecked, getPerksByCampaignId }) {
                 }
             </td>
             <td className={cx('quantity')}>{perk.claimed + '/' + perk.quantity}</td>
-            <td className={cx('est')}>{perk.estDelivery}</td>
+            <td className={cx('est')}>{perk.estDelivery ? convertDate(perk.estDelivery) : ''}</td>
             <td className={cx('action')}>
                 <div className={cx('action-doc')} onClick={(e) => { e.stopPropagation(); setOpenDropDown(prev => !prev) }} ref={docElement}>
                     <PiDotsThreeBold style={{ fontSize: '20px', color: '#7a69b3' }} />

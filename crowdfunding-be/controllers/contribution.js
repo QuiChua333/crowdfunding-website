@@ -179,7 +179,7 @@ const handleSuccess = async (req, res) => {
 const getAllContributionsByCampaign = async (req, res) => {
     try {
         const { id } = req.params
-        let { page = 1, size = 15, status = 'Tất cả', searchString = '', time = 'Tất cả', money = 'Tất cả' } = req.query;
+        let { page = 1, size = 15, status = 'Tất cả', searchString = '', time = 'Tất cả', money = 'Tất cả', timeDelivery = 'Tất cả' } = req.query;
         page = parseInt(page);
         size = parseInt(size)
         size = size >= 15 ? 15 : size
@@ -273,6 +273,16 @@ const getAllContributionsByCampaign = async (req, res) => {
                 }
             );
         }
+        if (timeDelivery !== 'Tất cả') {
+            aggregationStages.push(
+                {
+                    $sort: {
+                        'shippingInfo.estDelivery': timeDelivery === 'Sớm nhất' ? 1 : -1
+                    }
+                }
+            );
+        }
+        
         if (money !== 'Tất cả') {
             aggregationStages.push(
                 {
@@ -347,6 +357,15 @@ const getTopUserContributionByCampaign = async (req, res) => {
             },
             {
                 $unwind: "$userData" // Unwind để có thể truy cập các trường của user
+            },
+            {
+                $project: {
+                    'userData.password': 0,
+                    'userData.refreshToken': 0,
+                    'userData.isAdmin': 0,
+                    'userData.isVerifiedEmail': 0,
+                    'userData.isVerifiedUser': 0,
+                }
             },
             {
                 $project: {

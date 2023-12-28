@@ -35,7 +35,7 @@ function Payment() {
     const [showPaymentModal,setShowPaymentModal] = useState(false)
     const [contribution,setContribution] = useState({
         shippingInfo: {
-
+            estDelivery: payment.estDelivery
         },
         campaign: id,
         perks: payment.listPerkPayment.map(item => {
@@ -43,6 +43,7 @@ function Payment() {
             delete newItem.listShippingFee;
             return newItem
         })
+        
     })
     useEffect(() => {
         function handleClickOutside(event) {

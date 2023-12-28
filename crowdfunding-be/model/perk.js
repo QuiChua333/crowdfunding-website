@@ -13,7 +13,7 @@ export default mongoose.model('Perk',
             type: Number,
             default: 0,
         },
-        estDelivery: String,
+        estDelivery: Date,
         isVisible: Boolean,
         items: [{
             item: {

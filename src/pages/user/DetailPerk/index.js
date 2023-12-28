@@ -176,13 +176,21 @@ function DetailPerk() {
                 }, [])
             }
         })
+        let estDelivery = null
+        listSelected.forEach(item => {
+            if (!estDelivery) {
+                estDelivery = item.estDelivery
+            }
+            estDelivery = item.estDelivery > estDelivery ? item.estDelivery : estDelivery
+        })
         dispatch(setPayment({
             total: total,
             listPerkPayment: listPayment
         }))
         const state = {
             total: total,
-            listPerkPayment: listPayment
+            listPerkPayment: listPayment,
+            estDelivery
         }
         navigate(`/project/${id}/payments/new/checkout`, {
             state

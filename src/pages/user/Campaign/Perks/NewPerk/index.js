@@ -6,7 +6,7 @@ import Footer from "~/components/Layout/components/Footer";
 import ModalItem from "./ModalItem";
 import MenuDropDown from "../../MenuDropDown";
 import { AiOutlinePlus } from "react-icons/ai";
-import { FaAngleDown } from "react-icons/fa";
+import { AiFillCaretDown } from "react-icons/ai";
 import { HiCamera } from "react-icons/hi";
 import { MdEdit } from "react-icons/md";
 import { IoCloseSharp } from "react-icons/io5";
@@ -15,6 +15,7 @@ import { useParams } from "react-router-dom";
 import customAxios from '~/utils/customAxios'
 import axios from "axios";
 import baseURL from "~/utils/baseURL";
+import convertDate from "~/utils/convertDate3";
 // import { FaAngleDown } from "react-icons/fa";
 // import { AiFillQuestionCircle } from "react-icons/ai";
 // import { useState } from "react";
@@ -49,11 +50,13 @@ function NewPerk() {
     const [optionEdit, setOptionEdit] = useState({});
     const inputPerkImageWrapperElement = useRef();
     const perkImageElement = useRef();
-    const [selectedImage, setSelectedImage] = useState(null)
+    const dateInputElement = useRef(null);
     const [showBtnAddShip, setShowBtnAddShip] = useState(true)
     // const elementLocation = useRef([]);
 
-
+    const handleMouseOverDateFilter = () => {
+        dateInputElement.current?.showPicker();
+    }
     const getCampaign = async () => {
         try {
             const res = await customAxios.get(`${baseURL}/campaign/getCampaignById/${id}`)
@@ -70,6 +73,7 @@ function NewPerk() {
 
         }
     }
+
     const getPerk = async () => {
         try {
             if (idPerk === 'new') {
@@ -104,7 +108,7 @@ function NewPerk() {
                         public_id: ''
                     },
                     quantity: res.data.data.quantity || '',
-                    estDelivery: res.data.data.estDelivery || '',
+                    estDelivery: res.data.data.estDelivery ? convertDate(res.data.data.estDelivery) : convertDate(new Date()),
                     isShipping: res.data.data.isShipping || false,
                     listShippingFee: res.data.data.listShippingFee || []
                 })
@@ -120,7 +124,7 @@ function NewPerk() {
                         public_id: ''
                     },
                     quantity: res.data.data.quantity || '',
-                    estDelivery: res.data.data.estDelivery || '',
+                    estDelivery: res.data.data.estDelivery ? convertDate(res.data.data.estDelivery) : convertDate(new Date()),
                     isShipping: res.data.data.isShipping || false,
                     listShippingFee: res.data.data.listShippingFee || []
                 })
@@ -195,25 +199,22 @@ function NewPerk() {
     useEffect(() => {
         console.log(perkState)
     }, [perkState])
+
+    const handleChangeDateInput = (e) => {
+        let value = e.target.value;
+        if (!value) {
+            setPerkState(prev => ({ ...prev, estDelivery: '' }))
+            return;
+        }
+        const res = convertDate(value);
+
+        setPerkState(prev => ({ ...prev, estDelivery: res }))
+
+    }
     const handleChangeInputText = (e) => {
         const name = e.target.name;
         const value = e.target.value;
-        if (name === 'estDelivery') {
-            if (value.length === 2) {
-                setPerkState(prev => ({
-                    ...prev,
-                    [name]: prev[name].length === 1 ? value + ' / ' : value
-                }))
-            }
-            else {
-                setPerkState(prev => ({
-                    ...prev,
-                    [name]: value
-                }))
-            }
-
-        }
-        else setPerkState(prev => ({
+        setPerkState(prev => ({
             ...prev,
             [name]: value
         }))
@@ -347,6 +348,12 @@ function NewPerk() {
         }))
     }
     const handleClickSavePerk = async () => {
+        const dateString = perkState.estDelivery;
+        let dateArray = dateString.split('/');
+        let month = parseInt(dateArray[0], 10);
+        let year = parseInt(dateArray[1], 10);
+        let dateObject = new Date(year, month - 1, 1); 
+        perkState.estDelivery = dateObject
         if (idPerk === 'new') {
             const body = { ...perkState, image: perkState.perkImage, items: perkState.items.map(item => ({ item: item.id, quantity: item.quantity })) };
             dispatch(setLoading(true))
@@ -574,9 +581,19 @@ function NewPerk() {
                                     Ước tính ngày giao đặc quyền này cho những người ủng hộ bạn. Ngày này và những thay đổi về ngày giao trong tương lai sẽ xuất hiện trên thẻ đặc quyền để những người ủng hộ bạn có thể xem. Chúng tôi khuyên bạn nên đăng bản cập nhật cho những người ủng hộ bất cứ khi nào bạn thay đổi ngày này.
                                 </div>
                                 <div className={cx('entreField')}>
-                                    <label className={cx('entreField-label')}>Ngày dự kiến </label>
+                                        <label className={cx('entreField-label')}>Ngày dự kiến </label>
 
-                                    <input type="text" className={cx('itext-field')} style={{ width: '200px' }} placeholder="MM / YYYY" name="estDelivery" value={perkState.estDelivery} onChange={handleChangeInputText} />
+                                        <div style={{ position: 'relative', width: 'fit-content' }}>
+                                            <input type="text" className={cx('itext-field')} style={{ width: '200px' }} name="estDelivery" value={perkState.estDelivery} disabled />
+                                            <div style={{ position: 'absolute', width: 'fit-content', right: '12px', top: '8px', cursor: 'pointer' }} onClick={handleMouseOverDateFilter}>
+                                                <div className={cx('function-button')} style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '30px', height: '30px'}}>
+                                                    <AiFillCaretDown  />
+                                                </div>
+                                                <input onChange={handleChangeDateInput} ref={dateInputElement} type="month" style={{ opacity: '0', top: '6px', left: '6px', right: '0', position: 'absolute' }} />
+
+                                            </div>
+                                        </div>
+                                
                                 </div>
 
                                 <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', textAlign: 'right' }}>
