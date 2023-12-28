@@ -6,10 +6,12 @@ import styles from './CommentDisplay.module.scss'
 const cx = classNames.bind(styles)
 const CommentDisplay = ({ comment, replyCm, campaign, setListComments, handleRemoveComment }) => {
     const [showRep, setShowRep] = useState([])
-    const [next, setNext] = useState(2)
+    const [next, setNext] = useState(3)
 
     useEffect(() => {
-        setShowRep(replyCm.slice(replyCm.length - next))
+        // setShowRep(replyCm.slice(replyCm.length - next))
+        setShowRep(replyCm.slice(0,next))
+
     }, [replyCm, next])
 
     return (
@@ -35,14 +37,14 @@ const CommentDisplay = ({ comment, replyCm, campaign, setListComments, handleRem
 
                         replyCm.length - next > 0
                             ? <div style={{ cursor: 'pointer', color: '#65676b', marginTop: '12px' }}
-                                onClick={() => setNext(next + 10)}>
+                                onClick={() => setNext(next + 5)}>
                                 Xem thêm bình luận...
                             </div>
 
-                            : replyCm.length > 1 &&
+                            : replyCm.length > 3 &&
                             <div style={{ cursor: 'pointer', color: 'crimson', marginTop: '12px' }}
-                                onClick={() => setNext(2)}>
-                                Ẩn bình luận...
+                                onClick={() => setNext(3)}>
+                                Ẩn bình luận
                             </div>
 
                     }

@@ -7,14 +7,14 @@ import { setLoading } from '~/redux/slides/GlobalApp'
 const Comments = ({ campaign, comments, setListComments }) => {
     const [commentsOrigin, setCommentsOrigin] = useState([])
     const [showComments, setShowComments] = useState([])
-    const [next, setNext] = useState(2)
+    const [next, setNext] = useState(10)
     const dispatch = useDispatch()
     const [replyComments, setReplyComments] = useState([])
 
     useEffect(() => {
         const newCm = comments.filter(cm => !cm.reply)
         setCommentsOrigin(newCm)
-        setShowComments(newCm.slice(newCm.length - next))
+        setShowComments(newCm.slice(0, next))
     }, [comments, next])
 
     useEffect(() => {
@@ -53,11 +53,11 @@ const Comments = ({ campaign, comments, setListComments }) => {
                         Xem thêm bình luận...
                     </div>
 
-                    : commentsOrigin.length > 2 &&
+                    : commentsOrigin.length > 10 &&
                     <div 
                   style={{ cursor: 'pointer', color: 'crimson', padding: '8px', borderTop: '1px solid #ccc' }}
-                        onClick={() => setNext(2)}>
-                        Ẩn bình luận...
+                        onClick={() => setNext(10)}>
+                        Ẩn bình luận
                     </div>
             }
         </div>
