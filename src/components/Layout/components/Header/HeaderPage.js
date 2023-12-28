@@ -93,7 +93,7 @@ function Header() {
 
                     <div className={cx('nav-list')}>
                         <div onClick={() => setActiveExplore(prev => !prev)} className={cx('explore')}><a>Khám phá <FaAngleDown className={cx('icon', { active: activeExplore })} /></a></div>
-                        <div><a href='#'>Về chúng tôi</a></div>
+                        <div><a href='/about-us'>Về chúng tôi</a></div>
                     </div>
 
                 </div>

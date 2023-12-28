@@ -1,5 +1,5 @@
 .wrapper {
-    background-color: #00a671;
+    background-color: #15293b;
     border-radius: 20px;
     transition: border-radius .4s,width .4s;
     width: calc(100% - 240px);
@@ -7,7 +7,6 @@
         width: 100vw;
         border-radius: 0;
     }
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,17 +15,20 @@
 .content {
     
     color: var(--white);
-    font-size: 3.4rem;
+    font-size: 16px;
     line-height: 1.4;
     margin-bottom: 0.5rem;
-    max-width: 81.125rem;
-    margin-left: 0;
+    max-width: 50%;
     font-weight: 700;
-    padding: 10% 0;
+    padding: 6% 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-    h2 {
+    h1 {
         font-weight: 700;
-        font-size: 2rem;
+        font-size: 30px;
     }
     .body {
         font-weight: 400;

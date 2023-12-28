@@ -202,7 +202,7 @@ function Home() {
                             Give Fun là điểm đén của bạn để khám phá những đổi mới tinh tế trong công nghệ, thiết kế và nhiều lĩnh vực khác, thường đi kèm với ưu đãi đặc biệt và giá ưu đãi cho những người ủng hộ sớm. Hãy ủng hộ một dự án, chia sẻ ý kiến và phản hồi của bạn với nhóm dự án - và tham gia vào rủi ro và phúc lợi của việc mang sản phẩm mới vào cuộc sống.
                         </p>
 
-                        <Link className={cx('link')} to="/">
+                        <Link className={cx('link')} to="/explore">
                             <p>Tìm hiểu thêm về Give Fun <AiOutlineRight /></p>
                         </Link>
                     </div>
