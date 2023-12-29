@@ -7,11 +7,14 @@ function CommentSection({ campaign, comments, setListComments }) {
     return (
         <div className={cx('wrapper')}>
             <div>
-                <InputComment setListComments={setListComments}/>
+                <InputComment setListComments={setListComments} />
             </div>
-            <div className={cx('comment-wrapper')}>
-                <Comments campaign={campaign} comments={comments} setListComments={setListComments}/>
-            </div>
+            {
+                comments.length > 0 &&
+                <div className={cx('comment-wrapper')}>
+                    <Comments campaign={campaign} comments={comments} setListComments={setListComments} />
+                </div>
+            }
         </div>
     );
 }

@@ -112,6 +112,9 @@ function SettingCampaign() {
                                 <div className={cx('entreField-subHeader')}>
                                     Phát hành chiến dịch của bạn tại đây!
                                 </div>
+                                <div className={cx('entreField-subHeader')}>
+                                    Lưu ý: Bạn phải đạt ít nhất 70% mục tiêu gây quỹ thì chiến dịch của bạn mới được xem là thành công!
+                                </div>
 
 
 
@@ -137,6 +140,12 @@ function SettingCampaign() {
                                     campagin.status === 'Đang gây quỹ'&&
                                     <div style={{ marginTop: '60px', borderBottom: '1px solid #C8C8C8', paddingBottom: '30px', textAlign: 'left' }}>
                                         <a  className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >CHIẾN DỊCH ĐÃ PHÁT HÀNH</a>
+                                    </div>
+                                }
+                                {
+                                    campagin.status === 'Đã kết thúc'&&
+                                    <div style={{ marginTop: '60px', borderBottom: '1px solid #C8C8C8', paddingBottom: '30px', textAlign: 'left' }}>
+                                        <a  className={cx('btn')} style={{ marginLeft: '0', background: '#a8a8a8', color: '#fff' }} >CHIẾN DỊCH ĐÃ KẾT THÚC</a>
                                     </div>
                                 }
 

@@ -272,6 +272,7 @@ const getTeamMember = async (req, res) => {
         const result = campaign.team.map((item) => {
             return { ...item._doc, user: { ...item._doc.user._doc, password: 'Not show' } };
         });
+        console.log(result)
         res.status(200).json({
             message: 'Lấy thông tin thành viên chiến dịch thành công',
             data: result,
@@ -574,10 +575,10 @@ const getAllCampaignsExplore = async (req, res) => {
             ]);
         }
         for (let i = 0; i < filterCampaigns.length; i++) {
-            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id.toString() })
+            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id })
             let result = await Contribution.aggregate([
                 {
-                    $match: { campaign: filterCampaigns[i]._id.toString() }
+                    $match: { campaign: filterCampaigns[i]._id }
                 },
                 {
                     $group: {
@@ -586,8 +587,7 @@ const getAllCampaignsExplore = async (req, res) => {
                     }
                 }
             ])
-            // const totalMoney = result.length > 0 ? result[0].totalMoney : 0;
-            const totalMoney = 4000000 + i
+            const totalMoney = result.length > 0 ? result[0].totalMoney : 0;
             filterCampaigns[i].backers = backers
             filterCampaigns[i].currentMoney = totalMoney
             filterCampaigns[i].percentProgress = totalMoney / filterCampaigns[i].goal * 100
@@ -597,7 +597,10 @@ const getAllCampaignsExplore = async (req, res) => {
             const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60 * 60));
             let daysLeft = ''
             if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
-            else daysLeft = Math.ceil(remainingHours) + " giờ";
+            else if (remainingHours > 0) {
+                daysLeft = Math.ceil(remainingHours) + " giờ";
+            }
+            else daysLeft = 'Hết hạn'
             filterCampaigns[i].daysLeft = daysLeft
 
         }
@@ -715,7 +718,10 @@ const getMoreCampaigns = async (req, res) => {
             const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60 * 60));
             let daysLeft = ''
             if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
-            else daysLeft = Math.ceil(remainingHours) + " giờ";
+            else if (remainingHours > 0) {
+                daysLeft = Math.ceil(remainingHours) + " giờ";
+            }
+            else daysLeft = 'Hết hạn'
             filterCampaigns[i].daysLeft = daysLeft
 
         }
@@ -845,7 +851,10 @@ const getPopulateCampaigns = async (req, res) => {
             const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60 * 60));
             let daysLeft = ''
             if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
-            else daysLeft = Math.ceil(remainingHours) + " giờ";
+            else if (remainingHours > 0) {
+                daysLeft = Math.ceil(remainingHours) + " giờ";
+            }
+            else daysLeft = 'Hết hạn'
             filterCampaigns[i].daysLeft = daysLeft
 
         }

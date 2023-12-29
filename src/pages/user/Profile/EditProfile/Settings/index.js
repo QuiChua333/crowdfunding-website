@@ -48,12 +48,9 @@ function EditSetting() {
     }, [password])
     const handleClickVerify = async () => {
         try {
-            dispatch(setPreviousLink(window.location.href))
-            const res = await customAxios.get(`${baseURL}/user/getLinkVerifyUser`);
-            const index = res.data.data.indexOf('givefun');
-            const link = res.data.data.substring(index - 1);
-            console.log(link)
-            navigate(link)
+            dispatch(setPreviousLink('@settingInfo' + window.location.href))
+            const res = await customAxios.get(`${baseURL}/user/getLinkVerifyUser/${user._id}`);
+            navigate(res.data.data)
         } catch (error) {
 
         }
@@ -107,24 +104,7 @@ function EditSetting() {
                             Cài đặt
                         </a>
                     </div>
-                    <div className={cx('section-info')} style={{ marginTop: '32px' }}>
-                        <h1 className={cx('section-title')}>
-                            Kết Nối Mạng Xã Hội
-                        </h1>
-
-                        <div style={{ marginTop: '24px', display: 'flex' }}>
-
-                            <img src="" style={{ width: '60px', height: '60px', objectFit: 'cover' }}>
-
-                            </img>
-                            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', marginLeft: '12px', color: 'rgb(106, 106, 106)' }}>
-                                <span>Huỳnh Ngọc Quí</span>
-                                <span>2,726 friends</span>
-                            </div>
-
-                        </div>
-                        <div className={cx('btn', 'facebook')} style={{ marginTop: '20px' }}><span><FaFacebookF style={{ fontSize: '18px', marginBottom: '2px', marginRight: '8px' }} />Disconnect Facebook</span></div>
-                    </div>
+                
                     <div className={cx('section-info')} style={{ marginTop: '32px' }}>
                         <h1 className={cx('section-title')} style={{ display: 'flex', alignItems: 'center' }}>
                             <span> Email của bạn</span>
@@ -186,7 +166,7 @@ function EditSetting() {
                             {
                                 !userState.isVerifiedUser &&
                                 <div className={cx('entreField')} onClick={handleClickVerify}>
-                                    <a className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >XÁC MINH NGƯỜI DÙNG</a>
+                                    <a onClick={handleClickVerify} className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >XÁC MINH NGƯỜI DÙNG</a>
                                 </div>
                             }
 

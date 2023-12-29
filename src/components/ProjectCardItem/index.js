@@ -39,10 +39,14 @@ function ProjectCardItem({ campaign, refreshCampaign }) {
             <div className={cx('card-image')}>
                 <img src={campaign?.cardImage?.url} alt="project-image" />
             </div>
-
+         
             <div className={cx('card-info')}>
                 <div className={cx('card-status')}>
-                    <span className={cx('status')}>{campaign?.status}</span>
+                    <span className={cx('status',{
+                        dangGayQuy: campaign?.status === 'Đang gây quỹ',
+                        daKetThuc: campaign?.status === 'Đã kết thúc' || campaign?.status === 'Đang tạm ngưng'
+                    })}
+                    >{campaign?.status}</span>
 
                     <span onClick={handleClickHeart}>{favourite ? <FaHeart className={cx('heart-active')} /> : <FaRegHeart className={cx('heart')} />}</span>
 
@@ -70,7 +74,7 @@ function ProjectCardItem({ campaign, refreshCampaign }) {
 
                     <div className={cx('days-left')}>
                         <AiFillClockCircle style={{ color: 'rgb(173 172 172)' }} />
-                        <span>Còn {campaign.daysLeft}</span>
+                        <span>{campaign.daysLeft === 'Hết hạn' ? 'Hết hạn' : 'Còn ' +campaign.daysLeft }</span>
 
                     </div>
 

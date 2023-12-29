@@ -61,6 +61,10 @@ export default mongoose.model('Campaign',
             }
         ],
         comments: [{ type: mongoose.Types.ObjectId, ref: 'Comment' }],
+        isSuccessFunding: {
+            type: Boolean, 
+            default: false
+        }
         
     })
 )

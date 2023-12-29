@@ -34,7 +34,11 @@ function VerifyUser() {
         if (previousLink.startsWith('@campaignFund')) {
             const link = previousLink.substring(13);
             window.location.href = link;
-        } else {
+        } else if (previousLink.startsWith('@settingInfo')) {
+            const link = previousLink.substring(12);
+            window.location.href = link;
+        }
+        else {
             window.location.href = '/';
         }
     };

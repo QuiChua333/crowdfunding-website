@@ -115,8 +115,11 @@ function ContributionCampaign() {
             const currentDateTime = new Date().getTime()
             const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60 * 60));
             let daysLeft = ''
-            if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
-            else daysLeft = Math.ceil(remainingHours) + " giờ";
+            if (remainingHours > 24) daysLeft = "Còn " + Math.ceil(remainingHours / 24) + " ngày"
+            else if (remainingHours > 0) {
+                daysLeft = "Còn " + Math.ceil(remainingHours) + " giờ";
+            }
+            else daysLeft = 'Hết hạn'
             setTimeLeft(daysLeft)
         }
     }, [campagin])
@@ -362,21 +365,39 @@ function ContributionCampaign() {
                                                         <span className={cx('percent')}>{(currentPercent % 100 === 0) ? currentPercent : currentPercent.toFixed(2)}%</span>
                                                         <span className={cx('left')}>
                                                             <AiFillClockCircle style={{ color: 'rgb(173 172 172)' }} />
-                                                            <span>Còn {timeLeft}</span>
+                                                            <span>{timeLeft}</span>
                                                         </span>
 
                                                     </div>
 
                                                 </div>
+                                                {
+                                                    timeLeft === 'Hết hạn' &&
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '24px' }}>
+                                                        <span style={{ display: 'block', paddingBottom: '2px', borderBottom: '1px dashed #949494' }}>Gây quỹ:</span>
+                                                        {
+                                                            campagin.isSSuccessFunding
+                                                            && <div style={{ padding: '4px 16px', background: '#34ca96', color: '#fff', borderRadius: '4px' }}>Thành công</div>
+                                                        }
+                                                        {
+                                                            !campagin.isSSuccessFunding
+                                                            && <div style={{ padding: '4px 16px', background: '#a8a8a8', color: '#fff', borderRadius: '8px' }}>Thất bại</div>
+                                                        }
+
+                                                    </div>
+                                                }
                                                 <ContributionTable contributions={contributions} onContributionTableChange={handleChangStateListContributions} getAllContributions={getAllContributions} openDetailContribution={openDetailContribution} />
                                             </div>
-                                            <div className={cx('pagination-wrapper')}>
-                                                <div className={cx('pagination')}>
-                                                    <span className={cx('icon')} onClick={handleClickPreviousPage}><FaAngleLeft style={{ color: '#7a69b3' }} /></span>
-                                                    <span className={cx('curent')}>{`${filter.page} của ${totalPages}`}</span>
-                                                    <span className={cx('icon')} onClick={handleClickNextPage}><FaAngleRight style={{ color: '#7a69b3' }} /></span>
+                                            {
+                                                totalPages > 0 &&
+                                                <div className={cx('pagination-wrapper')}>
+                                                    <div className={cx('pagination')}>
+                                                        <span className={cx('icon')} onClick={handleClickPreviousPage}><FaAngleLeft style={{ color: '#7a69b3' }} /></span>
+                                                        <span className={cx('curent')}>{`${filter.page} của ${totalPages}`}</span>
+                                                        <span className={cx('icon')} onClick={handleClickNextPage}><FaAngleRight style={{ color: '#7a69b3' }} /></span>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            }
 
                                         </div>
 
@@ -443,13 +464,16 @@ function ContributionCampaign() {
 
                                                 <GiftTable gifts={gifts} openDetailGift={openDetailGift} />
                                             </div>
-                                            <div className={cx('pagination-wrapper')}>
-                                                <div className={cx('pagination')}>
-                                                    <span className={cx('icon')} onClick={handleClickPreviousPageGift}><FaAngleLeft style={{ color: '#7a69b3' }} /></span>
-                                                    <span className={cx('curent')}>{`${filterGift.page} của ${totalPagesGift}`}</span>
-                                                    <span className={cx('icon')} onClick={handleClickNextPageGift}><FaAngleRight style={{ color: '#7a69b3' }} /></span>
+                                            {
+                                                totalPagesGift > 0 &&
+                                                <div className={cx('pagination-wrapper')}>
+                                                    <div className={cx('pagination')}>
+                                                        <span className={cx('icon')} onClick={handleClickPreviousPageGift}><FaAngleLeft style={{ color: '#7a69b3' }} /></span>
+                                                        <span className={cx('curent')}>{`${filterGift.page} của ${totalPagesGift}`}</span>
+                                                        <span className={cx('icon')} onClick={handleClickNextPageGift}><FaAngleRight style={{ color: '#7a69b3' }} /></span>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            }
 
                                         </div>
 

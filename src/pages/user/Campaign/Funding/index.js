@@ -208,7 +208,7 @@ function Funding() {
 
                                     {
                                         !campagin.owner?.isVerifiedUser ?
-                                            <a onClick={handleClickVerifyUser} className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >XÁC MINH ID CỦA BẠN</a>
+                                            <a onClick={handleClickVerifyUser} className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >XÁC MINH ID</a>
                                             :
                                             <a onClick={handleClickVerifyUser} className={cx('btn', 'btn-green')}  style={{ marginLeft: '0' }} >TÀI KHOẢN ĐÃ XÁC MINH <span style={{marginBottom: '2px', fontSize: '16px'}}><FaCheck /></span></a>
                                     }

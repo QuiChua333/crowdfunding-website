@@ -347,13 +347,6 @@ function Explore() {
                                     </span>
                                 </label>
                                 <label className={cx('inputRadioGroup-radio')}>
-                                    <input type="radio" value={'InDemand'} name="status" onChange={handleChangeStatus} />
-                                    <span className={cx('inputRadioGroup-radio-button')}></span>
-                                    <span className={cx('inputRadioGroup-radio-label')}>
-                                        <span>InDemand</span>
-                                    </span>
-                                </label>
-                                <label className={cx('inputRadioGroup-radio')}>
                                     <input type="radio" value={'Đã kết thúc'} name="status" onChange={handleChangeStatus} />
                                     <span className={cx('inputRadioGroup-radio-button')}></span>
                                     <span className={cx('inputRadioGroup-radio-label')}>

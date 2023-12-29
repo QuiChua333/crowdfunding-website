@@ -32,18 +32,21 @@ function ItemCampaign({ item }) {
             window.location.href = `/project/${item._id}/detail`
         }
     }
+    const handleClickImg = () => {
+        window.location.href = `/project/${item._id}/detail`
+    }
     return (
         <div className={cx('wrapper')}>
             <div className={cx('campaign')}>
-                <img src={item.cardImage?.url} />
+                <img src={item.cardImage?.url} style={{cursor: 'pointer'}} onClick={handleClickImg}/>
                 <div className={cx('campaign-info')}>
                     <div className={cx('campaign-title-wrapper')}>
                         <h2 onClick={handleClickTitleCampaign} className={cx('campaign-title')}>
                             {item.title}
                         </h2> <span className={cx({
-                            banNhap: item.status === 'Bản nháp' || item.status === 'Đã hết hạn',
+                            banNhap: item.status === 'Bản nháp' || item.status === 'Đã kết thúc',
                             choXacNhan: item.status === 'Chờ xác nhận',
-                            dangGayQuy: item.status === 'Đang gây quỹ' || item.status === 'InDemand'
+                            dangGayQuy: item.status === 'Đang gây quỹ' 
                         })}>  {item.status}</span>
                     </div>
                     <span className={cx('campaign-author')}>
