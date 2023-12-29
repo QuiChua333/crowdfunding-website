@@ -59,8 +59,55 @@ const getAllContributionsOfUser = async (req, res) => {
                 },
             ]);
 
-            const totalRecords = await Contribution.countDocuments();
-            const totalPages = Math.ceil(totalRecords / size);
+            const totalRecords = await Contribution.aggregate([
+                {
+                    $lookup: {
+                        from: 'campaigns',
+                        localField: 'campaign',
+                        foreignField: '_id',
+                        as: 'campaignInfo',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user',
+                        foreignField: '_id',
+                        as: 'userInfo',
+                    },
+                },
+                {
+                    $unwind: '$campaignInfo',
+                },
+                {
+                    $unwind: '$userInfo',
+                },
+                {
+                    $match: {
+                        $and: [
+                            {
+                                isFinish:
+                                    status === 'Tất cả' ? { $ne: 'Tất cả' } : status === 'Chưa nhận' ? false : true,
+                            },
+                            {
+                                $or: [
+                                    {
+                                        'campaignInfo.title': { $regex: `.*${searchString}.*`, $options: 'i' },
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                },
+                {
+                    $group: {
+                        _id: null,
+                        count: { $sum: 1 },
+                    },
+                }
+            ])
+            const totalPages = Math.ceil(totalRecords[0] ? (totalRecords[0].count / size) : 0);
+
 
             res.status(200).json({
                 message: 'Lấy thông tin các đóng góp của người dùng thành công',
@@ -370,8 +417,38 @@ const getAllContributionsByCampaign = async (req, res) => {
         const filterContributions = await Contribution.aggregate(aggregationStages);
 
 
-        const totalRecords = await Contribution.countDocuments({ campaign: id });
-        const totalPages = Math.ceil(totalRecords / size);
+        const totalRecords = await Contribution.aggregate([
+            {
+                $match: {
+                    $and: [
+                        {
+                            isFinish: status === 'Tất cả' ? { $ne: 'Tất cả' } : (status === 'Chưa gửi' ? false : true)
+                        },
+                        {
+                            $or: [
+                                {
+                                    'shippingInfo.fullName': { $regex: `.*${searchString}.*`, $options: 'i' }
+                                },
+                                {
+                                    email: { $regex: `.*${searchString}.*`, $options: 'i' }
+                                }
+                            ]
+                        },
+                        {
+                            campaign: new mongoose.Types.ObjectId(id)
+                        }
+                    ]
+
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    count: { $sum: 1 },
+                },
+            },
+        ])
+        const totalPages = Math.ceil(totalRecords[0] ? (totalRecords[0].count / size) : 0);
         res.status(200).json({
             message: 'Lấy thông tin các chiến dịch  thành công',
             data: {

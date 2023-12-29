@@ -87,7 +87,9 @@ function ComplaintManagement() {
                     />
                 </div>
 
-                <div className={cx('pagination-wrapper')}>
+                {
+                    totalPages > 0 &&
+                    <div className={cx('pagination-wrapper')}>
                     <div className={cx('pagination')}>
                         <span className={cx('icon')} onClick={handleClickPreviousPage}>
                             <FaAngleLeft style={{ color: '#7a69b3' }} />
@@ -98,6 +100,7 @@ function ComplaintManagement() {
                         </span>
                     </div>
                 </div>
+                }
             </div>
             {isOpenModalSeeDetail && (
                 <ModalDetailReport

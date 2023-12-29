@@ -171,6 +171,7 @@ function VerifyUser() {
                 dispatch(setLoading(false));
                 toast.success('Gửi thông tin xác minh thành công');
                 setUser(res.data.data);
+
             }
         } catch (error) {
             console.log(error.message);
@@ -265,7 +266,7 @@ function VerifyUser() {
                                     <input
                                         type="date"
                                         placeholder="Ngày sinh"
-                                        value={user.infoVerify?.birthday}
+                                        value={(new Date(user.infoVerify?.birthday)).toISOString().substring(0,10)}
                                         name="birthday"
                                         onChange={handleChangeInputText}
                                     />

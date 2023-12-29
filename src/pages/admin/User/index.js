@@ -141,6 +141,8 @@ function UserManagement() {
                     <UserTable allUsers={allUsers} handleStatusUser={handleStatusUser} handlVerifyUser={handlVerifyUser}/>
                 </div>
 
+               {
+                totalPages > 0 &&
                 <div className={cx('pagination-wrapper')}>
                     <div className={cx('pagination')}>
                         <span className={cx('icon')} onClick={handleClickPreviousPage}>
@@ -152,6 +154,7 @@ function UserManagement() {
                         </span>
                     </div>
                 </div>
+               }
             </div>
             {
                 isOpenModalVerify && <ModalVerifyAccount setIsOpenModalVerify={setIsOpenModalVerify} user={allUsers[indexOfRow]} getAllUsers={getAllUsers}/>

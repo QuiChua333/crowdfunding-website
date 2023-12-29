@@ -43,7 +43,7 @@ const getAllReports = async (req, res) => {
     try {
         const isAdmin = req.isAdmin;
         if (isAdmin) {
-            let { page = 1, size = 15, status = 'Tất cả', searchString = '' } = req.query;
+            let { page = 1, size = 15, status = 'Tất cả', searchString = '', title='' } = req.query;
             page = parseInt(page);
             size = parseInt(size);
             size = size >= 15 ? 15 : size;
@@ -88,6 +88,10 @@ const getAllReports = async (req, res) => {
                             },
                             {
                                 $or: [
+                                  {
+                                    
+                                    'campaignInfo.title': { $regex: `.*${searchString}.*`, $options: 'i' },
+                                  },
                                     {
                                         title: { $regex: `.*${searchString}.*`, $options: 'i' },
                                     },
@@ -106,8 +110,66 @@ const getAllReports = async (req, res) => {
                     $limit: size,
                 },
             ]);
-            const totalRecords = await Report.countDocuments();
-            const totalPages = Math.ceil(totalRecords / size);
+            const totalRecords = await Report.aggregate([
+              {
+                $lookup: {
+                    from: 'campaigns',
+                    localField: 'campaign',
+                    foreignField: '_id',
+                    as: 'campaignInfo',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'userInfo',
+                },
+            },
+            {
+                $unwind: '$campaignInfo',
+            },
+            {
+                $unwind: '$userInfo',
+            },
+            {
+                $project: {
+                    'userInfo.password': 0,
+                    'userInfo.refreshToken': 0,
+                    'userInfo.isAdmin': 0,
+                    'userInfo.isVerifiedEmail': 0,
+                    'userInfo.isVerifiedUser': 0,
+                },
+            },
+            {
+                $match: {
+                    $and: [
+                        {
+                            isResponsed:
+                                status === 'Tất cả' ? { $ne: 'Tất cả' } : status === 'Chưa phản hồi' ? false : true,
+                        },
+                        {
+                            $or: [
+                                {
+                                    title: { $regex: `.*${searchString}.*`, $options: 'i' },
+                                },
+                                {
+                                    'userInfo.fullName': { $regex: `.*${searchString}.*`, $options: 'i' },
+                                },
+                            ],
+                        },
+                    ],
+                },
+            },
+            {
+              $group: {
+                  _id: null,
+                  count: { $sum: 1 },
+              },
+          },
+            ])
+            const totalPages = Math.ceil(totalRecords[0] ? (totalRecords[0].count / size) : 0);
 
             res.status(200).json({
                 message: 'Lấy thông tin các báo cáo thành công',

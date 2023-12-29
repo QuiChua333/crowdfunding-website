@@ -6,6 +6,7 @@ import baseURL from '~/utils/baseURL';
 import customAxios from '~/utils/customAxios';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '~/redux/slides/GlobalApp';
+import convertDate from '~/utils/convertDate';
 
 const cx = classNames.bind(styles);
 
@@ -59,7 +60,7 @@ function ModalVerifyAccount({ setIsOpenModalVerify, user, getAllUsers }) {
 
                             <div className={cx('container-input')}>
                                 <span className={cx('title')}>Ngày sinh</span>
-                                <input type="text" value={user.infoVerify?.birthday} />
+                                <input type="text" value={convertDate(user.infoVerify?.birthday)} />
                             </div>
 
                             <div className={cx('container-input')}>

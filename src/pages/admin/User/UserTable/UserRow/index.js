@@ -36,7 +36,7 @@ function UserRow({ index, user, handleStatusUser, handlVerifyUser }) {
             {user.isAdmin === false && (
                 <>
                     <td>
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
                             <img className={cx('avatar')} src={user.avatar.url} alt="avt" />
                             <div
                                 style={{

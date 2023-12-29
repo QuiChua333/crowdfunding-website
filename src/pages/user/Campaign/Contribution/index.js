@@ -340,7 +340,7 @@ function ContributionCampaign() {
                         <div className={cx('body')}>
 
                             {
-                                campagin.status !== 'Bản nháp' &&
+                                campagin.status && campagin.status !== 'Bản nháp' &&
                                 <>
                                     <div>
                                         <div className={cx('entreSection')}>

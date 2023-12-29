@@ -73,13 +73,7 @@ function CampaignTable({campaigns, onCampaignTableChange, getAllCampaigns}) {
             <table>
                 <thead>
                     <tr>
-                        <th className={cx('checkbox')}>
-                            <span onClick={handleClickCheckAll}>
-                                {
-                                    !isCheckAll ? <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} /> : <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
-                                }
-                            </span>
-                        </th>
+                    
                         <th className={cx('title')}>TÊN CHIẾN DỊCH</th>
                         <th className={cx('goal')}>MỤC TIÊU</th>
                         <th className={cx('status')}>TRẠNG THÁI</th>

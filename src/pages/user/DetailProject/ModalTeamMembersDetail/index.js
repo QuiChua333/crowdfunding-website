@@ -21,7 +21,7 @@ function ModalTeamMembersDetail({ setIsOpenModalMember, members }) {
                 <div className={cx('separate')}></div>
                 <div className={cx('content-modal')}>
                     {members?.map((item) => {
-                        if (item.isAccepted) {
+                        if (item.isAccepted || item.isOwner === true) {
                             return (
                                 <div className={cx('item-members')}>
                                     <div className={cx('info-members')}>

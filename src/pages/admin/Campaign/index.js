@@ -31,16 +31,16 @@ function CampaignManagement() {
     }
     const handleClickPreviousPage = () => {
         if (filter.page === 1) return;
-        setFilter(prev => ({...prev, page: prev.page - 1}))
+        setFilter(prev => ({ ...prev, page: prev.page - 1 }))
     }
 
     const handleClickNextPage = () => {
         if (filter.page === totalPages) return;
-        setFilter(prev => ({...prev, page: prev.page + 1}))
+        setFilter(prev => ({ ...prev, page: prev.page + 1 }))
     }
     useEffect(() => {
         const queryParams = { page: filter.page, searchString: filter.textSearch, status: filter.status };
-        const queryString = new URLSearchParams(queryParams).toString(); 
+        const queryString = new URLSearchParams(queryParams).toString();
         const pathWithQuery = `${baseURL}/campaign/getAllCampaigns?${queryString}`;
         setPathWithQuery(pathWithQuery)
     }, [filter])
@@ -50,7 +50,7 @@ function CampaignManagement() {
         }
     }, [pathWithQuery])
     const [campaigns, setCampaigns] = useState([])
-    
+
     const getAllCampaigns = async () => {
         // setLoadingData(true)
         try {
@@ -71,7 +71,7 @@ function CampaignManagement() {
             return num
         })
     }
-   
+
 
     return (
         <div className={cx('wrapper')}>
@@ -94,15 +94,18 @@ function CampaignManagement() {
                 <CampaignTableSkeleton rows={8}/>
             } */}
                 <div className={cx('table-wrapper')}>
-                        <CampaignTable campaigns={campaigns} onCampaignTableChange={handleChangStateListCampaign} getAllCampaigns={getAllCampaigns} />             
+                    <CampaignTable campaigns={campaigns} onCampaignTableChange={handleChangStateListCampaign} getAllCampaigns={getAllCampaigns} />
                 </div>
-                <div className={cx('pagination-wrapper')}>
-                    <div className={cx('pagination')}>
-                        <span className={cx('icon')} onClick={handleClickPreviousPage}><FaAngleLeft style={{color: '#7a69b3'}}/></span>
-                        <span className={cx('curent')}>{`${filter.page} của ${totalPages}`}</span>
-                        <span className={cx('icon')} onClick={handleClickNextPage}><FaAngleRight style={{color: '#7a69b3'}}/></span>
+                {
+                    totalPages > 0 &&
+                    <div className={cx('pagination-wrapper')}>
+                        <div className={cx('pagination')}>
+                            <span className={cx('icon')} onClick={handleClickPreviousPage}><FaAngleLeft style={{ color: '#7a69b3' }} /></span>
+                            <span className={cx('curent')}>{`${filter.page} của ${totalPages}`}</span>
+                            <span className={cx('icon')} onClick={handleClickNextPage}><FaAngleRight style={{ color: '#7a69b3' }} /></span>
+                        </div>
                     </div>
-                </div>
+                }
 
             </div>
         </div>

@@ -12,6 +12,7 @@ import baseURL from '~/utils/baseURL';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import formatMoney from '~/utils/formatMoney';
 import PaymentModal from './PaymentModal';
+import axios from 'axios';
 
 const cx = classNames.bind(styles);
 
@@ -91,7 +92,7 @@ function Payment() {
     };
     const getListLocationShip = async () => {
         try {
-            const res = await customAxios.get('https://provinces.open-api.vn/api/p');
+            const res = await axios.get('https://provinces.open-api.vn/api/p');
             setListLocationShip(res.data.map((item) => item.name));
         } catch (error) { }
     };

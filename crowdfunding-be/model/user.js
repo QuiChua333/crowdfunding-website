@@ -36,7 +36,7 @@ export default mongoose.model('User',
         infoVerify: {
             fullName: String,
             phoneNumber: String,
-            birthday: String,
+            birthday: Date,
             detailAddress: String,
             identifyCode: String,
             identifyCardImage: {

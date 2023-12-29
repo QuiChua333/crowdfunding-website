@@ -25,10 +25,9 @@ const checkRegisterEmail = async (req, res) => {
         );
         const url = `${process.env.FRONT_END_URL}users/verify/${tokenVerifyEmailLink}`;
         await sendEmail(email, 'Verify Email', url);
-
+        console.log(url)
         return res.status(201).json({
             message: `Một liên kết đã được gửi đến ${email}. Vui lòng truy cập liên kết để xác thực tài khoản. Liên kết tồn tại trong 5 phút.`,
-            data: url,
         });
     } catch (error) {
         return res.status(400).json({
@@ -141,12 +140,12 @@ const registerUser = async (req, res) => {
                 ...newUser,
                 isVerifiedEmail: true,
                 avatar: {
-                    url: 'https://res.cloudinary.com/nqportfolio/image/upload/v1703343774/CROWDFUNDING/lvadocmjdweyplapvtin.png',
-                    public_id: 'CROWDFUNDING/lvadocmjdweyplapvtin',
+                    url: "https://res.cloudinary.com/nqportfolio/image/upload/v1703856598/CROWDFUNDING/mnkk8sokcqs2khqtxku2.png",
+                    public_id: "CROWDFUNDING/mnkk8sokcqs2khqtxku2"
                 },
                 profileImage: {
-                    url: 'https://res.cloudinary.com/nqportfolio/image/upload/v1703343774/CROWDFUNDING/lvadocmjdweyplapvtin.png',
-                    public_id: 'CROWDFUNDING/lvadocmjdweyplapvtin',
+                    url: "https://res.cloudinary.com/nqportfolio/image/upload/v1703856598/CROWDFUNDING/mnkk8sokcqs2khqtxku2.png",
+                    public_id: "CROWDFUNDING/mnkk8sokcqs2khqtxku2"
                 },
             });
 
@@ -499,6 +498,154 @@ const getCampaignFollowed = async (req, res) => {
     }
 };
 
+// const getAllUser = async (req, res) => {
+//     try {
+//         const isAdmin = req.isAdmin;
+//         if (isAdmin) {
+//             let { page = 1, size = 15, isVerifiedUser = 'Tất cả', status = 'Tất cả', searchString = '' } = req.query;
+//             page = parseInt(page);
+//             size = parseInt(size);
+//             size = size >= 15 ? 15 : size;
+//             const filterUsers = await User.aggregate([
+//                 {
+//                     $lookup: {
+//                         from: 'campaigns',
+//                         localField: 'followedCampaigns',
+//                         foreignField: '_id',
+//                         as: 'followedCampaignsInfo',
+//                     },
+//                 },
+//                 {
+//                     $unwind: {
+//                         path: '$followedCampaignsInfo',
+//                         preserveNullAndEmptyArrays: true, // Giữ nguyên cả khi trường followedCampaigns rỗng
+//                     },
+//                 },
+//                 {
+//                     $project: {
+//                         password: 0,
+//                         refreshToken: 0,
+//                         isVerifiedEmail: 0,
+//                     },
+//                 },
+//                 {
+//                     $match: {
+//                         $and: [
+//                             {
+//                                 status:
+//                                     status === 'Tất cả' ? { $ne: 'Tất cả' } : status === 'Đã bị khóa' ? false : true,
+//                             },
+//                             {
+//                                 isVerifiedUser:
+//                                     isVerifiedUser === 'Tất cả'
+//                                         ? { $ne: 'Tất cả' }
+//                                         : isVerifiedUser === 'Chưa xác minh'
+//                                             ? false
+//                                             : true,
+//                             },
+//                             {
+//                                 $or: [
+//                                     {
+//                                         fullName: { $regex: `.*${searchString}.*`, $options: 'i' },
+//                                     },
+//                                     {
+//                                         email: { $regex: `.*${searchString}.*`, $options: 'i' },
+//                                     },
+//                                 ],
+//                             },
+//                         ],
+//                     },
+//                 },
+//                 {
+//                     $skip: (page - 1) * size,
+//                 },
+//                 {
+//                     $limit: size,
+//                 },
+//             ]);
+
+//             const totalRecords = await User.aggregate([
+//                 {
+//                     $lookup: {
+//                         from: 'campaigns',
+//                         localField: 'followedCampaigns',
+//                         foreignField: '_id',
+//                         as: 'followedCampaignsInfo',
+//                     },
+//                 },
+//                 {
+//                     $unwind: {
+//                         path: '$followedCampaignsInfo',
+//                         preserveNullAndEmptyArrays: true, // Giữ nguyên cả khi trường followedCampaigns rỗng
+//                     },
+//                 },
+//                 {
+//                     $project: {
+//                         password: 0,
+//                         refreshToken: 0,
+//                         isVerifiedEmail: 0,
+//                     },
+//                 },
+//                 {
+//                     $match: {
+//                         $and: [
+//                             {
+//                                 status:
+//                                     status === 'Tất cả' ? { $ne: 'Tất cả' } : status === 'Đã bị khóa' ? false : true,
+//                             },
+//                             {
+//                                 isVerifiedUser:
+//                                     isVerifiedUser === 'Tất cả'
+//                                         ? { $ne: 'Tất cả' }
+//                                         : isVerifiedUser === 'Chưa xác minh'
+//                                             ? false
+//                                             : true,
+//                             },
+//                             {
+//                                 $or: [
+//                                     {
+//                                         fullName: { $regex: `.*${searchString}.*`, $options: 'i' },
+//                                     },
+//                                     {
+//                                         email: { $regex: `.*${searchString}.*`, $options: 'i' },
+//                                     },
+//                                 ],
+//                             },
+//                         ],
+//                     },
+//                 },
+//                 {
+//                     $group: {
+//                         _id: null,
+//                         count: { $sum: 1 },
+//                     },
+//                 },
+//             ])
+//             const totalPages = Math.ceil(totalRecords[0] ? (totalRecords[0].count / size) : 0);
+
+//             // for (let i = 0; i < filterUsers.length; i++) {
+//             //     const quantityCampaign = await Campaign.countDocuments({ owner: filterUsers[i]._id });
+//             //     filterUsers[i].quantityCampaign = quantityCampaign;
+//             // }
+//             // for (let i = 0; i < filterUsers.length; i++) {
+//             //     const quantityContribute = await Contribution.countDocuments({ user: filterUsers[i]._id });
+//             //     filterUsers[i].quantityContribute = quantityContribute;
+//             // }
+
+//             res.status(200).json({
+//                 message: 'Lấy thông tin tất cả người dùng thành công',
+//                 data: {
+//                     users: filterUsers,
+//                     totalPages,
+//                 },
+//             });
+//         } else throw new Error('Bạn không có quyền truy cập');
+//     } catch (error) {
+//         res.status(400).json({
+//             message: error.message,
+//         });
+//     }
+// };
 const getAllUser = async (req, res) => {
     try {
         const isAdmin = req.isAdmin;
@@ -507,6 +654,7 @@ const getAllUser = async (req, res) => {
             page = parseInt(page);
             size = parseInt(size);
             size = size >= 15 ? 15 : size;
+
             const filterUsers = await User.aggregate([
                 {
                     $lookup: {
@@ -541,8 +689,8 @@ const getAllUser = async (req, res) => {
                                     isVerifiedUser === 'Tất cả'
                                         ? { $ne: 'Tất cả' }
                                         : isVerifiedUser === 'Chưa xác minh'
-                                        ? false
-                                        : true,
+                                            ? false
+                                            : true,
                             },
                             {
                                 $or: [
@@ -565,18 +713,93 @@ const getAllUser = async (req, res) => {
                 },
             ]);
 
-            const totalRecords = await User.countDocuments();
-            const totalPages = Math.ceil(totalRecords / size);
+            const userIds = filterUsers.map(user => user._id);
 
-            for (let i = 0; i < filterUsers.length; i++) {
-                const quantityCampaign = await Campaign.countDocuments({ owner: filterUsers[i]._id });
-                filterUsers[i].quantityCampaign = quantityCampaign;
-            }
-            for (let i = 0; i < filterUsers.length; i++) {
-                const quantityContribute = await Contribution.countDocuments({ user: filterUsers[i]._id });
-                filterUsers[i].quantityContribute = quantityContribute;
-            }
-            
+            const [campaignCounts, contributeCounts] = await Promise.all([
+                Campaign.aggregate([
+                    { $match: { owner: { $in: userIds } } },
+                    { $group: { _id: '$owner', count: { $sum: 1 } } }
+                ]),
+                Contribution.aggregate([
+                    { $match: { user: { $in: userIds } } },
+                    { $group: { _id: '$user', count: { $sum: 1 } } }
+                ])
+            ]);
+
+            const campaignCountMap = campaignCounts.reduce((map, item) => {
+                map[item._id] = item.count;
+                return map;
+            }, {});
+
+            const contributeCountMap = contributeCounts.reduce((map, item) => {
+                map[item._id] = item.count;
+                return map;
+            }, {});
+
+            filterUsers.forEach(user => {
+                user.quantityCampaign = campaignCountMap[user._id] || 0;
+                user.quantityContribute = contributeCountMap[user._id] || 0;
+            });
+
+            const totalRecords = await User.aggregate([
+                {
+                    $lookup: {
+                        from: 'campaigns',
+                        localField: 'followedCampaigns',
+                        foreignField: '_id',
+                        as: 'followedCampaignsInfo',
+                    },
+                },
+                {
+                    $unwind: {
+                        path: '$followedCampaignsInfo',
+                        preserveNullAndEmptyArrays: true, // Giữ nguyên cả khi trường followedCampaigns rỗng
+                    },
+                },
+                {
+                    $project: {
+                        password: 0,
+                        refreshToken: 0,
+                        isVerifiedEmail: 0,
+                    },
+                },
+                {
+                    $match: {
+                        $and: [
+                            {
+                                status:
+                                    status === 'Tất cả' ? { $ne: 'Tất cả' } : status === 'Đã bị khóa' ? false : true,
+                            },
+                            {
+                                isVerifiedUser:
+                                    isVerifiedUser === 'Tất cả'
+                                        ? { $ne: 'Tất cả' }
+                                        : isVerifiedUser === 'Chưa xác minh'
+                                            ? false
+                                            : true,
+                            },
+                            {
+                                $or: [
+                                    {
+                                        fullName: { $regex: `.*${searchString}.*`, $options: 'i' },
+                                    },
+                                    {
+                                        email: { $regex: `.*${searchString}.*`, $options: 'i' },
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                },
+                {
+                    $group: {
+                        _id: null,
+                        count: { $sum: 1 },
+                    },
+                },
+            ])
+            const totalPages = Math.ceil(totalRecords[0] ? (totalRecords[0].count / size) : 0);
+
             res.status(200).json({
                 message: 'Lấy thông tin tất cả người dùng thành công',
                 data: {
@@ -584,14 +807,15 @@ const getAllUser = async (req, res) => {
                     totalPages,
                 },
             });
-        } else throw new Error('Bạn không có quyền truy cập');
+        } else {
+            throw new Error('Bạn không có quyền truy cập');
+        }
     } catch (error) {
         res.status(400).json({
             message: error.message,
         });
     }
 };
-
 const changeStatusUser = async (req, res) => {
     try {
         const isAdmin = req.isAdmin;

@@ -25,7 +25,7 @@ const getQuantityCampaingnPerUser = async (req, res) => {
         const { id } = req.params;
         const campain = await Campaign.findById(id).exec();
         const userId = campain.owner.toString();
-        const campaigns = await Campaign.find({ owner: userId, status: { $ne: 'Bản nháp' } }).exec();
+        const campaigns = await Campaign.find({ owner: userId, status: { $nin: ['Bản nháp', 'Chờ xác nhận'] } }).exec();
 
         res.status(200).json({
             message: 'Lấy số lượng chiến dịch của user thành công',
@@ -329,6 +329,7 @@ const sendInvitation = async (req, res) => {
                 process.env.JWT_SECRET_LINK_SEND_INVITATION)
             const url = `${process.env.FRONT_END_URL}campaigns/team/invitation/${tokenLink}`;
             await sendEmail(email, 'Invitation campaign', url);
+            console.log('email send', url)
             const member = {
                 user: user._id,
                 canEdit,
@@ -511,8 +512,34 @@ const getAllCampaigns = async (req, res) => {
                     $limit: size
                 }
             ]);
-            const totalRecords = await Campaign.countDocuments();
-            const totalPages = Math.ceil(totalRecords / size);
+            const totalRecords = await Campaign.aggregate([
+                {
+                    $match: {
+                        $and: [
+                            {
+                                status: status === 'Tất cả' ? { $nin: ['Tất cả', 'Bản nháp'] } : status
+                            },
+                            {
+                                $or: [
+                                    {
+                                        title: { $regex: `.*${searchString}.*`, $options: 'i' }
+                                    },
+                                    {
+                                        'owner.fullName': { $regex: `.*${searchString}.*`, $options: 'i' }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        count: { $sum: 1 },
+                    },
+                },
+            ])
+            const totalPages = Math.ceil(totalRecords[0] ? (totalRecords[0].count / size) : 0);
 
             // const campaigns = await Campaign.find({ status: { $ne: 'Bản nháp' } }).populate({
             //     path: 'owner',
@@ -656,7 +683,7 @@ const getMoreCampaigns = async (req, res) => {
                                     title: { $regex: `.*${searchString}.*`, $options: 'i' }
                                 },
                                 {
-                                    status: status === 'Tất cả' ? { $nin: ['Bản nháp', 'Đang tạm ngưng'] } : status
+                                    status: status === 'Tất cả' ? { $nin: ['Bản nháp', 'Đang tạm ngưng', 'Chờ xác nhận'] } : status
                                 }
                             ]
                         }
@@ -712,7 +739,7 @@ const getMoreCampaigns = async (req, res) => {
             ]);
         }
         for (let i = 0; i < filterCampaigns.length; i++) {
-            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id.toString()})
+            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id.toString() })
             let result = await Contribution.aggregate([
                 {
                     $match: {
@@ -776,7 +803,7 @@ const getTotalCampaignsExplore = async (req, res) => {
                                     title: { $regex: `.*${searchString}.*`, $options: 'i' }
                                 },
                                 {
-                                    status: status === 'Tất cả' ? { $nin: ['Bản nháp', 'Đang tạm ngưng'] } : status
+                                    status: status === 'Tất cả' ? { $nin: ['Bản nháp', 'Đang tạm ngưng', 'Chờ xác nhận'] } : status
                                 }
                             ]
                         }
@@ -840,12 +867,12 @@ const getPopulateCampaigns = async (req, res) => {
         filterCampaigns = await Campaign.aggregate([
             {
                 $match: {
-                    status: { $nin: ['Bản nháp', 'Đang tạm ngưng', 'Đã kết thúc'] }
+                    status: { $nin: ['Bản nháp', 'Đang tạm ngưng', 'Đã kết thúc', 'Chờ  xác nhận'] }
                 }
             }
         ]);
         for (let i = 0; i < filterCampaigns.length; i++) {
-            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id.toString()})
+            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id.toString() })
             let result = await Contribution.aggregate([
                 {
                     $match: {
@@ -970,6 +997,29 @@ const adminDeleteCampaign = async (req, res) => {
         })
     }
 }
+const userDeleteCampaign = async (req, res) => {
+    try {
+
+        const { idCampaign } = req.params;
+        const campaign = await Campaign.findById(idCampaign).exec();
+        if (campaign) {
+            await campaign.deleteOne();
+            await Item.deleteMany({ campaign: idCampaign })
+            await Perk.deleteMany({ campaign: idCampaign })
+            await Contribution.deleteMany({ campaign: idCampaign })
+            res.status(200).json({
+                message: 'Đã xóa chiến dịch thành công',
+            })
+        }
+        else throw new Error('Chiến dịch không tồn tại')
+
+
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
 export default {
     createNewCampaign,
     getCampaignById,
@@ -991,5 +1041,6 @@ export default {
     checkCampaignOfUser,
     adminChangeStatusCampaign,
     adminDeleteCampaign,
+    userDeleteCampaign,
     getQuantityCampaignOfUserId,
 }

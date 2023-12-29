@@ -38,13 +38,7 @@ function CampaignRow({ index, campaign, setChecked, getAllCampaigns }) {
 
         <tr onClick={handleClickRow}>
             {/* <Link to='/campaigns/:id/edit/perks/new' style={{position: 'relative', zIndex: '10'}}></Link> */}
-            <td className={cx('checkbox')}>
-                <span onClick={(e) => handleClickChecked(e, index)}>
-                    {
-                        !campaign.isChecked ? <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} /> : <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
-                    }
-                </span>
-            </td>
+       
             <td className={cx('title')}>{campaign.title}</td>
             <td className={cx('goal')}>{campaign.goal}</td>
             <td className={cx('status')}>

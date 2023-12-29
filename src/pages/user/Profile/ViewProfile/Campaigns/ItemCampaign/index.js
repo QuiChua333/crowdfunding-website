@@ -3,14 +3,19 @@ import classNames from "classnames/bind";
 import styles from './ItemCampaign.module.scss'
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { setLoading } from "~/redux/slides/GlobalApp";
+import customAxios from '~/utils/customAxios'
+import baseURL from "~/utils/baseURL";
 const cx = classNames.bind(styles);
 
-function ItemCampaign({ item }) {
+function ItemCampaign({ item, getCampaignsFollowed }) {
     const { id } = useParams()
     const [showDropDown, setShowDropDown] = useState(false)
     const dropdownElement = useRef()
+    const dispatch = useDispatch()
     const currentUser = useSelector(state => state.user.currentUser)
     useEffect(() => {
         function handleClickOutside(event) {
@@ -24,12 +29,34 @@ function ItemCampaign({ item }) {
         };
     }, [dropdownElement]);
     const handleClickTitleCampaign = () => {
-       
-            window.location.href = `/project/${item._id}/detail`
+
+            if (item.status !== 'Bản nháp' && item.status !== 'Đang tạm ngưng' && item.status !== 'Chờ xác nhận') {
+                window.location.href = `/project/${item._id}/detail`
+            }
         
     }
     const handleClickImg = () => {
-        window.location.href = `/project/${item._id}/detail`
+        if (item.status !== 'Bản nháp' && item.status !== 'Đang tạm ngưng' && item.status !== 'Chờ xác nhận') {
+            window.location.href = `/project/${item._id}/detail`
+        }
+    }
+    const handleDeleteCampaign = async () => {
+        if (item.status === 'Đang gây quỹ') {
+            toast.error('Chiến dịch đang gây quỹ! Không thể xóa')
+        }
+        else {
+            dispatch(setLoading(true))
+            try {
+                const res = await customAxios.delete(`${baseURL}/campaign/delete/userDeleteCampaign/${item._id}`)
+                dispatch(setLoading(false))
+                toast.success(res.data.message)
+                getCampaignsFollowed()
+            } catch (error) {
+                dispatch(setLoading(false))
+                toast.error('Có lỗi trong quá trình xóa chiến dịch')
+            }
+        }
+        
     }
     return (
         <div className={cx('wrapper')}>
@@ -80,7 +107,7 @@ function ItemCampaign({ item }) {
                             <div style={{ height: '1px', background: '#ccc' }}></div>
                             {
                                 currentUser._id && item.owner?._id === currentUser._id &&
-                                <a>Xóa chiến dịch</a>
+                                <a onClick={handleDeleteCampaign}>Xóa chiến dịch</a>
                             }
 
                             <div style={{ height: '1px', background: '#ccc' }}></div>

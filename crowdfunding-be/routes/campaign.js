@@ -30,6 +30,7 @@ router.get('/getPopulateCampaigns',checkCampaignStatus,CampaignController.getPop
 router.get('/checkCampaignOfUser/:idCampaign',checkToken,CampaignController.checkCampaignOfUser)
 router.patch('/adminChangeStatusCampaign/:idCampaign',checkToken,CampaignController.adminChangeStatusCampaign)
 router.delete('/adminDeleteCampaign/:idCampaign',checkToken,CampaignController.adminDeleteCampaign)
+router.delete('/userDeleteCampaign/:idCampaign',checkToken,CampaignController.userDeleteCampaign)
 
 
 

@@ -52,7 +52,7 @@ function Funding() {
     }, [])
 
     const handleClickVerifyUser = async () => {
-        if (!campagin.owner?._id !== currentUser._id) return;
+        if (campagin.owner?._id !== currentUser._id) return;
         try {
             dispatch(setPreviousLink('@campaignFund' + window.location.href))
             const res = await customAxios.get(`${baseURL}/user/getLinkVerifyUser/${campagin.owner._id}`);

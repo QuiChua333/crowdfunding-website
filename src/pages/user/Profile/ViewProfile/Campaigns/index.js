@@ -93,9 +93,9 @@ function ViewCampaigns() {
                             <span className={cx('titleCampaign')} style={{ display: 'inline-block', padding: '8px 16px', backgroundColor: '#ccc', borderRadius: '4px', color: '#212121' }}>Dự án là chủ sở hữu</span>
                         </div>
                         {campaignsOfUser.map((item, index) => {
-                            if ((item.owner?._id === id && (item.status === 'Đang gây quỹ' || (item.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true }))))) {
+                            if ((item.owner?._id === id && (item.status === 'Đang gây quỹ' || (item.team?.some(x => { return (x.user === currentUser._id && (x.isAccepted === true || x.isOwner === true))  }))))) {
                                 if (!isHasCampaign) setHasCampaign(true)
-                                return <ItemCampaign key={index} item={item} />
+                                return <ItemCampaign key={index} item={item} getCampaignsFollowed={getCampaignsFollowed}/>
                             }
 
                             else return <></>
