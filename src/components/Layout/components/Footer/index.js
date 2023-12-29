@@ -56,6 +56,7 @@ function Footer() {
                     <div className={cx('btn-signup')}>
                         <a href='/' style={{color: '#fff'}}>KHÁM PHÁ</a>
                     </div>
+                    <a className={cx('contact')} href='mailto: 21620417@gm.uit.edu.vn'>@GiveFun Support</a>
                 </div>
             </div>
 

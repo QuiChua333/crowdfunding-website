@@ -11,12 +11,12 @@ import styles from './CommenCard.module.scss'
 import { setLoading } from '~/redux/slides/GlobalApp'
 import baseURL from '~/utils/baseURL'
 const cx = classNames.bind(styles)
-const CommentCard = ({ children, comment, campaign, commentId, setListComments, handleRemoveComment }) => {
+const CommentCard = ({ children, comment, campaign, commentId, setListComments, handleRemoveComment, members }) => {
     const currentUser = useSelector(state => state.user.currentUser)
     const dispatch = useDispatch()
     const [content, setContent] = useState('')
     const [readMore, setReadMore] = useState(false)
-
+    const [role,setRole] = useState('')
     const [onEdit, setOnEdit] = useState(false)
     const [isLike, setIsLike] = useState(false)
     const [loadLike, setLoadLike] = useState(false)
@@ -60,6 +60,7 @@ const CommentCard = ({ children, comment, campaign, commentId, setListComments, 
 
 
     const handleLike = async () => {
+        if (!currentUser._id) return
         if (loadLike) return;
         setLoadLike(true)
 
@@ -100,6 +101,7 @@ const CommentCard = ({ children, comment, campaign, commentId, setListComments, 
 
 
     const handleReply = () => {
+        if (!currentUser._id) return;
         if (onReply) return setOnReply(false)
         setOnReply({ ...comment, commentId })
     }
@@ -121,6 +123,21 @@ const CommentCard = ({ children, comment, campaign, commentId, setListComments, 
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [inputElement]);
+    useEffect(() => {
+        let role = ''
+        console.log('hello',members)
+        console.log(comment.user._id)
+        members.forEach(mem => {
+            if (mem.user._id === comment.user._id && mem.isAccepted === true) {
+                role = 'Member'
+            }
+            if (mem.user._id === comment.user._id && mem.isOwner === true) {
+                role = 'Owner'
+            }
+        });
+        
+        setRole(role)
+    },[comment])
     return (
         <div className={cx('wrapper')} style={styleCard}>
             <div className={cx('inner')}>
@@ -131,12 +148,20 @@ const CommentCard = ({ children, comment, campaign, commentId, setListComments, 
                 <div className={cx('content-wrapper')} ref={inputElement}>
                     <div className={cx('commen-action')}>
                         <div className={cx('comment_content')}>
-                            <span className={cx('fullName')}>{comment.user.fullName}</span>
+                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                <span className={cx('fullName')} style={{marginRight: '8px'}}>{comment.user.fullName}</span>
+                                {
+                                    role === 'Owner' && <span style={{color: '#fff', backgroundColor: 'rgb(8, 131, 102)', display: 'inline-block', padding: '2px 5px', fontSize: '12px', letterSpacing: '1px', borderRadius: '4px'}}>CHỦ DỰ ÁN</span>
+                                }
+                                {
+                                    role === 'Member' && <span style={{color: 'rgb(42, 42, 42)', backgroundColor: '#fdde86', display: 'inline-block', padding: '2px 5px', fontSize: '12px', letterSpacing: '1px',  borderRadius: '4px'}}>THÀNH VIÊN</span>
+                                }
+                            </div>
                             <div>
                                 {
                                     onEdit
                                         ? <input value={content} className={cx('input-edit')}
-                                            onChange={e => setContent(e.target.value)}  />
+                                            onChange={e => setContent(e.target.value)} />
 
 
                                         : <div>
@@ -155,7 +180,7 @@ const CommentCard = ({ children, comment, campaign, commentId, setListComments, 
                                             {
                                                 content.length > 100 &&
                                                 <span className={cx('readMore')} onClick={() => setReadMore(!readMore)}>
-                                                    {readMore ? <span style={{color: 'crimson', marginLeft: '8px', cursor: 'pointer'}}>Ẩn nội dung</span> : <span style={{color: '#65676b', marginLeft: '8px', cursor: 'pointer'}}>Xem thêm</span>}
+                                                    {readMore ? <span style={{ color: 'crimson', marginLeft: '8px', cursor: 'pointer' }}>Ẩn nội dung</span> : <span style={{ color: '#65676b', marginLeft: '8px', cursor: 'pointer' }}>Xem thêm</span>}
                                                 </span>
                                             }
                                         </div>
@@ -171,7 +196,7 @@ const CommentCard = ({ children, comment, campaign, commentId, setListComments, 
 
                         </div>
                         <div className={cx('action')}>
-                            <CommentMenu campaign={campaign} comment={comment} setOnEdit={setOnEdit} handleRemoveComment={handleRemoveComment} />
+                            <CommentMenu campaign={campaign} comment={comment} setOnEdit={setOnEdit} handleRemoveComment={handleRemoveComment} members={members}/>
 
                         </div>
                     </div>
@@ -210,7 +235,7 @@ const CommentCard = ({ children, comment, campaign, commentId, setListComments, 
                     </div>
                     {
                         onReply &&
-                        <div style={{marginTop: '8px', marginLeft: '8px'}}>
+                        <div style={{ marginTop: '8px', marginLeft: '8px' }}>
                             <InputComment onReply={onReply} setOnReply={setOnReply} campaign={campaign} setListComments={setListComments}>
                                 <Link to={`/profile/${onReply.user._id}`} style={{ marginRight: '4px', color: '#5c9aff' }}>
                                     @{onReply.user.fullName}:

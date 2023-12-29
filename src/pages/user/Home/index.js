@@ -1,6 +1,6 @@
 import ProjectCardItem from "~/components/ProjectCardItem";
 import classNames from "classnames/bind";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa";
 import { FaAngleLeft } from "react-icons/fa";
 import { AiOutlineRight } from "react-icons/ai";
@@ -13,10 +13,13 @@ import styles from './Home.module.scss'
 import SectionTrust from "./SectionTrust";
 import { useEffect, useState } from "react";
 import baseURL from "~/utils/baseURL";
+import { setFilterExplore } from "~/redux/slides/GlobalApp";
+import { useDispatch } from "react-redux";
 
 const cx = classNames.bind(styles);
 
 function Home() {
+    const dispatch = useDispatch()
     const responsive = {
         superLargeDesktop: {
             // the naming can be any, depends on you.
@@ -36,6 +39,12 @@ function Home() {
             items: 2
         }
     };
+    const handleClickField = (field) => {
+        dispatch(setFilterExplore({
+            field
+        }))
+        navigate('/explore')
+    }
     const ButtonGroup = ({ next, previous, goToSlide, ...rest }) => {
         const { carouselState: { currentSlide } } = rest;
         return (
@@ -74,6 +83,7 @@ function Home() {
     useEffect(() => {
         console.log(campaigns)
     },[])
+    const navigate = useNavigate()
     return (
         <div className={cx('wrapper')}>
             <div className={cx('inner')}>
@@ -126,7 +136,7 @@ function Home() {
                     </p>
 
                     <div className="d-flex flex-wrap" style={{ width: '100%', marginTop: '16px' }}>
-                        <Link to="/" className={cx('column')}>
+                        <div onClick={() => handleClickField('Vật dụng trong nhà')} className={cx('column')}>
                             <div className={cx('categoryIcon')}>
                                 <img src={images.home} />
                             </div>
@@ -134,9 +144,9 @@ function Home() {
                             <div className={cx('categoryText')} >
                                 VẬT DỤNG TRONG NHÀ
                             </div>
-                        </Link>
+                        </div>
 
-                        <Link to="/" className={cx('column')}>
+                        <div onClick={() => handleClickField('Điện thoại & phụ kiện')} className={cx('column')}>
                             <div className={cx('categoryIcon')}>
                                 <img src={images.phone} />
                             </div>
@@ -145,9 +155,9 @@ function Home() {
                                 ĐIỆN THOẠI & PHỤ KIỆN
 
                             </div>
-                        </Link>
+                        </div>
 
-                        <Link to="/" className={cx('column')}>
+                        <div onClick={() => handleClickField('Du lịch & hoạt động ngoài trời')} className={cx('column')}>
                             <div className={cx('categoryIcon')}>
                                 <img src={images.travel} />
                             </div>
@@ -156,9 +166,9 @@ function Home() {
                                 DU LỊCH & HOẠT ĐỘNG NGOÀI TRỜI
 
                             </div>
-                        </Link>
+                        </div>
 
-                        <Link to="/" className={cx('column')}>
+                        <div onClick={() => handleClickField('Sức khỏe & thể hình')} className={cx('column')}>
                             <div className={cx('categoryIcon')}>
                                 <img src={images.health} />
                             </div>
@@ -167,9 +177,9 @@ function Home() {
                                 SỨC KHỎE & THỂ HÌNH
 
                             </div>
-                        </Link>
+                        </div>
 
-                        <Link to="/" className={cx('column')}>
+                        <div onClick={() => handleClickField('Âm thanh')} className={cx('column')}>
                             <div className={cx('categoryIcon')}>
                                 <img src={images.audio} />
                             </div>
@@ -178,9 +188,9 @@ function Home() {
                                 ÂM THANH
 
                             </div>
-                        </Link>
+                        </div>
 
-                        <Link to="/" className={cx('column')}>
+                        <div onClick={() => handleClickField('Phim')} className={cx('column')}>
                             <div className={cx('categoryIcon')}>
                                 <img src={images.film} />
                             </div>
@@ -189,7 +199,7 @@ function Home() {
                                 PHIM
 
                             </div>
-                        </Link>
+                        </div>
                     </div>
                 </div>
                 <div className={cx('backTheProjectSection-imageWrapper')} style={{ marginTop: '60px' }}>
@@ -202,7 +212,7 @@ function Home() {
                             Give Fun là điểm đén của bạn để khám phá những đổi mới tinh tế trong công nghệ, thiết kế và nhiều lĩnh vực khác, thường đi kèm với ưu đãi đặc biệt và giá ưu đãi cho những người ủng hộ sớm. Hãy ủng hộ một dự án, chia sẻ ý kiến và phản hồi của bạn với nhóm dự án - và tham gia vào rủi ro và phúc lợi của việc mang sản phẩm mới vào cuộc sống.
                         </p>
 
-                        <Link className={cx('link')} to="/">
+                        <Link className={cx('link')} to="/about-us">
                             <p>Tìm hiểu thêm về Give Fun <AiOutlineRight /></p>
                         </Link>
                     </div>

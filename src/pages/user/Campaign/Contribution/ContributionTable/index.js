@@ -21,7 +21,7 @@ function ContributionTable({contributions, onContributionTableChange, getAllCont
                     id: item._id,
                     userName: item.shippingInfo.fullName,
                     estDelivery: item.shippingInfo?.estDelivery ? convertDate3(item.shippingInfo?.estDelivery) :'',
-                    email: item.user[0].email || '',
+                    email: item.user[0]?.email || 'Không có',
                     perks: item.perks,
                     money: formatMoney(item.money) + 'VNĐ',
                     date: convertDate(item.date),

@@ -16,13 +16,13 @@ import baseURL from "~/utils/baseURL";
 import { toast } from "react-toastify";
 import convertDate from "~/utils/convertDate2";
 const cx = classNames.bind(styles)
-function ModalContribution({ setShowModal, contribution, handleChangeStatus }) {
+function ModalContribution({ setShowModal, contribution, handleChangeStatus, isEditComponent }) {
     const dispatch = useDispatch();
     const [showListStatus, setShowListStatus] = useState(false);
-    const [listStatus,setListStatus] = useState(() => {
+    const [listStatus, setListStatus] = useState(() => {
         let list;
         if (!contribution.isFinish) {
-            list = ['Chưa gửi','Đã gửi']
+            list = ['Chưa gửi', 'Đã gửi']
         }
         else list = ['Đã gửi']
         return list;
@@ -56,14 +56,14 @@ function ModalContribution({ setShowModal, contribution, handleChangeStatus }) {
                     dispatch(setLoading(false))
                     setShowModal(false)
                     toast.success('Thay đổi trạng thái gửi đặc quyền thành công!')
-    
+
                 }
             } catch (error) {
                 dispatch(setLoading(false))
             }
         }
         else setShowModal(false)
-        
+
     }
     return (
         <div className={cx('wrapper')}>
@@ -75,13 +75,17 @@ function ModalContribution({ setShowModal, contribution, handleChangeStatus }) {
                     <div className={cx('product-container')}>
                         <div className={cx('order-container')}>
                             <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#4bac4d' }}>
-                                Mã đóng góp {`#${contribution.contributionId.substring(4)}`} <span style={{ color: '#000' }}>/ Trạng thái
-                                    <div ref={statusElement} className={cx('product-category-select', { active: showListStatus })} onClick={() => { if (!contribution.isFinish) { setShowListStatus(prev => !prev) } }}>
-                                        <span style={{ color: status === 'Chưa gửi' ? 'red' : '#4eb7f5' }}>{status}</span>
-                                        <span> {!showListStatus ? <AiFillCaretDown /> : <AiFillCaretUp />}</span>
-                                        {showListStatus && <DropDown items={listStatus} style={{ width: '100%', left: '0', top: '35px', fontWeight: '500' }} onClick={handleClickItemStatus} />}
-                                    </div>
-                                </span>
+                                Mã đóng góp {`#${contribution.contributionId.substring(4)}`}
+                                {
+                                    contribution.perks && contribution.perks.length > 0 &&
+                                    <span style={{ color: '#000' }}>/ Trạng thái
+                                        <div ref={statusElement} className={cx('product-category-select', { active: showListStatus })} onClick={() => { if (!contribution.isFinish) { setShowListStatus(prev => !prev) } }} style={{ pointerEvents: !isEditComponent && 'none' }}>
+                                            <span style={{ color: status === 'Chưa gửi' ? 'red' : '#4eb7f5' }}>{status}</span>
+                                            <span> {!showListStatus ? <AiFillCaretDown /> : <AiFillCaretUp />}</span>
+                                            {showListStatus && <DropDown items={listStatus} style={{ width: '100%', left: '0', top: '35px', fontWeight: '500' }} onClick={handleClickItemStatus} />}
+                                        </div>
+                                    </span>
+                                }
 
 
 
@@ -109,9 +113,14 @@ function ModalContribution({ setShowModal, contribution, handleChangeStatus }) {
                                     <div className={cx('form-group')}>
                                         <label>Phí ship:
                                         </label>
-                                        <div className={cx('info-value')}>{formatMoney(contribution.money - contribution.perks.reduce((acc, cur) => {
-                                            return acc + cur.price
-                                        }, 0))} VNĐ</div>
+                                        <div className={cx('info-value')}>{
+                                            contribution.perks && contribution.perks.length > 0 ?
+                                                formatMoney(contribution.money - contribution.perks.reduce((acc, cur) => {
+                                                    return acc + cur.price
+                                                }, 0))
+                                                :
+                                                0
+                                        } VNĐ</div>
                                     </div>
 
                                 </div>
@@ -123,10 +132,18 @@ function ModalContribution({ setShowModal, contribution, handleChangeStatus }) {
                                     <label>Tổng tiền: </label>
                                     <div className={cx('info-value')}>{formatMoney(contribution.money)} VNĐ</div>
                                 </div>
-                                <div className={cx('form-group', 'single')} style={{ width: '40%' }} >
-                                    <label>Ngày giao dự kiến: </label>
-                                    <div className={cx('info-value')}>{formatDate(contribution.date)}</div>
-                                </div>
+                                
+                                   
+                                    <div className={cx('form-group', 'single')} style={{ width: '40%' }} >
+                                        {
+                                            contribution.perks && contribution.perks.length > 0 &&
+                                            <>
+                                                <label>Ngày giao dự kiến: </label>
+                                                <div className={cx('info-value')}>{formatDate(contribution.date)}</div>
+                                            </>
+                                        }
+                                    </div>
+                                
 
                             </div>
                             <div style={{ display: 'flex', overflow: 'hidden', marginTop: '16px' }}>
@@ -146,56 +163,85 @@ function ModalContribution({ setShowModal, contribution, handleChangeStatus }) {
                                     </div>
                                 </div>
                                 <div style={{ marginTop: '16px', marginLeft: '32px', flex: '1' }}>
-                                    <label style={{ fontSize: '16px', fontWeight: '600', marginLeft: '32px', marginBottom: '16px' }}>Thông tin giao hàng</label>
-                                    <div style={{ borderLeft: '3px solid #4bac4d', height: '100%', paddingLeft: '32px', fontSize: '14px' }}>
+                                    {
+                                        contribution.perks && contribution.perks.length > 0 &&
+                                        <div>
+                                            <label style={{ fontSize: '16px', fontWeight: '600', marginLeft: '32px', marginBottom: '16px' }}>Thông tin giao hàng</label>
+                                            <div style={{ borderLeft: '3px solid #4bac4d', height: '100%', paddingLeft: '32px', fontSize: '14px' }}>
 
-                                        <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center' }}>
-                                            <img style={{ width: '100px', height: '100px' }} src="https://png.pngtree.com/png-vector/20191101/ourmid/pngtree-cartoon-color-simple-male-avatar-png-image_1934459.jpg" />
+                                                <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center' }}>
+                                                    <img style={{ width: '100px', height: '100px' }} src="https://png.pngtree.com/png-vector/20191101/ourmid/pngtree-cartoon-color-simple-male-avatar-png-image_1934459.jpg" />
 
-                                            <div style={{ marginLeft: '16px', fontSize: '14px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
-                                                        <span><IoPersonOutline style={{ marginRight: '6px' }} /></span>
-                                                        Người nhận:</span>
-                                                    <span >{contribution.shippingInfo?.fullName}</span>
-                                                </div>
+                                                    <div style={{ marginLeft: '16px', fontSize: '14px' }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
+                                                                <span><IoPersonOutline style={{ marginRight: '6px' }} /></span>
+                                                                Người nhận:</span>
+                                                            <span >{contribution.shippingInfo?.fullName}</span>
+                                                        </div>
 
-                                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
-                                                        <span><BiPhoneCall style={{ marginRight: '6px' }} /></span>
-                                                        SĐT:</span>
-                                                    <span >{contribution.shippingInfo?.phoneNumber}</span>
-                                                </div>
-                                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
-                                                        <span><BiMap style={{ marginRight: '6px' }} /></span>
-                                                        Tỉnh / TP:</span>
-                                                    <span >{contribution.shippingInfo?.province}</span>
-                                                </div>
-                                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
-                                                        <span><BiMapPin style={{ marginRight: '6px' }} /></span>
-                                                        Quận / Huyện:</span>
-                                                    <span >{contribution.shippingInfo?.district}</span>
-                                                </div>
-                                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
-                                                        <span><BiSitemap style={{ marginRight: '6px' }} /></span>
-                                                        Xã / Thị trấn:</span>
-                                                    <span >{contribution.shippingInfo?.ward}</span>
-                                                </div>
-                                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
-                                                        <span><BiMessageSquareDetail style={{ marginRight: '6px' }} /></span>
-                                                        Chi tiết:</span>
-                                                    <span >{contribution.shippingInfo?.detail}</span>
-                                                </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
+                                                                <span><BiPhoneCall style={{ marginRight: '6px' }} /></span>
+                                                                SĐT:</span>
+                                                            <span >{contribution.shippingInfo?.phoneNumber}</span>
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
+                                                                <span><BiMap style={{ marginRight: '6px' }} /></span>
+                                                                Tỉnh / TP:</span>
+                                                            <span >{contribution.shippingInfo?.province}</span>
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
+                                                                <span><BiMapPin style={{ marginRight: '6px' }} /></span>
+                                                                Quận / Huyện:</span>
+                                                            <span >{contribution.shippingInfo?.district}</span>
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
+                                                                <span><BiSitemap style={{ marginRight: '6px' }} /></span>
+                                                                Xã / Thị trấn:</span>
+                                                            <span >{contribution.shippingInfo?.ward}</span>
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
+                                                                <span><BiMessageSquareDetail style={{ marginRight: '6px' }} /></span>
+                                                                Chi tiết:</span>
+                                                            <span >{contribution.shippingInfo?.detail}</span>
+                                                        </div>
 
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div>
+                                    }
+                                    <div style={{ marginTop: '48px' }}>
+                                        <label style={{ fontSize: '16px', fontWeight: '600', marginLeft: '32px', marginBottom: '16px' }}>Thông tin tài khoản ngân hàng</label>
+                                        <div style={{ borderLeft: '3px solid #4bac4d', height: '100%', paddingLeft: '32px', fontSize: '14px' }}>
 
+                                            <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center' }}>
+                                                <img style={{ width: '100px', height: '100px' }} src="https://cdn-icons-png.flaticon.com/512/8634/8634075.png" />
+
+                                                <div style={{ marginLeft: '16px', fontSize: '14px' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                        <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
+                                                            <span><IoPersonOutline style={{ marginRight: '6px' }} /></span>
+                                                            Tên ngân hàng:</span>
+                                                        <span >{contribution.bankAccount?.bank}</span>
+                                                    </div>
+
+                                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                        <span style={{ display: 'inline-block', width: '150px', fontWeight: '600' }}>
+                                                            <span><BiPhoneCall style={{ marginRight: '6px' }} /></span>
+                                                            Số tài khoản:</span>
+                                                        <span >{contribution.bankAccount?.numberAccount}</span>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -216,7 +262,7 @@ function ModalContribution({ setShowModal, contribution, handleChangeStatus }) {
                     <a onClick={handleClickSave} className={cx('btn', 'btn-ok')}>Xác nhận</a>
 
                 </div>
-                <span onClick={() => setShowModal(false)}  className={cx('editFile-icon')}><IoCloseSharp style={{ color: '#7a69b3', fontSize: '22px' }} /></span>
+                <span onClick={() => setShowModal(false)} className={cx('editFile-icon')}><IoCloseSharp style={{ color: '#7a69b3', fontSize: '22px' }} /></span>
             </div>
         </div>
     );

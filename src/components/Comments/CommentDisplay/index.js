@@ -4,7 +4,7 @@ import classNames from 'classnames/bind'
 import styles from './CommentDisplay.module.scss'
 
 const cx = classNames.bind(styles)
-const CommentDisplay = ({ comment, replyCm, campaign, setListComments, handleRemoveComment }) => {
+const CommentDisplay = ({ comment, replyCm, campaign, setListComments, handleRemoveComment, members }) => {
     const [showRep, setShowRep] = useState([])
     const [next, setNext] = useState(3)
 
@@ -17,7 +17,7 @@ const CommentDisplay = ({ comment, replyCm, campaign, setListComments, handleRem
     return (
         <div className={cx('wrapper')}>
             <CommentCard comment={comment} campaign={campaign} commentId={comment._id} setListComments={setListComments}
-                handleRemoveComment={handleRemoveComment}>
+                handleRemoveComment={handleRemoveComment} members={members}>
                 <div style={{ paddingLeft: '32px', marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {
                         showRep.map((item, index) => (
@@ -26,6 +26,7 @@ const CommentDisplay = ({ comment, replyCm, campaign, setListComments, handleRem
                                 handleRemoveComment={handleRemoveComment}
                                 key={index}
                                 comment={item}
+                                members={members}
                                 campaign={campaign}
                                 commentId={comment._id}
                                 setListComments={setListComments}

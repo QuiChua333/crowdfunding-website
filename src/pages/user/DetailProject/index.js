@@ -260,6 +260,9 @@ function DetailProject() {
         }
 
     }
+    useEffect(() => {
+        console.log('thành viên',members)
+    },[members])
 
     useEffect(() => {
         getProjectById();
@@ -274,9 +277,6 @@ function DetailProject() {
         let startDateTime = new Date(ItemProject.startDate)
         let endDateTime = new Date()
         endDateTime = endDateTime.setDate(startDateTime.getDate() + ItemProject.duration);
-        console.log(ItemProject.duration)
-        console.log('startDate', convertDate(startDateTime))
-        console.log('endDate', convertDate(endDateTime))
         setEndDate(convertDate(endDateTime))
     }, [ItemProject])
 
@@ -567,7 +567,7 @@ function DetailProject() {
                     <div >
                         {indexTabHeader === 1 && <StorySection story={ItemProject.story} />}
                         {indexTabHeader === 2 && <FAQSection faqs={ItemProject.faqs} />}
-                        {indexTabHeader === 3 && <CommentSection campaign={ItemProject} comments={listComments} setListComments={setListComments} />}
+                        {indexTabHeader === 3 && <CommentSection campaign={ItemProject} comments={listComments} setListComments={setListComments} members={members}/>}
                     </div>
                 </div>
 

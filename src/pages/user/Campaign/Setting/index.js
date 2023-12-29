@@ -1,6 +1,7 @@
 import classNames from "classnames/bind";
 import SidebarCampaign from "../Sidebar";
 import { HeaderPage } from "~/components/Layout/components/Header";
+import { TiCancel } from "react-icons/ti";
 
 import Footer from "~/components/Layout/components/Footer";
 import { IoSquareOutline, IoCheckboxSharp } from "react-icons/io5";
@@ -18,7 +19,7 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 import baseURL from "~/utils/baseURL";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "~/redux/slides/GlobalApp";
 const cx = classNames.bind(styles);
 
@@ -38,6 +39,8 @@ function SettingCampaign() {
                 cardImage: res.data.data.cardImage || { url: '', public_id: '' },
                 status: res.data.data.status,
                 isIndemand: res.data.data.isIndemand || false,
+                owner: res.data.data.owner || '',
+                team: res.data.data.team || []
             }
             setCampaign({ ...infoBasic })
             setCampaignState({ ...infoBasic })
@@ -50,22 +53,23 @@ function SettingCampaign() {
     useEffect(() => {
         getCampaign()
     }, [])
-    const handleClickSaveContinue = async () => {
-        const body = { ...campaginState }
-        const id = body.id;
-        delete body.id
-        delete body.status
-        delete body.title
-        delete body.cardImage
-        dispatch(setLoading(true))
-        try {
-            const res = await customAxios.patch(`${baseURL}/campaign/editCampaign/${id}`, body)
-            dispatch(setLoading(false))
+    // const handleClickSaveContinue = async () => {
+    //     const body = { ...campaginState }
+    //     const id = body.id;
+    //     delete body.id
+    //     delete body.status
+    //     delete body.title
+    //     delete body.cardImage
+    //     delete body.owner;
+    //     dispatch(setLoading(true))
+    //     try {
+    //         const res = await customAxios.patch(`${baseURL}/campaign/editCampaign/${id}`, body)
+    //         dispatch(setLoading(false))
 
-        } catch (error) {
-            console.log(error.message)
-        }
-    }
+    //     } catch (error) {
+    //         console.log(error.message)
+    //     }
+    // }
     const handleClickLaunchCampaign = async () => {
         dispatch(setLoading(true))
         try {
@@ -77,6 +81,30 @@ function SettingCampaign() {
             console.log(error.message)
         }
     }
+    const [isEditAll, setEditAll] = useState(null);
+    const currentUser = useSelector(state => state.user.currentUser)
+    useEffect(() => {
+        if (JSON.stringify(campagin) !== '{}') {
+            let edit = false
+            if (currentUser.isAdmin) edit = true
+            else {
+                if (campagin.owner?._id === currentUser._id) edit = true
+                if (campagin.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true && x.canEdit === true})) {
+                    edit = true
+                }
+            }
+            if (edit === true) {
+                setShowErrorDelete(false)
+            }
+            else {
+                setContentError('Bạn không có quyền chỉnh sửa lúc này!')
+                setShowErrorDelete(true)
+            }
+            setEditAll(edit)
+        }
+    }, [campagin])
+    const [showErrorDelete, setShowErrorDelete] = useState(false)
+    const [contentError, setContentError] = useState('')
     return (
         <>
             <div className={cx('wrapper')}>
@@ -90,7 +118,7 @@ function SettingCampaign() {
 
                     <HeaderPage isFixed={false} />
 
-                    <div className={cx('content')}>
+                    <div className={cx('content')} style={{ pointerEvents: !isEditAll && 'none' }}>
                         <div className={cx('controlBar')}>
                             <div className={cx('controlBar-container')}>
                                 <div className={cx('controlBar-content')}>
@@ -98,6 +126,13 @@ function SettingCampaign() {
                                 </div>
 
                             </div>
+                            {
+                                showErrorDelete &&
+                                <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#ff324b', paddingLeft: '40px', height: '80px' }}>
+                                    <span style={{ color: '#fff' }}><TiCancel style={{ color: '#fff', fontSize: '48px' }} />  {contentError}</span>
+                                </div>
+                            }
+
 
                         </div>
                         <div className={cx('body')}>

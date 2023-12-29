@@ -50,7 +50,7 @@ function GiftTable({gifts, getAllContributions, openDetailGift}) {
                 <tbody>
                     {
                         listGifts?.map((item, index) => {
-                            return <GiftRow key={index} gift={item} index={index}   openDetailGift={openDetailGift}/>
+                            return <GiftRow  key={index} gift={item} index={index}   openDetailGift={openDetailGift}/>
                         })
                     }
                 </tbody>

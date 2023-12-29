@@ -13,6 +13,7 @@ import TopContributionTable from "./TopContributionTable";
 import GiftTable from "./GiftTable";
 
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
+import { TiCancel } from "react-icons/ti";
 
 import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
 import { useEffect, useState } from "react";
@@ -21,7 +22,7 @@ import { useParams } from "react-router-dom";
 import Search from "~/pages/admin/components/Search";
 import baseURL from "~/utils/baseURL";
 import Filter from "~/pages/admin/components/Filter";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "~/redux/slides/GlobalApp";
 import ModalContribution from "./ModalContribution";
 import ModalGivePerk from "./ModalGivePerk";
@@ -80,6 +81,8 @@ function ContributionCampaign() {
                 goal: res.data.data.goal,
                 duration: res.data.data.duration,
                 isIndemand: res.data.data.isIndemand || false,
+                owner: res.data.data.owner || '',
+                team: res.data.data.team || []
             }
             setCampaign({ ...infoBasic })
 
@@ -274,6 +277,37 @@ function ContributionCampaign() {
     useEffect(() => {
         getListUserContribution()
     }, [])
+    const [isEditAll, setEditAll] = useState(null);
+    const [isEditComponent, setEditComponent] = useState(false);
+    const currentUser = useSelector(state => state.user.currentUser)
+    useEffect(() => {
+        if (JSON.stringify(campagin) !== '{}') {
+            let edit = false
+            if (currentUser.isAdmin) edit = true
+            else {
+                if (campagin.owner?._id === currentUser._id) edit = true
+                if (campagin.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true && x.canEdit === true})) {
+                    edit = true
+                }
+            }
+            if (edit === true) {
+                setShowErrorDelete(false)
+            }
+            else {
+                setContentError('Bạn không có quyền chỉnh sửa lúc này!')
+                setShowErrorDelete(true)
+            }
+            setEditAll(edit)
+            setEditComponent(edit)
+        }
+    }, [campagin])
+    useEffect(() => {
+        let edit = false;
+ 
+    },[campagin])
+    
+    const [showErrorDelete, setShowErrorDelete] = useState(false)
+    const [contentError, setContentError] = useState('')
     return (
         <>
             <div className={cx('wrapper')}>
@@ -295,6 +329,12 @@ function ContributionCampaign() {
                                 </div>
 
                             </div>
+                            {
+                                showErrorDelete &&
+                                <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#ff324b', paddingLeft: '40px', height: '80px' }}>
+                                    <span style={{ color: '#fff' }}><TiCancel style={{ color: '#fff', fontSize: '48px' }} />  {contentError}</span>
+                                </div>
+                            }
 
                         </div>
                         <div className={cx('body')}>
@@ -418,7 +458,7 @@ function ContributionCampaign() {
                                         <div style={{ marginTop: '40px' }}>
                                             <div className={cx('table-wrapper-2')}>
 
-                                                <TopContributionTable listUserContribution={listUserContribution} setShowModalGivePerk={setShowModalGivePerk} setUserContributionGivePerk={setUserContributionGivePerk} />
+                                                <TopContributionTable isEditComponent={isEditComponent} listUserContribution={listUserContribution} setShowModalGivePerk={setShowModalGivePerk} setUserContributionGivePerk={setUserContributionGivePerk} />
                                             </div>
 
 
@@ -515,7 +555,7 @@ function ContributionCampaign() {
 
                 {
                     showModal &&
-                    <ModalContribution setShowModal={setShowModal} contribution={contributions[indexContributionActive]} handleChangeStatus={handleChangeStatus} />
+                    <ModalContribution isEditComponent={isEditComponent} setShowModal={setShowModal} contribution={contributions[indexContributionActive]} handleChangeStatus={handleChangeStatus} />
                 }
                 {
                     showModalGivePerk &&
@@ -523,7 +563,7 @@ function ContributionCampaign() {
                 }
                 {
                     showModalGift &&
-                    <ModalGift setShowModalGift={setShowModalGift} gift={gifts[indexGiftActive]} handleChangeStatus={handleChangeStatusGift} />
+                    <ModalGift isEditComponent={isEditComponent} setShowModalGift={setShowModalGift} gift={gifts[indexGiftActive]} handleChangeStatus={handleChangeStatusGift} />
                 }
             </div>
 

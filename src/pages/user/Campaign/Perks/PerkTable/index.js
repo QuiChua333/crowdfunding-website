@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 const cx = classNames.bind(styles)
 
-function PerkTable({onPerkTableChange, listPerks, getPerksByCampaignId}) {
+function PerkTable({onPerkTableChange, listPerks, getPerksByCampaignId, isEditAll, isEditComponent, handleDeletePerK}) {
    
     const [listPerkState,setListPerkState] = useState([...listPerks].map(item => ({...item, isChecked: false})));
     const [isCheckAll,setCheckAll] = useState(false) 
@@ -49,13 +49,7 @@ function PerkTable({onPerkTableChange, listPerks, getPerksByCampaignId}) {
             <table>
                 <thead>
                     <tr>
-                        <th className={cx('checkbox')}>
-                            <span onClick={handleClickCheckALl}>
-                                {
-                                    !isCheckAll ? <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} /> : <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
-                                }
-                            </span>
-                        </th>
+                
                         <th className={cx('title')}>Tiêu đề</th>
                         <th className={cx('price')}>Trị giá</th>
                         <th className={cx('type')}>Loại</th>
@@ -67,7 +61,7 @@ function PerkTable({onPerkTableChange, listPerks, getPerksByCampaignId}) {
                 <tbody>
                     {
                         listPerkState.map((item, index) => {
-                            return <PerkRow key={index} perk={item} index={index} setChecked={handleSetChecked} getPerksByCampaignId={getPerksByCampaignId} />
+                            return <PerkRow key={index} perk={item} index={index} setChecked={handleSetChecked} getPerksByCampaignId={getPerksByCampaignId} isEditComponent={isEditComponent} handleDeletePerK={handleDeletePerK}/>
                         })
                     }
                 </tbody>

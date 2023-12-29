@@ -129,24 +129,16 @@ function SidebarCampaign({ current, status, title, cardImage, id }) {
                                         </div>
                                     </Link>
                                 </div>
-                                <div className={cx('navItem--child', 'navItem', {
-                                    'navItem--current': current === 9
-                                })}>
-                                    <Link to={`/campaigns/${id}/edit/settings`} className={cx('navItem-link')}>
-                                        <div>
-                                            9. CẬP NHẬT
-                                        </div>
-                                    </Link>
-                                </div>
+                                
 
                             </div>
                         }
                     </div>
 
                     <div className={cx('navItem')}>
-                        <a href="#" className={cx('navItem-link')}>
+                        <a href="/" className={cx('navItem-link')}>
                             <div>
-                                QQQ
+                                TRANG CHỦ
                             </div>
                         </a>
                     </div>

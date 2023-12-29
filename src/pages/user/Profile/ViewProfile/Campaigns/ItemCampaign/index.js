@@ -24,13 +24,9 @@ function ItemCampaign({ item }) {
         };
     }, [dropdownElement]);
     const handleClickTitleCampaign = () => {
-        const condition = currentUser._id && (item.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true }) || item.owner?._id === currentUser._id);
-        if (condition) {
-            window.location.href = `/campaigns/${item._id}/edit/basic`
-        }
-        else {
+       
             window.location.href = `/project/${item._id}/detail`
-        }
+        
     }
     const handleClickImg = () => {
         window.location.href = `/project/${item._id}/detail`
@@ -74,8 +70,12 @@ function ItemCampaign({ item }) {
 
                         <div className={cx('action-dropdown', { show: showDropDown })}>
                             {
-                                currentUser._id && (item.owner?._id === currentUser._id || item.team?.some(x => x.user === currentUser._id && x.canEdit === true)) &&
+                                currentUser._id && (item.owner?._id === currentUser._id || item.team?.some(x => x.user === currentUser._id && x.canEdit === true && x.isAccepted === true)) &&
                                 <a href={`/campaigns/${item._id}/edit/basic`}>Chỉnh sửa chiến dịch</a>
+                            }
+                            {
+                                currentUser._id &&  item.team?.some(x => x.user === currentUser._id && x.canEdit === false && x.isAccepted === true) &&
+                                <a href={`/campaigns/${item._id}/edit/basic`}>Xem chiến dịch</a>
                             }
                             <div style={{ height: '1px', background: '#ccc' }}></div>
                             {
@@ -84,7 +84,6 @@ function ItemCampaign({ item }) {
                             }
 
                             <div style={{ height: '1px', background: '#ccc' }}></div>
-                            <a>Xem đóng góp</a>
                         </div>
                     </div>
                 }

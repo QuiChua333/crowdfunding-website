@@ -36,6 +36,9 @@ function Explore() {
     // useEffect(() => {
     //     console.log(filter)
     // }, [filter])
+    useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
     const getListCategory = async () => {
         try {
             const res = await customAxios.get(`${baseURL}/field/getFieldGroupByCategory`)
@@ -402,9 +405,7 @@ function Explore() {
                         </InfiniteScroll>
                     </div>
 
-                    <div className="d-flex justify-content-center">
-                        <button className={cx('btn-view-all')} >VIEW ALL TRENDING</button>
-                    </div>
+                   
                 </div>
 
             </div>

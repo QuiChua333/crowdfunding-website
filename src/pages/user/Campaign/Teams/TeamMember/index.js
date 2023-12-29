@@ -57,11 +57,7 @@ function TeamMember({changeRole, member, isOwner, removeMember, changeEdit }) {
                         }
                         <div style={{marginTop: '8px'}}>{member?.user?.fullName} </div>
                         <div>{member?.user?.email} </div>
-                        {
-                            isOwner &&
-                            <div style={{ fontSize: '14px', textDecoration: 'underline', cursor: 'pointer' }} className={cx('hover-edit-profile')}>
-                                Edit Profile</div>
-                        }
+                       
 
                         {
                             !isOwner &&

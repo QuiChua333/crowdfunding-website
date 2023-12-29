@@ -12,10 +12,10 @@ import SidebarCampaign from '../Sidebar';
 import FAQ from './FAQ';
 import { useParams } from 'react-router-dom';
 import customAxios from '~/utils/customAxios';
-
+import { TiCancel } from "react-icons/ti";
 import baseURL from '~/utils/baseURL';
 import { setLoading } from '~/redux/slides/GlobalApp';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CustomUploadCKEAdapter from '~/utils/CustomUploadCKEAdapter';
 import Footer from '~/components/Layout/components/Footer';
 
@@ -141,6 +141,8 @@ function ContentCampaign() {
                 imageDetailPage: res.data.data.imageDetailPage || { url: '', public_id: '' },
                 story: res.data.data.story || '',
                 faqs: (res.data.data.faqs.length > 0 && res.data.data.faqs) || [{ question: '', answer: '' }],
+                owner: res.data.data.owner || '',
+                team: res.data.data.team || []
             };
             setCampaignState({ ...infoBasic });
             setCampaign({ ...infoBasic });
@@ -175,7 +177,8 @@ function ContentCampaign() {
         delete body.status;
         delete body.title;
         delete body.cardImage;
-
+        delete body.owner;
+        delete body.team
         let flagURL = validateCardImageAndVideo(body.imageDetailPage.url, body.videoUrl);
         setIsClicked(true);
         if (flagURL && flagFaqs) {
@@ -190,6 +193,31 @@ function ContentCampaign() {
             }
         }
     };
+    const [isEditAll, setEditAll] = useState(null);
+    const currentUser = useSelector(state => state.user.currentUser)
+    useEffect(() => {
+        if (JSON.stringify(campagin) !== '{}') {
+            let edit = false
+            if (currentUser.isAdmin) edit = true
+            else {
+                if (campagin.owner?._id === currentUser._id) edit = true
+                if (campagin.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true && x.canEdit === true})) {
+                    edit = true
+                }
+            }
+            if (edit === true) {
+                setShowErrorDelete(false)
+            }
+            else {
+                setContentError('Bạn không có quyền chỉnh sửa lúc này!')
+                setShowErrorDelete(true)
+            }
+            setEditAll(edit)
+        }
+    }, [campagin])
+    
+    const [showErrorDelete, setShowErrorDelete] = useState(false)
+    const [contentError, setContentError] = useState('')
     return (
         <div className={cx('wrapper')}>
             <SidebarCampaign
@@ -202,11 +230,17 @@ function ContentCampaign() {
             <div style={{ flex: '1' }}>
                 <HeaderPage isFixed={false} />
 
-                <div className={cx('content')}>
+                <div className={cx('content')} style={{ pointerEvents: !isEditAll && 'none' }}>
                     <div className={cx('controlBar')}>
                         <div className={cx('controlBar-container')}>
                             <div className={cx('controlBar-content')}>Chiến dịch / Nội dung</div>
                         </div>
+                        {
+                            showErrorDelete &&
+                            <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#ff324b', paddingLeft: '40px', height: '80px' }}>
+                                <span style={{ color: '#fff' }}><TiCancel style={{ color: '#fff', fontSize: '48px' }} />  {contentError}</span>
+                            </div>
+                        }
                     </div>
 
                     <div className={cx('body')}>

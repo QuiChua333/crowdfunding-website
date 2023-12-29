@@ -6,11 +6,10 @@ import styles from './CommentMenu.module.scss'
 
 import { BsThreeDotsVertical } from "react-icons/bs";
 const cx = classNames.bind(styles)
-const CommentMenu = ({ campaign, comment, setOnEdit, handleRemoveComment }) => {
+const CommentMenu = ({ campaign, comment, setOnEdit, handleRemoveComment, members }) => {
     const currentUser = useSelector(state => state.user.currentUser)
     // const { auth, socket } = useSelector(state => state)
     const dispatch = useDispatch()
-    console.log('day la menu', campaign.owner)
     const handleRemove = () => {
         if (campaign.owner._id === currentUser._id || comment.user._id === currentUser._id) {
             handleRemoveComment(comment)
@@ -54,7 +53,7 @@ const CommentMenu = ({ campaign, comment, setOnEdit, handleRemoveComment }) => {
     return (
         <div className={cx('wrapper')}>
             {
-                (campaign.owner._id === currentUser._id || comment.user._id === currentUser._id) &&
+                (members.some(i => i.user._id === currentUser._id)|| comment.user._id === currentUser._id) &&
                 <div style={{ position: 'relative' }} onClick={() => setShowDropdown(prev => !prev)} ref={element}>
                     <span className={cx('three-dot')} >
                         <BsThreeDotsVertical style={{ color: '#888' }} />
@@ -64,7 +63,7 @@ const CommentMenu = ({ campaign, comment, setOnEdit, handleRemoveComment }) => {
                         isShowDropdown &&
                         <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: '0', zIndex: '20' }}>
                             {
-                                campaign.owner._id === currentUser._id
+                                members.some(i => i.user._id === currentUser._id)
                                     ? comment.user._id === currentUser._id
                                         ? MenuItem()
                                         : MenuItem2()

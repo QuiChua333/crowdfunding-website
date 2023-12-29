@@ -72,6 +72,7 @@ function DetailPerk() {
                 }
             });
             setListPerkByCampaignId(arr);
+
         } catch (error) {
             console.log(error);
         }
@@ -193,7 +194,10 @@ function DetailPerk() {
             estDelivery
         }
         navigate(`/project/${id}/payments/new/checkout`, {
-            state
+            state: {
+                res: state,
+                hasPerk: true
+            }
         })
     }
     const handleClickRemoveItem = (index) => {

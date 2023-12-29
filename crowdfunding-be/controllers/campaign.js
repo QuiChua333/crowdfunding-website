@@ -272,7 +272,6 @@ const getTeamMember = async (req, res) => {
         const result = campaign.team.map((item) => {
             return { ...item._doc, user: { ...item._doc.user._doc, password: 'Not show' } };
         });
-        console.log(result)
         res.status(200).json({
             message: 'Lấy thông tin thành viên chiến dịch thành công',
             data: result,
@@ -419,6 +418,27 @@ const deleteMember = async (req, res) => {
 };
 
 const getCampaignsOfUserId = async (req, res) => {
+    try {
+        const { id } = req.params;
+        // const campaigns = await Campaign.find({ owner: id }).populate({
+        //     path: 'owner',
+        //     model: 'User'
+        // }).exec();
+        const campaigns = await Campaign.find({ 'team.user': id }).populate({
+            path: 'owner',
+            model: 'User'
+        }).exec();
+        res.status(200).json({
+            message: 'Lấy thông tin các chiến dịch của user thành công',
+            data: campaigns
+        })
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
+const getCampaignsOfUserIdIsMember = async (req, res) => {
     try {
         const { id } = req.params;
         const campaigns = await Campaign.find({ owner: id }).populate({

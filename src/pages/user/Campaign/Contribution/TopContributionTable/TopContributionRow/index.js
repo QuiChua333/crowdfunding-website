@@ -12,7 +12,7 @@ import formatMoney from "~/utils/formatMoney";
 
 
 const cx = classNames.bind(styles)
-function TopContributionRow({ index, userContribution, setShowModalGivePerk, setUserContributionGivePerk  }) {
+function TopContributionRow({ index, userContribution, setShowModalGivePerk, setUserContributionGivePerk, isEditComponent  }) {
     
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null)
@@ -46,7 +46,7 @@ function TopContributionRow({ index, userContribution, setShowModalGivePerk, set
             <td className={cx('action')}>
                 <div className={cx('action-doc')} onClick={(e) => { e.stopPropagation(); setOpenDropDown(prev => !prev) }} ref={docElement}>
                     <PiDotsThreeBold style={{ fontSize: '20px', color: '#7a69b3' }} />
-                    <div className={cx('dropdown-wrapper')} style={{ display: openDropDown && 'block' }}>
+                    <div className={cx('dropdown-wrapper')} style={{ display: openDropDown && 'block', pointerEvents: !isEditComponent && 'none'  }}>
                         <DropDown setShowModalGivePerk={setShowModalGivePerk} setUserContributionGivePerk={handleSetUserContributionGivePerk}/>
                     </div>
                 </div>

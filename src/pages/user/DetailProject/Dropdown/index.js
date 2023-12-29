@@ -54,15 +54,10 @@ function DropDown({ setIsOpenModalMember, setIsOpenModalReport, IsOpenModalRepor
             <div onClick={handleClickSeeMember} className={cx('action')}>
                 Xem thành viên
             </div>
-            {
-                statusCampaign === 'Đang gây quỹ' &&
-                <>
-                    <div style={{ height: '1px', background: '#ccc' }}></div>
-                    <div onClick={handleClickReport} className={cx('action', 'action-delete')}>
-                        Báo cáo vi phạm
-                    </div>
-                </>
-            }
+            <div style={{ height: '1px', background: '#ccc' }}></div>
+            <div onClick={handleClickReport} className={cx('action', 'action-delete')}>
+                Báo cáo vi phạm
+            </div>
         </div>
     );
 }

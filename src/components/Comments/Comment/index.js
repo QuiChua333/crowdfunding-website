@@ -4,7 +4,7 @@ import customAxios from '~/utils/customAxios'
 import baseURL from '~/utils/baseURL'
 import { useDispatch } from 'react-redux'
 import { setLoading } from '~/redux/slides/GlobalApp'
-const Comments = ({ campaign, comments, setListComments }) => {
+const Comments = ({ campaign, comments, setListComments, members }) => {
     const [commentsOrigin, setCommentsOrigin] = useState([])
     const [showComments, setShowComments] = useState([])
     const [next, setNext] = useState(10)
@@ -40,7 +40,7 @@ const Comments = ({ campaign, comments, setListComments }) => {
             {
                 showComments.map((comment, index) => (
                     <CommentDisplay key={index} comment={comment} campaign={campaign} setListComments={setListComments}
-                        handleRemoveComment={handleRemoveComment}
+                        handleRemoveComment={handleRemoveComment} members={members}
                         replyCm={replyComments.filter(item => item.reply === comment._id)} />
                 ))
             }

@@ -4,10 +4,23 @@
     border: 1px solid #ccc;
     display: flex;
     flex-direction: column;
+    position: relative;
     border-radius: 4px;
     &:hover {
         box-shadow: 0 4px 4px #ccc;
         cursor: pointer;
+    }
+    .featured {
+        font-size: 14px;
+        padding: 4px 8px;
+        background-color: #e51075;
+        color: #fff;
+        width: fit-content;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        display: block;
+        border-bottom-right-radius: 6px;
     }
    
     &.disabled {

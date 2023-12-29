@@ -46,6 +46,12 @@ function PerkItem({
 
     return (
         <div className={cx('container-item')} onClick={handleClickItem}>
+            {
+                item.isFeatured &&
+                <span className={cx('featured')}>
+                    NỔI BẬT
+                </span>
+            }
             <img src={item.image.url} alt="img" />
             <div className={cx('container-body')}>
                 <h2 style={{ fontSize: '24px' }}>{item.title}</h2>

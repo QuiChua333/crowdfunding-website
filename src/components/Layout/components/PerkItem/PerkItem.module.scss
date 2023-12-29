@@ -7,10 +7,23 @@
     border: 1px solid #949494;
     height: 'auto';
     width: '100%';
+    position: relative;
     overflow: hidden;
     &:hover {
         box-shadow: 0 0 4px 4px #e6e6e6;
         cursor: pointer;
+    }
+    .featured {
+        font-size: 14px;
+        padding: 4px 8px;
+        background-color: #e51075;
+        color: #fff;
+        width: fit-content;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        display: block;
+        border-bottom-right-radius: 6px;
     }
     img {
         width: 100%;
