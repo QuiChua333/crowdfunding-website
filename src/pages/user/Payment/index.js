@@ -471,7 +471,9 @@ function Payment() {
                     <div className={cx('shipping-address')}>
                         <div className={cx('title')}>Tóm tắt đóng góp</div>
 
-                        <input
+                        {
+                            !payment &&
+                            <input
                             type="text"
                             maxLength="50"
                             className={cx('itext-field')}
@@ -482,6 +484,7 @@ function Payment() {
 
                         />
 
+                        }
                         {
                             payment &&
                             <>

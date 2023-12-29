@@ -61,7 +61,7 @@ const editCampaign = async (req, res) => {
         } = req.body;
         const campaign = await Campaign.findById(id).exec();
         if (campaign) {
-            if (campaign.owner.toString() !== userId) {
+            if (!(campaign.owner.toString() === userId || req.isAdmin === true || campaign.team.some(item => item.user.toString() === userId && item.isAccepted === true))) {
                 throw new Error('Không có quyền truy cập vào dự án này')
             }
             campaign.title = title ?? campaign.title
@@ -290,7 +290,7 @@ const launchCampaign = async (req, res) => {
         const { id } = req.params;
         const campaign = await Campaign.findById(id).exec();
         if (campaign) {
-            if (campaign.owner.toString() !== userId) {
+            if (!(campaign.owner.toString() === userId || req.isAdmin === true || campaign.team.some(item => item.user.toString() === userId && item.isAccepted === true))) {
                 throw new Error('Không có quyền truy cập vào dự án này')
             }
             campaign.status = 'Chờ xác nhận'
@@ -318,7 +318,7 @@ const sendInvitation = async (req, res) => {
         const campaign = await Campaign.findById(campaignId).exec();
 
         if (campaign) {
-            if (campaign.owner.toString() !== userId) {
+            if (!(campaign.owner.toString() === userId || req.isAdmin === true || campaign.team.some(item => item.user.toString() === userId && item.isAccepted === true))) {
                 throw new Error('Không có quyền truy cập vào dự án này')
             }
             const tokenLink = jwt.sign({
@@ -397,7 +397,7 @@ const deleteMember = async (req, res) => {
         const { id, memberId } = req.params;
         const campaign = await Campaign.findById(id).exec();
         if (campaign) {
-            if (campaign.owner.toString() !== userId) {
+            if (!(campaign.owner.toString() === userId || req.isAdmin === true || campaign.team.some(item => item.user.toString() === userId && item.isAccepted === true))) {
                 throw new Error('Không có quyền truy cập vào dự án này')
             }
             const result = [...campaign.team].filter(item => {

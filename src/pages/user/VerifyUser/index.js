@@ -95,7 +95,7 @@ function VerifyUser() {
         } else {
             var vnf_regex = /((09|03|07|08|05)+([0-9]{8})\b)/g;
             if (vnf_regex.test(value?.trim()) === false) {
-                setTextValidateSDT('* Số điện thoại của bạn không hợp lệ ');
+                setTextValidateSDT('* Số điện thoại của bạn kậthông hợp lệ ');
                 return false;
             } else {
                 setTextValidateSDT('');
@@ -266,7 +266,7 @@ function VerifyUser() {
                                     <input
                                         type="date"
                                         placeholder="Ngày sinh"
-                                        value={(new Date(user.infoVerify?.birthday)).toISOString().substring(0,10)}
+                                        value={(user.infoVerify && user.infoVerify.birthday && (new Date(user.infoVerify?.birthday)).toISOString().substring(0,10)) || (new Date()).toISOString().substring(0,10)}
                                         name="birthday"
                                         onChange={handleChangeInputText}
                                     />

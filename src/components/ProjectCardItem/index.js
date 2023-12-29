@@ -39,24 +39,28 @@ function ProjectCardItem({ campaign, refreshCampaign }) {
             <div className={cx('card-image')}>
                 <img src={campaign?.cardImage?.url} alt="project-image" />
             </div>
-         
+
             <div className={cx('card-info')}>
-                <div className={cx('card-status')}>
-                    <span className={cx('status',{
-                        dangGayQuy: campaign?.status === 'Đang gây quỹ',
-                        daKetThuc: campaign?.status === 'Đã kết thúc' || campaign?.status === 'Đang tạm ngưng'
-                    })}
-                    >{campaign?.status}</span>
+                <div>
+                    <div className={cx('card-status')}>
+                        <span className={cx('status', {
+                            dangGayQuy: campaign?.status === 'Đang gây quỹ',
+                            daKetThuc: campaign?.status === 'Đã kết thúc' || campaign?.status === 'Đang tạm ngưng'
+                        })}
+                        >{campaign?.status}</span>
 
-                    <span onClick={handleClickHeart}>{favourite ? <FaHeart className={cx('heart-active')} /> : <FaRegHeart className={cx('heart')} />}</span>
+                        <span onClick={handleClickHeart}>{favourite ? <FaHeart className={cx('heart-active')} /> : <FaRegHeart className={cx('heart')} />}</span>
 
 
 
+                    </div>
+
+
+                    <h2 className={cx('card-title')}>{campaign.title}</h2>
+                    <p className={cx('card-description')}>{campaign.tagline}</p>
+                    <p className={cx('card-category')}>{campaign.field}</p>
                 </div>
 
-                <h2 className={cx('card-title')}>{campaign.title}</h2>
-                <p className={cx('card-description')}>{campaign.tagline}</p>
-                <p className={cx('card-category')}>{campaign.field}</p>
 
                 <div className={cx('card-progress')}>
                     <div className={cx('money-info')}>
@@ -74,7 +78,7 @@ function ProjectCardItem({ campaign, refreshCampaign }) {
 
                     <div className={cx('days-left')}>
                         <AiFillClockCircle style={{ color: 'rgb(173 172 172)' }} />
-                        <span>{campaign.daysLeft === 'Hết hạn' ? 'Hết hạn' : 'Còn ' +campaign.daysLeft }</span>
+                        <span>{campaign.daysLeft === 'Hết hạn' ? 'Hết hạn' : 'Còn ' + campaign.daysLeft}</span>
 
                     </div>
 

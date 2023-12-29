@@ -1,4 +1,4 @@
-import { Contribution, User } from "../model/index.js";
+import { Contribution, User, Perk } from "../model/index.js";
 import mongoose from "mongoose"
 import { Buffer } from "buffer";
 import crypto from 'crypto'
@@ -7,6 +7,7 @@ import moment from "moment";
 
 const getAllContributionsOfUser = async (req, res) => {
     try {
+        const {id} = req.params
         let { page = 1, size = 15, status = 'Tất cả', searchString = '' } = req.query;
             page = parseInt(page);
             size = parseInt(size);
@@ -37,6 +38,9 @@ const getAllContributionsOfUser = async (req, res) => {
                 {
                     $match: {
                         $and: [
+                            {
+                                user: new mongoose.Types.ObjectId(id)
+                            },
                             {
                                 isFinish:
                                     status === 'Tất cả' ? { $ne: 'Tất cả' } : status === 'Chưa nhận' ? false : true,
@@ -274,6 +278,11 @@ const handleSuccess = async (req, res) => {
                 const old = await Contribution.findOne({ contributionId: orderId }).exec()
                 if (!old) {
                     const contribution = await Contribution.findOneAndUpdate({ contributionId: orderId }, { ...decode, contributionId: orderId }, options).exec()
+                    for (let i = 0; i<contribution.perks.length; i++) {
+                        const perk = await Perk.findById(contribution.perks[i].perkId).exec();
+                        perk.claimed = perk.claimed + contribution.perks[i].quantity
+                        await perk.save()
+                    }
                     res.status(200).json({
                         message: 'Đóng góp thành công',
                         data: contribution.campaign
