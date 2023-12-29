@@ -169,6 +169,7 @@ function NewItem() {
             if (messageBox.type === 'deleteItem') {
                 if (messageBox.result === true) {
                     if (itemState.isHasAssociatedPerks) {
+                        setContentError('Bạn không thể xóa vật phẩm này vì nó được bao gồm trong một đặc quyền')
                         setShowErrorDelete(true)
                         dispatch(setMessageBox({result: null, isShow: false}))
                         return;
@@ -241,6 +242,8 @@ function NewItem() {
                 title: res.data.data.title || '',
                 cardImage: res.data.data.cardImage || { url: '', public_id: '' },
                 status: res.data.data.status,
+                owner: res.data.data.owner || '',
+                team: res.data.data.team || []
             }
             setCampaign({ ...infoBasic })
 
@@ -256,6 +259,30 @@ function NewItem() {
     useEffect(() => {
         console.log(itemState)
     }, [itemState])
+    const [isEditAll, setEditAll] = useState(null);
+    const currentUser = useSelector(state => state.user.currentUser)
+    useEffect(() => {
+        if (JSON.stringify(campagin) !== '{}') {
+            let edit = false
+            if (currentUser.isAdmin) edit = true
+            else {
+                if (campagin.owner?._id === currentUser._id) edit = true
+                if (campagin.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true && x.canEdit === true})) {
+                    edit = true
+                }
+            }
+            if (edit === true) {
+                setShowErrorDelete(false)
+            }
+            else {
+                setContentError('Bạn không có quyền chỉnh sửa lúc này!')
+                setShowErrorDelete(true)
+            }
+            setEditAll(edit)
+        }
+    }, [campagin])
+
+    const [contentError, setContentError] = useState('')
     return (
         <>
             <div className={cx('wrapper')}>
@@ -269,7 +296,7 @@ function NewItem() {
 
                     <HeaderPage isFixed={false} />
 
-                    <div className={cx('content')}>
+                    <div className={cx('content')} style={{ pointerEvents: !isEditAll && 'none' }}>
                         <div className={cx('controlBar')}>
                             <div className={cx('controlBar-container')}>
                                 <div className={cx('controlBar-content')}>
@@ -290,7 +317,7 @@ function NewItem() {
                             {
                                 showErrorDelete &&
                                 <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#ff324b', paddingLeft: '40px', height: '80px' }}>
-                                    <span style={{ color: '#fff' }}><TiCancel style={{ color: '#fff', fontSize: '48px' }} />  Bạn không thể xóa vật phẩm này vì nó được bao gồm trong một đặc quyền</span>
+                                    <span style={{ color: '#fff' }}><TiCancel style={{ color: '#fff', fontSize: '48px' }} />  {contentError}</span>
                                 </div>
                             }
                         </div>

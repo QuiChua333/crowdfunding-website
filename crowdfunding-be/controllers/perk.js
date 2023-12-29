@@ -1,4 +1,4 @@
-import { Perk } from "../model/index.js";
+import { Perk, Contribution, Gift } from "../model/index.js";
 import cloudinary from "../utils/cloudinary.js"
 
 
@@ -26,7 +26,9 @@ const getPerksHasListItemsByCampaignId = async (req, res) => {
                     model: 'Item'
                 }
             ]
-        ).exec();
+        ).
+            sort({ isFeatured: -1 })
+            .exec();
         res.status(200).json({
             message: 'Lấy danh sách quà có chứa items thành công',
             data: listPerk,
@@ -93,6 +95,44 @@ const addPerk = async (req, res) => {
 
     }
 }
+const deletePerk = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const perk = await Perk.findById(id).exec()
+        if (perk) {
+            const existsContribution = await Contribution.findOne({
+                isFinish: false,
+                'perks.perkId': id
+            }).exec();
+            if (existsContribution) {
+                throw new Error('Không thể xóa đặc quyền vì có người đóng góp vẫn chưa nhận được nó')
+            }
+            const existsGift = await Gift.findOne({
+                isFinish: false,
+                'perks.perkId': id
+            }).exec();
+            if (existsGift) {
+                throw new Error('Không thể xóa đặc quyền người đóng góp tiêu biểu vẫn chưa chận được nó')
+            }
+
+            await perk.deleteOne()
+
+            res.status(200).json({
+                message: 'Xóa đặc quyền thành công',
+            })
+
+        }
+        else throw new Error('Không tồn tại đặc quyền')
+
+
+    } catch (error) {
+        debugger
+        res.status(400).json({
+            message: error.message
+        })
+
+    }
+}
 const editPerk = async (req, res) => {
     try {
         const { idPerk } = req.params;
@@ -122,8 +162,8 @@ const editPerk = async (req, res) => {
         perk.isShipping = isShipping ?? perk.isShipping
         perk.listShippingFee = listShippingFee ?? perk.listShippingFee
         if (image) {
-           
-            if (image.url!=='') {
+
+            if (image.url !== '') {
                 if (!image.url.startsWith('http')) {
                     if (perk.image && perk.image.url) {
                         await cloudinary.uploader.destroy(perk.image.public_id)
@@ -136,9 +176,9 @@ const editPerk = async (req, res) => {
                         public_id: result.public_id,
                     }
                 }
-                
+
             }
-            
+
             else {
                 perk.image = {
                     url: '',
@@ -162,10 +202,12 @@ const editPerk = async (req, res) => {
 
     }
 }
+
 export default {
     getPerksByCampaignId,
     getPerkById,
     addPerk,
     editPerk,
     getPerksHasListItemsByCampaignId,
+    deletePerk
 }

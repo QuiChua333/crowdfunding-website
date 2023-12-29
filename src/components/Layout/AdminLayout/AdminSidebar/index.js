@@ -47,12 +47,12 @@ function AdminSidebar({setTitle}) {
 
 
                         <div className={cx('navSection-children')}>
-                            <Link to="/admin/campaigns"   onClick={() => {setIndexActive(1); setTitle('Quản lý dự án')}} className={cx('navItem--child', 'navItem', {
+                            <Link to="/admin/campaigns"   onClick={() => {setIndexActive(1); setTitle('Quản lý chiến dịch')}} className={cx('navItem--child', 'navItem', {
                                 'navItem--current': indexActive === 1
                             })}>
                                 <div className={cx('navItem-link')}>
                                     <div>
-                                        1. Dự án
+                                        1. Chiến dịch
                                     </div>
                                 </div>
                             </Link>
@@ -65,30 +65,13 @@ function AdminSidebar({setTitle}) {
                                     </div>
                                 </div>
                             </Link>
-                            <Link  to="/admin/verify-campaign" onClick={() => {setIndexActive(3); setTitle('Quản lý xét duyệt dự án')}} className={cx('navItem--child', 'navItem', {
+                          
+                            <Link to="/admin/complaint"  onClick={() => {setIndexActive(3); setTitle('Quản lý báo cáo vi phạm dự án')}} className={cx('navItem--child', 'navItem', {
                                 'navItem--current': indexActive === 3
                             })}>
-                                <div className={cx('navItem-link')}>
-                                    <div>
-                                        3. Xét duyệt dự án
-                                    </div>
-                                </div>
-                            </Link>
-                            <Link to="/admin/progress-contribute" onClick={() => {setIndexActive(4); setTitle('Quán lý tiến độ và đóng góp dự án')}} className={cx('navItem--child', 'navItem', {
-                                'navItem--current': indexActive === 4
-                            })}>
                                 <div  className={cx('navItem-link')}>
                                     <div>
-                                        4. Tiến độ và đóng góp
-                                    </div>
-                                </div>
-                            </Link>
-                            <Link to="/admin/complaint"  onClick={() => {setIndexActive(5); setTitle('Quản lý báo cáo vi phạm dự án')}} className={cx('navItem--child', 'navItem', {
-                                'navItem--current': indexActive === 5
-                            })}>
-                                <div  className={cx('navItem-link')}>
-                                    <div>
-                                        5. Báo cáo vi phạm
+                                        3. Báo cáo vi phạm
                                     </div>
                                 </div>
                             </Link>

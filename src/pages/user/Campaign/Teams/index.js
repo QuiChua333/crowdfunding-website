@@ -43,6 +43,8 @@ function TeamCampaign() {
                 title: res.data.data.title || '',
                 cardImage: res.data.data.cardImage || { url: '', public_id: '' },
                 status: res.data.data.status,
+                owner: res.data.data.owner || '',
+                team: res.data.data.team || []
             }
             setCampaign({ ...infoBasic })
 
@@ -169,6 +171,29 @@ function TeamCampaign() {
             console.log(error.message)
         }
     }
+    const [isEditAll, setEditAll] = useState(null);
+    const currentUser = useSelector(state => state.user.currentUser)
+    useEffect(() => {
+        if (JSON.stringify(campagin) !== '{}') {
+            let edit = false
+            if (currentUser.isAdmin) edit = true
+            else {
+                if (campagin.owner?._id === currentUser._id) edit = true
+                if (campagin.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true && x.canEdit === true})) {
+                    edit = true
+                }
+            }
+            if (edit === true) {
+                setShowErrorDelete(false)
+            }
+            else {
+                setContentError('Bạn không có quyền chỉnh sửa lúc này!')
+                setShowErrorDelete(true)
+            }
+            setEditAll(edit)
+        }
+    }, [campagin])
+
     return (
         <>
             <div className={cx('wrapper')}>
@@ -182,7 +207,7 @@ function TeamCampaign() {
 
                     <HeaderPage isFixed={false} />
 
-                    <div className={cx('content')}>
+                    <div className={cx('content')} style={{ pointerEvents: !isEditAll && 'none' }}>
                         <div className={cx('controlBar')}>
                             <div className={cx('controlBar-container')}>
                                 <div className={cx('controlBar-content')}>

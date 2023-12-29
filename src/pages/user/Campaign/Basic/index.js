@@ -14,7 +14,9 @@ import { useParams } from 'react-router-dom';
 import customAxios from '~/utils/customAxios';
 import baseURL from '~/utils/baseURL';
 import { setLoading } from '~/redux/slides/GlobalApp';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { TiCancel } from "react-icons/ti";
+
 import Footer from '~/components/Layout/components/Footer';
 
 const cx = classNames.bind(styles);
@@ -26,7 +28,6 @@ function BasicCampaign() {
     const [listFieldGrouByCategory, setListFieldGrouByCategory] = useState([]);
     const inputImage = useRef();
     const [showCategory, setshowCategory] = useState(false);
-
     const handleClickCategorySelector = function () {
         setshowCategory(!showCategory);
     };
@@ -67,7 +68,7 @@ function BasicCampaign() {
         try {
             const res = await customAxios.get(`${baseURL}/field/getFieldGroupByCategory`);
             setListFieldGrouByCategory(res.data.data);
-        } catch (error) {}
+        } catch (error) { }
     };
 
     const getCampaign = async () => {
@@ -83,10 +84,12 @@ function BasicCampaign() {
                 category: res.data.data.category || '',
                 duration: res.data.data.duration || '',
                 status: res.data.data.status,
+                owner: res.data.data.owner || '',
+                team: res.data.data.team || []
             };
             setCampaignState({ ...infoBasic });
             setCampaign({ ...infoBasic });
-        } catch (error) {}
+        } catch (error) { }
     };
     const handleChangeInputText = (e) => {
         const name = e.target.name;
@@ -182,7 +185,7 @@ function BasicCampaign() {
             return false;
         } else {
             if (!/^\d+$/.test(value)) {
-                if (value[0] === '-' && /^\d+$/.test(value.split('-').join('')) ) {
+                if (value[0] === '-' && /^\d+$/.test(value.split('-').join(''))) {
                     setTextValidateDuration('* Thời hạn phải là một số nguyên lớn hơn 0');
                     return false;
                 }
@@ -207,7 +210,8 @@ function BasicCampaign() {
         const id = body.id;
         delete body.id;
         delete body.status;
-
+        delete body.owner;
+        delete body.team
         let flagTitle = validateTitle(body.title);
         let flagTagline = validateTagline(body.tagline);
         let flagImage = validateCardImage(body.cardImage.url);
@@ -228,6 +232,36 @@ function BasicCampaign() {
             }
         }
     };
+    const [showErrorDelete, setShowErrorDelete] = useState(false)
+    const [contentError, setContentError] = useState('')
+    const [isEditAll, setEditAll] = useState(null);
+    const [isEditComponent, setEditComponent] = useState(true);
+    const currentUser = useSelector(state => state.user.currentUser)
+    useEffect(() => {
+        if (JSON.stringify(campagin) !== '{}') {
+            let edit = false
+            if (currentUser.isAdmin) edit = true
+            else {
+                if (campagin.owner?._id === currentUser._id) edit = true
+                console.log(campagin.team)
+                if (campagin.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true && x.canEdit === true})) {
+                    edit = true
+                }
+            }
+            if (edit === true) {
+                setShowErrorDelete(false)
+            }
+            else {
+                setContentError('Bạn không có quyền chỉnh sửa lúc này!')
+                setShowErrorDelete(true)
+            }
+            setEditAll(edit)
+            if (campagin.status === 'Đang gây quỹ') {
+                setEditComponent(false)
+            }
+        }
+    }, [campagin])
+
 
     return (
         <div className={cx('wrapper')}>
@@ -241,11 +275,17 @@ function BasicCampaign() {
             <div style={{ flex: '1' }}>
                 <HeaderPage isFixed={false} />
 
-                <div className={cx('content')}>
+                <div className={cx('content')} style={{ pointerEvents: !isEditAll && 'none' }}>
                     <div className={cx('controlBar')}>
                         <div className={cx('controlBar-container')}>
                             <div className={cx('controlBar-content')}>Chiến dịch / Cơ bản</div>
                         </div>
+                        {
+                            showErrorDelete &&
+                            <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#ff324b', paddingLeft: '40px', height: '80px' }}>
+                                <span style={{ color: '#fff' }}><TiCancel style={{ color: '#fff', fontSize: '48px' }} />  {contentError}</span>
+                            </div>
+                        }
                     </div>
                     <div className={cx('body')}>
                         <div className={cx('entreSection')}>
@@ -267,6 +307,7 @@ function BasicCampaign() {
                                     name="title"
                                     value={campaginState.title}
                                     onChange={handleChangeInputText}
+                                    disabled={!isEditComponent}
                                 />
                                 <span className={cx('entreField-validationLabel')}>{textValidateTitle}</span>
                             </div>
@@ -397,7 +438,7 @@ function BasicCampaign() {
                                     Để giúp những người ủng hộ tìm thấy chiến dịch của bạn, hãy chọn lĩnh vực thể hiện
                                     rõ nhất dự án của bạn.
                                 </div>
-                                <div className={cx('entreField-categorySelect')}>
+                                <div className={cx('entreField-categorySelect')} style={{pointerEvents: !isEditComponent && 'none'}}>
                                     <a
                                         ref={elementCategory}
                                         className={cx('entreDropdown-select', 'itext-field', {
@@ -436,6 +477,7 @@ function BasicCampaign() {
                                     name="duration"
                                     value={campaginState.duration}
                                     onChange={handleChangeInputText}
+                                    disabled={!isEditComponent}
                                 />
                                 <span className={cx('entreField-validationLabel')}>{textValidateDuration}</span>
                             </div>

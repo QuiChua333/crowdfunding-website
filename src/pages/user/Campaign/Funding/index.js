@@ -7,10 +7,11 @@ import { FaCheck } from "react-icons/fa6";
 import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { TiCancel } from "react-icons/ti";
 import { useParams } from "react-router-dom";
 import customAxios from '~/utils/customAxios'
 import baseURL from "~/utils/baseURL";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setPreviousLink } from "~/redux/slides/GlobalApp";
 const cx = classNames.bind(styles);
 
@@ -36,7 +37,8 @@ function Funding() {
                 goal: res.data.data.goal || '',
                 momoNumber: res.data.data.momoNumber || '',
                 momoNumberConfirm: res.data.data.momoNumber || '',
-                owner: res.data.data.owner || ''
+                owner: res.data.data.owner || '',
+                team: res.data.data.team || []
             }
             setCampaign({ ...infoBasic })
             setCampaignState({ ...infoBasic })
@@ -50,6 +52,7 @@ function Funding() {
     }, [])
 
     const handleClickVerifyUser = async () => {
+        if (!campagin.owner?._id !== currentUser._id) return;
         try {
             dispatch(setPreviousLink('@campaignFund' + window.location.href))
             const res = await customAxios.get(`${baseURL}/user/getLinkVerifyUser/${campagin.owner._id}`);
@@ -128,6 +131,8 @@ function Funding() {
         delete body.status
         delete body.title
         delete body.cardImage
+        delete body.owner;
+        delete body.team
 
         let flagGoal = validateGoal(body.goal);
         let flagMomo = validateMomo(body.momoNumber);
@@ -145,7 +150,35 @@ function Funding() {
         }
         }
     }
+    const [isEditAll, setEditAll] = useState(null);
+    const [isEditComponent, setEditComponent] = useState(true);
+    const currentUser = useSelector(state => state.user.currentUser)
+    useEffect(() => {
+        if (JSON.stringify(campagin) !== '{}') {
+            let edit = false
+            if (currentUser.isAdmin) edit = true
+            else {
+                if (campagin.owner?._id === currentUser._id) edit = true
 
+                if (campagin.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true && x.canEdit === true})) {
+                    edit = true
+                }
+            }
+            if (edit === true) {
+                setShowErrorDelete(false)
+            }
+            else {
+                setContentError('Bạn không có quyền chỉnh sửa lúc này!')
+                setShowErrorDelete(true)
+            }
+            setEditAll(edit)
+            if (campagin.status === 'Đang gây quỹ') {
+                setEditComponent(false)
+            }
+        }
+    }, [campagin])
+    const [showErrorDelete, setShowErrorDelete] = useState(false)
+    const [contentError, setContentError] = useState('')
     return (
         <>
             <div className={cx('wrapper')}>
@@ -159,7 +192,7 @@ function Funding() {
 
                     <HeaderPage isFixed={false} />
 
-                    <div className={cx('content')}>
+                    <div className={cx('content')} style={{ pointerEvents: !isEditAll && 'none' }}>
                         <div className={cx('controlBar')}>
                             <div className={cx('controlBar-container')}>
                                 <div className={cx('controlBar-content')}>
@@ -167,6 +200,12 @@ function Funding() {
                                 </div>
 
                             </div>
+                            {
+                                showErrorDelete &&
+                                <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#ff324b', paddingLeft: '40px', height: '80px' }}>
+                                    <span style={{ color: '#fff' }}><TiCancel style={{ color: '#fff', fontSize: '48px' }} />  {contentError}</span>
+                                </div>
+                            }
 
                         </div>
                         <div className={cx('body')}>
@@ -184,7 +223,7 @@ function Funding() {
 
                                 <div className={cx('entreField')}>
                                     <div className={cx('inputCurrencyField')} style={{ width: '50%' }}>
-                                        <input placeholder={"Ví dụ: 10000000"} type="text" maxlength="50" className={cx('itext-field', 'inputCurrencyField-input')} value={campaginState.goal} onChange={handleChangeInputText} name="goal" />
+                                        <input placeholder={"Ví dụ: 10000000"} type="text" maxlength="50" className={cx('itext-field', 'inputCurrencyField-input')} value={campaginState.goal} onChange={handleChangeInputText} name="goal" disabled={!isEditComponent}/>
                                         <span className={cx('inputCurrencyField-isoCode')}>VNĐ</span>
                                     </div>
                                     <span className={cx('entreField-validationLabel')}>{textValidateGoal}</span>
@@ -208,7 +247,7 @@ function Funding() {
 
                                     {
                                         !campagin.owner?.isVerifiedUser ?
-                                            <a onClick={handleClickVerifyUser} className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >XÁC MINH ID CỦA BẠN</a>
+                                            <a onClick={handleClickVerifyUser} className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >XÁC MINH ID</a>
                                             :
                                             <a onClick={handleClickVerifyUser} className={cx('btn', 'btn-green')}  style={{ marginLeft: '0' }} >TÀI KHOẢN ĐÃ XÁC MINH <span style={{marginBottom: '2px', fontSize: '16px'}}><FaCheck /></span></a>
                                     }
@@ -232,13 +271,13 @@ function Funding() {
                                     <div className={cx('entreField-subLabel')}>
                                         Nhập số tài khoản mà bạn muốn nhận tiền. Hãy đảm bảo số tài khoản thật chính xác, nếu không chúng tôi sẽ không thể chuyển tiền cho bạn.
                                     </div>
-                                    <input type="text" className={cx('itext-field')} placeholder="000000000000" value={campaginState.momoNumber} onChange={handleChangeInputText} name="momoNumber" />
+                                    <input type="text" className={cx('itext-field')} placeholder="000000000000" value={campaginState.momoNumber} onChange={handleChangeInputText} name="momoNumber" disabled={!isEditComponent}/>
                                     <span className={cx('entreField-validationLabel')}>{textValidateMomo}</span>
 
                                     <div className={cx('entreField-subLabel')} style={{ marginTop: '16px' }}>
                                         Nhập lại số tài khoản.
                                     </div>
-                                    <input type="text" className={cx('itext-field')} placeholder="000000000000" value={campaginState.momoNumberConfirm} onChange={handleChangeInputText} name="momoNumberConfirm" />
+                                    <input type="text" className={cx('itext-field')} placeholder="000000000000" value={campaginState.momoNumberConfirm} onChange={handleChangeInputText} name="momoNumberConfirm" disabled={!isEditComponent}/>
                                     <span className={cx('entreField-validationLabel')}>{textValidateMomoConfirm}</span>
                                 </div>
                                 <div style={{ marginTop: '60px', borderTop: '1px solid #C8C8C8', paddingTop: '60px', textAlign: 'right' }}>

@@ -15,9 +15,15 @@ import formatPercent from '~/utils/formatPercent';
 import formatDate from '~/utils/formatDate';
 import { PiDotsThreeBold } from 'react-icons/pi';
 import DropDown from './Dropdown';
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 import customAxios from '~/utils/customAxios';
 import ModalTeamMembersDetail from './ModalTeamMembersDetail';
 import ModalReport from './ModalReport';
+import FAQSection from './Tab/FAQ';
+import StorySection from './Tab/Story';
+import CommentSection from './Tab/Comment';
+import convertDate from '~/utils/convertDate';
+import { useSelector } from 'react-redux';
 const cx = classNames.bind(styles);
 
 function DetailProject() {
@@ -38,6 +44,9 @@ function DetailProject() {
     const [quantityCampaignOfUser, setQuantityCampaignOfUser] = useState(0);
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null);
+    const [listComments, setListComments] = useState([])
+    const [endDate, setEndDate] = useState('')
+
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -194,6 +203,7 @@ function DetailProject() {
             const config = {};
             const { data } = await customAxios.get(`${baseUrl}/campaign/getCampaignById/${id}`, config);
             setItemProject({ ...data.data });
+            setListComments(data.data.comments)
         } catch (error) {
             console.log(error);
         }
@@ -233,6 +243,26 @@ function DetailProject() {
             console.log(error);
         }
     };
+    const [favourite, setFavourite] = useState(false);
+    const currentUser = useSelector(state => state.user.currentUser)
+    useEffect(() => {
+        if (currentUser.followedCampaigns?.includes(ItemProject._id)) {
+            setFavourite(true)
+        }
+        else setFavourite(false)
+    }, [ItemProject])
+    const handleClickFollowCampaign = async () => {
+        try {
+            const res = await customAxios.patch(`${baseUrl}/user/handleFollowedCampaigns`, { campaignId: ItemProject._id })
+            setFavourite(res.data.data)
+        } catch (error) {
+
+        }
+
+    }
+    useEffect(() => {
+        console.log('thành viên',members)
+    },[members])
 
     useEffect(() => {
         getProjectById();
@@ -243,6 +273,12 @@ function DetailProject() {
         getMoney();
         getTeam();
     }, []);
+    useEffect(() => {
+        let startDateTime = new Date(ItemProject.startDate)
+        let endDateTime = new Date()
+        endDateTime = endDateTime.setDate(startDateTime.getDate() + ItemProject.duration);
+        setEndDate(convertDate(endDateTime))
+    }, [ItemProject])
 
     const handleURLImage = (linkURL) => {
         var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
@@ -351,7 +387,10 @@ function DetailProject() {
                     </div>
                 </div>
                 <div className={cx('container-right')}>
-                    <p className={cx('text-funding')}>Đang gây quỹ</p>
+                    <p className={cx('text-funding', {
+                        dangGayQuy: ItemProject?.status === 'Đang gây quỹ',
+                        daKetThuc: ItemProject?.status === 'Đã kết thúc' || ItemProject?.status === 'Đang tạm ngưng'
+                    })}>{ItemProject.status}</p>
                     <p className={cx('text-name')}>{ItemProject?.title}</p>
                     <p className={cx('text-des')}>{ItemProject?.tagline}</p>
                     <div className={cx('container-layout-info')}>
@@ -369,48 +408,73 @@ function DetailProject() {
                             </div>
                         </div>
                     </div>
-                    <div className={cx('container-layout-money')}>
-                        <div className={cx('container-money')}>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <b className={cx('text-current-money')}>{formatMoney(money)}</b>
-                                <span style={{ fontWeight: '50', color: '#3d3d3d', fontSize: '16px' }}>VND</span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span className={cx('container-people')}>{quantityPeople}</span>
-                                <span className={cx('text-people')}>người đóng góp</span>
-                            </div>
-                        </div>
-                        <ProgressBar
-                            margin="6px 0"
-                            labelAlignment="right"
-                            labelColor="#fff"
-                            labelSize="12px"
-                            width="100%"
-                            baseBgColor="#ccc"
-                            bgColor="#34ca96"
-                            borderRadius="10px"
-                            height="16px"
-                            customLabel={formatPercent((money / ItemProject.goal) * 100)}
-                            maxCompleted={ItemProject.goal}
-                            completed={money}
-                        />
-                        <div className={cx('container-layout-deadline')}>
-                            <div className={cx('container-deadline')}>
-                                <b className={cx('text-money-total')}>
-                                    {formatPercent((money / ItemProject.goal) * 100) + ' %'}
-                                </b>
-                                <span className={cx('text-of')}>của</span>
+                    {
+                        ItemProject.status === 'Đang gây quỹ' &&
+                        <div className={cx('container-layout-money')}>
+                            <div className={cx('container-money')}>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <b className={cx('text-money-total')}>{formatMoney(ItemProject.goal)}</b>
-                                    <span style={{ fontWeight: '50', color: '#3d3d3d', fontSize: '16px' }}>VND</span>
+                                    <b className={cx('text-current-money')}>{formatMoney(money)}</b>
+                                    <span style={{ fontWeight: '500', color: '#3d3d3d', fontSize: '16px' }}>VNĐ</span>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <span className={cx('container-people')}>{quantityPeople}</span>
+                                    <span className={cx('text-people')}>lượt đóng góp</span>
                                 </div>
                             </div>
+                            <ProgressBar
+                                margin="6px 0"
+                                labelAlignment="right"
+                                labelColor="#fff"
+                                labelSize="12px"
+                                width="100%"
+                                baseBgColor="#ccc"
+                                bgColor="#34ca96"
+                                borderRadius="10px"
+                                height="16px"
+                                customLabel={formatPercent((money / ItemProject.goal) * 100)}
+                                isLabelVisible={false}
+                                maxCompleted={ItemProject.goal}
+                                completed={money}
+                            />
+                            <div className={cx('container-layout-deadline')}>
+                                <div className={cx('container-deadline')}>
+                                    <b className={cx('text-money-total')}>
+                                        {formatPercent((money / ItemProject.goal) * 100) + '%'}
+                                    </b>
+                                    <span className={cx('text-of')}>của</span>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <b className={cx('text-money-total')}>{formatMoney(ItemProject.goal)}</b>
+                                        <span style={{ fontWeight: '500', color: '#3d3d3d', fontSize: '16px' }}>VNĐ</span>
+                                    </div>
+                                </div>
 
-                            <b className={cx('container-people')}>
-                                {getDeadline()} <span className={cx('text-people')}>ngày còn lại</span>
-                            </b>
+                                <b className={cx('container-people')}>
+                                    {getDeadline()} <span className={cx('text-people')}>ngày còn lại</span>
+                                </b>
+                            </div>
                         </div>
-                    </div>
+                    }
+                    {
+                        ItemProject.status === 'Đã kết thúc' &&
+                        <>
+                            <div className={cx('end-status')}>
+                                <div>Dự án đã kết thúc vào ngày: {endDate}</div>
+                                <div><span style={{ fontWeight: '700' }}>{formatMoney(money)}</span>VNĐ <span>bởi {quantityPeople} lượt đóng góp</span></div>
+                            </div>
+                            <div style={{display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '24px'}}>
+                                <span style={{display: 'block', paddingBottom: '2px', borderBottom: '1px dashed #949494' }}>Gây quỹ:</span>
+                                {
+                                    ItemProject.isSSuccessFunding
+                                    && <div style={{padding: '4px 16px', background: '#34ca96', color: '#fff', borderRadius:'4px'}}>Thành công</div>
+                                }
+                                {
+                                    !ItemProject.isSSuccessFunding
+                                    && <div style={{padding: '4px 16px', background: '#a8a8a8', color: '#fff', borderRadius:'8px'}}>Thất bại</div>
+                                }
+
+                            </div>
+                        </>
+                    }
 
                     <div className={cx('container-button')}>
                         <div>
@@ -421,11 +485,16 @@ function DetailProject() {
                                     setPerkInModal(true);
                                     setIsOpenModal(true);
                                 }}
+                                style={{ display: ItemProject.status === 'Đã kết thúc' && 'none' }}
                             >
                                 XEM QUÀ TẶNG
                             </button>
-                            <button className={cx('hover-btn-follow')} type="button">
-                                <AiOutlineHeart className={cx('text-follow')} /> THEO DÕI
+                            <button className={cx('hover-btn-follow')} type="button" onClick={handleClickFollowCampaign}>
+                                {/* <AiOutlineHeart className={cx('text-follow')} /> THEO DÕI */}
+                                {
+                                    favourite ? <FaHeart style={{ color: 'red' }} className={cx('text-follow')} /> : <FaRegHeart className={cx('text-follow')} />
+                                } THEO DÕI
+
                             </button>
                         </div>
                         <div
@@ -442,6 +511,7 @@ function DetailProject() {
                                     setIsOpenModalMember={setIsOpenModalMember}
                                     setIsOpenModalReport={setIsOpenModalReport}
                                     IsOpenModalReport={isOpenModalReport}
+                                    statusCampaign={ItemProject.status}
                                 />
                             </div>
                         </div>
@@ -449,15 +519,15 @@ function DetailProject() {
                 </div>
             </div>
 
-            <div style={{ position: 'relative', height: 'auto', display: 'flex', margin: '20px 130px' }}>
-                <div style={{ width: '70%', height: 'auto' }}>
+            <div style={{ position: 'relative', height: 'auto', display: 'flex', justifyContent: 'space-between', margin: '20px 130px 200px 130px' }}>
+                <div style={{ width: '70%', maxWidth: '800px', height: 'auto' }}>
                     <div
                         style={{
                             height: 'auto',
                             marginBottom: '16px',
                             display: 'flex',
-                            justifyContent: 'flex-start',
                             alignItems: 'center',
+                            gap: '48px',
                             padding: '20px 0',
                         }}
                     >
@@ -465,7 +535,7 @@ function DetailProject() {
                             className={cx('item-tab-header', { 'item-tab-header-clicked': indexTabHeader === 1 })}
                             onClick={() => setIndexTabHeader(1)}
                         >
-                            STORY
+                            CÂU CHUYỆN
                         </span>
                         <span
                             className={cx('item-tab-header', { 'item-tab-header-clicked': indexTabHeader === 2 })}
@@ -477,7 +547,7 @@ function DetailProject() {
                             className={cx('item-tab-header', { 'item-tab-header-clicked': indexTabHeader === 3 })}
                             onClick={() => setIndexTabHeader(3)}
                         >
-                            <span>UPDATES</span>
+                            <span>THẢO LUẬN</span>
                             <span
                                 style={{
                                     fontSize: '9px',
@@ -489,35 +559,15 @@ function DetailProject() {
                                     fontWeight: '700',
                                 }}
                             >
-                                1
-                            </span>
-                        </div>
-                        <div
-                            className={cx('item-tab-header', { 'item-tab-header-clicked': indexTabHeader === 4 })}
-                            onClick={() => setIndexTabHeader(4)}
-                        >
-                            <span>DISCUSSION</span>
-                            <span
-                                style={{
-                                    fontSize: '9px',
-                                    textAlign: 'center',
-                                    backgroundColor: '#f5f5f5',
-                                    padding: '2px 6px',
-                                    borderRadius: '40%',
-                                    marginLeft: '8px',
-                                    fontWeight: '700',
-                                }}
-                            >
-                                435
+
                             </span>
                         </div>
                     </div>
 
-                    <div style={{ height: '20px', backgroundColor: 'red' }}>
-                        {indexTabHeader === 1 && <>1</>}
-                        {indexTabHeader === 2 && <>2</>}
-                        {indexTabHeader === 3 && <>3</>}
-                        {indexTabHeader === 4 && <>4</>}
+                    <div >
+                        {indexTabHeader === 1 && <StorySection story={ItemProject.story} />}
+                        {indexTabHeader === 2 && <FAQSection faqs={ItemProject.faqs} />}
+                        {indexTabHeader === 3 && <CommentSection campaign={ItemProject} comments={listComments} setListComments={setListComments} members={members}/>}
                     </div>
                 </div>
 
@@ -529,16 +579,18 @@ function DetailProject() {
                         <div style={{ maxHeight: '920px', overflowY: 'scroll' }}>
                             {listPerkByCampaignId.map((item, index) => {
                                 return (
-                                    <PerkItem
-                                        setItemPerkSelected={setItemPerkSelected}
-                                        index={index}
-                                        item={item}
-                                        key={index}
-                                        isPage={true}
-                                        setIsOpenModalOption={setIsOpenModalOption}
-                                        closePerkModal={() => setIsOpenModal(false)}
-                                        setPerkInModal={setPerkInModal}
-                                    />
+                                    <div style={{ pointerEvents: ItemProject.status === 'Đã kết thúc' && 'none' }}>
+                                        <PerkItem
+                                            setItemPerkSelected={setItemPerkSelected}
+                                            index={index}
+                                            item={item}
+                                            key={index}
+                                            isPage={true}
+                                            setIsOpenModalOption={setIsOpenModalOption}
+                                            closePerkModal={() => setIsOpenModal(false)}
+                                            setPerkInModal={setPerkInModal}
+                                        />
+                                    </div>
                                 );
                             })}
                         </div>

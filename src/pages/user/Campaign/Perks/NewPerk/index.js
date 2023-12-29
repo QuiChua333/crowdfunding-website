@@ -4,7 +4,8 @@ import { HeaderPage } from "~/components/Layout/components/Header";
 
 import Footer from "~/components/Layout/components/Footer";
 import ModalItem from "./ModalItem";
-import MenuDropDown from "../../MenuDropDown";
+import { TiCancel } from "react-icons/ti";
+
 import { AiOutlinePlus } from "react-icons/ai";
 import { AiFillCaretDown } from "react-icons/ai";
 import { HiCamera } from "react-icons/hi";
@@ -20,7 +21,7 @@ import convertDate from "~/utils/convertDate3";
 // import { AiFillQuestionCircle } from "react-icons/ai";
 // import { useState } from "react";
 import { setLoading } from "~/redux/slides/GlobalApp";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 
 
@@ -65,6 +66,8 @@ function NewPerk() {
                 title: res.data.data.title || '',
                 cardImage: res.data.data.cardImage || { url: '', public_id: '' },
                 status: res.data.data.status,
+                owner: res.data.data.owner || '',
+                team: res.data.data.team || []
             }
             setCampaign({ ...infoBasic })
 
@@ -379,12 +382,30 @@ function NewPerk() {
     }
 
 
-
-
-
-
-
-
+    const [isEditAll, setEditAll] = useState(null);
+    const currentUser = useSelector(state => state.user.currentUser)
+    useEffect(() => {
+        if (JSON.stringify(campagin) !== '{}') {
+            let edit = false
+            if (currentUser.isAdmin) edit = true
+            else {
+                if (campagin.owner?._id === currentUser._id) edit = true
+                if (campagin.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true && x.canEdit === true})) {
+                    edit = true
+                }
+            }
+            if (edit === true) {
+                setShowErrorDelete(false)
+            }
+            else {
+                setContentError('Bạn không có quyền chỉnh sửa lúc này!')
+                setShowErrorDelete(true)
+            }
+            setEditAll(edit)
+        }
+    }, [campagin])
+    const [showErrorDelete, setShowErrorDelete] = useState(false)
+    const [contentError, setContentError] = useState('')
     return (
         <>
             <div className={cx('wrapper')}>
@@ -398,7 +419,7 @@ function NewPerk() {
 
                     <HeaderPage isFixed={false} />
 
-                    <div className={cx('content')}>
+                    <div className={cx('content')} style={{ pointerEvents: !isEditAll && 'none' }}>
                         <div className={cx('controlBar')}>
                             <div className={cx('controlBar-container')}>
                                 <div className={cx('controlBar-content')}>
@@ -409,9 +430,12 @@ function NewPerk() {
                                     <a onClick={handleClickSavePerk} className={cx('btn', 'btn-ok')}>Lưu</a>
                                 </div>
                             </div>
-                            {/* <div className={cx('controlBar-loadingBar')}>
-
-                            </div> */}
+                            {
+                                showErrorDelete &&
+                                <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#ff324b', paddingLeft: '40px', height: '80px' }}>
+                                    <span style={{ color: '#fff' }}><TiCancel style={{ color: '#fff', fontSize: '48px' }} />  {contentError}</span>
+                                </div>
+                            }
                         </div>
                         <div className={cx('body')}>
                             <div className={cx('entreSection')}>

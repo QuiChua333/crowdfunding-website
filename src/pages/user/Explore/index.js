@@ -36,6 +36,9 @@ function Explore() {
     // useEffect(() => {
     //     console.log(filter)
     // }, [filter])
+    useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
     const getListCategory = async () => {
         try {
             const res = await customAxios.get(`${baseURL}/field/getFieldGroupByCategory`)
@@ -347,13 +350,6 @@ function Explore() {
                                     </span>
                                 </label>
                                 <label className={cx('inputRadioGroup-radio')}>
-                                    <input type="radio" value={'InDemand'} name="status" onChange={handleChangeStatus} />
-                                    <span className={cx('inputRadioGroup-radio-button')}></span>
-                                    <span className={cx('inputRadioGroup-radio-label')}>
-                                        <span>InDemand</span>
-                                    </span>
-                                </label>
-                                <label className={cx('inputRadioGroup-radio')}>
                                     <input type="radio" value={'Đã kết thúc'} name="status" onChange={handleChangeStatus} />
                                     <span className={cx('inputRadioGroup-radio-button')}></span>
                                     <span className={cx('inputRadioGroup-radio-label')}>
@@ -409,9 +405,7 @@ function Explore() {
                         </InfiniteScroll>
                     </div>
 
-                    <div className="d-flex justify-content-center">
-                        <button className={cx('btn-view-all')} >VIEW ALL TRENDING</button>
-                    </div>
+                   
                 </div>
 
             </div>

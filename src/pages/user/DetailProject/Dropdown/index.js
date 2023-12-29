@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 const cx = classNames.bind(styles)
 
-function DropDown({ setIsOpenModalMember, setIsOpenModalReport, IsOpenModalReport}) {
+function DropDown({ setIsOpenModalMember, setIsOpenModalReport, IsOpenModalReport, statusCampaign }) {
 
     const dispatch = useDispatch();
     const messageBox = useSelector(state => state.globalApp.messageBox)
@@ -24,26 +24,26 @@ function DropDown({ setIsOpenModalMember, setIsOpenModalReport, IsOpenModalRepor
                 contentCancel: 'HỦY',
                 isShow: true,
                 type: 'reportModal'
-    
+
             }))
 
         }
         else {
             setIsOpenModalReport(true);
         }
-        
+
     }
     const navigate = useNavigate()
     useEffect(() => {
         if (messageBox.result) {
             if (messageBox.type === 'reportModal') {
                 if (messageBox.result === true) {
-                    dispatch(setMessageBox({result: null, isShow: false}))
+                    dispatch(setMessageBox({ result: null, isShow: false }))
                     dispatch(setPreviousLink("@report" + window.location.href))
                     navigate("/login");
                 }
                 else {
-                    dispatch(setMessageBox({result: null, isShow: false}))
+                    dispatch(setMessageBox({ result: null, isShow: false }))
                 }
             }
         }
@@ -51,13 +51,13 @@ function DropDown({ setIsOpenModalMember, setIsOpenModalReport, IsOpenModalRepor
 
     return (
         <div className={cx('wrapper')}>
-           <div onClick={handleClickSeeMember} className={cx('action')}>
+            <div onClick={handleClickSeeMember} className={cx('action')}>
                 Xem thành viên
-           </div>
-           <div style={{height: '1px', background: '#ccc'}}></div>
-           <div onClick={handleClickReport} className={cx('action','action-delete')}>
+            </div>
+            <div style={{ height: '1px', background: '#ccc' }}></div>
+            <div onClick={handleClickReport} className={cx('action', 'action-delete')}>
                 Báo cáo vi phạm
-           </div>
+            </div>
         </div>
     );
 }

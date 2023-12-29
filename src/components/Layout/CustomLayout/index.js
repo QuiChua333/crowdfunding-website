@@ -3,9 +3,11 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { RingLoader, HashLoader, PacmanLoader } from 'react-spinners';
 import CustomMessageBox from '~/components/CustomMessageBox';
+import { useEffect } from 'react';
 function CustomLayout({ children }) {
     const isLoading = useSelector((state) => state.globalApp.loading)
     const messageBox = useSelector(state => state.globalApp.messageBox)
+
     return (
         <div>
             {

@@ -72,6 +72,11 @@
             }
         }
     }
+    .contact {
+        &:hover {
+            text-decoration: underline;
+        }
+    }
     .layout-2 {
         display: flex;
         flex-direction: column;

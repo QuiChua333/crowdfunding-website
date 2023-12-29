@@ -19,7 +19,12 @@ function Payment() {
     const [currentUser, setCurrentUser] = useState({});
     const navigate = useNavigate();
     const lct = useLocation();
-    const payment = lct.state;
+    let payment = null
+    let money = null
+    if (lct.state.hasPerk) {
+        payment = lct.state.res
+    }
+    else money = lct.state.money
     const { id } = useParams();
     const [campaign, setCampaign] = useState({});
     const [showLocation, setShowLocation] = useState(false);
@@ -32,10 +37,13 @@ function Payment() {
     const [quantityCampaignOfUser, setQuantityCampaignOfUser] = useState(0);
     const [contribution, setContribution] = useState({
         shippingInfo: {
-            estDelivery: payment.estDelivery,
+            estDelivery: payment?.estDelivery,
+        },
+        bankAccount: {
+
         },
         campaign: id,
-        perks: payment.listPerkPayment.map((item) => {
+        perks: payment?.listPerkPayment.map((item) => {
             const newItem = { ...item };
             delete newItem.listShippingFee;
             return newItem;
@@ -50,6 +58,11 @@ function Payment() {
             console.log(error);
         }
     };
+    const [moneyState, setMoneyState] = useState('')
+    useEffect(() => {
+        setMoneyState(money)
+
+    }, [money])
     useEffect(() => {
         function handleClickOutside(event) {
             if (element.current && !element.current.contains(event.target)) {
@@ -66,7 +79,7 @@ function Payment() {
         try {
             const res = await customAxios.get(`${baseURL}/user/getInfoCurrentUser`);
             setCurrentUser(res.data.data);
-        } catch (error) {}
+        } catch (error) { }
     };
     const getInfoCampaign = async () => {
         try {
@@ -80,7 +93,7 @@ function Payment() {
         try {
             const res = await customAxios.get('https://provinces.open-api.vn/api/p');
             setListLocationShip(res.data.map((item) => item.name));
-        } catch (error) {}
+        } catch (error) { }
     };
     useEffect(() => {
         getInfoCampaign();
@@ -92,6 +105,7 @@ function Payment() {
         getQuantityCampaignOfUser();
     }, []);
     useEffect(() => {
+        if (!payment) return;
         let max = 0;
         if (location) {
             for (let i = 0; i < payment.listPerkPayment.length; i++) {
@@ -115,6 +129,7 @@ function Payment() {
         }
     }, [location]);
     useEffect(() => {
+        if (!payment) return
         setContribution((prev) => ({ ...prev, money: payment.total + shipFee }));
     }, [shipFee]);
     const handleChangeInput = (e) => {
@@ -124,6 +139,17 @@ function Payment() {
             ...prev,
             shippingInfo: {
                 ...prev.shippingInfo,
+                [name]: value,
+            },
+        }));
+    };
+    const handleChangeInputBank = (e) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        setContribution((prev) => ({
+            ...prev,
+            bankAccount: {
+                ...prev.bankAccount,
                 [name]: value,
             },
         }));
@@ -139,7 +165,7 @@ function Payment() {
             contribution.user = currentUser._id;
             const res = await customAxios.post(`${baseURL}/contribution/paymentMomo/handle`, contribution);
             window.location.href = res.data.data;
-        } catch (error) {}
+        } catch (error) { }
     };
 
     const [textValidateFullname, setTextValidateFullname] = useState('');
@@ -210,17 +236,26 @@ function Payment() {
     };
 
     const handlePayment = () => {
+       
         // validate 
-        let flagFullname = validateFullname(contribution.shippingInfo?.fullName);
-        let flagProvince = validateProvince(contribution.shippingInfo?.province);
-        let flagDistrict = validateDistrict(contribution.shippingInfo?.district);
-        let flagCommune = validateCommune(contribution.shippingInfo?.ward);
-        let flagAddressDetail =validateDetailAddress(contribution.shippingInfo?.detail);
-        let flagSDT = validateSDT(contribution.shippingInfo?.phoneNumber);
+        if (payment) {
+            let flagFullname = validateFullname(contribution.shippingInfo?.fullName);
+            let flagProvince = validateProvince(contribution.shippingInfo?.province);
+            let flagDistrict = validateDistrict(contribution.shippingInfo?.district);
+            let flagCommune = validateCommune(contribution.shippingInfo?.ward);
+            let flagAddressDetail = validateDetailAddress(contribution.shippingInfo?.detail);
+            let flagSDT = validateSDT(contribution.shippingInfo?.phoneNumber);
 
-        if (flagFullname && flagProvince && flagDistrict && flagCommune && flagAddressDetail && flagSDT) {
+            if (flagFullname && flagProvince && flagDistrict && flagCommune && flagAddressDetail && flagSDT) {
+                setShowPaymentModal(true);
+            }
+        }
+        else {
+            setContribution(prev => ({...prev, money: Number(moneyState), isFinish: true}))
             setShowPaymentModal(true);
         }
+       
+        
     }
     return (
         <div className={cx('wrapper')}>
@@ -270,117 +305,162 @@ function Payment() {
                         </div>
                     </div>
 
-                    <div className={cx('shipping-address')}>
-                        <div className={cx('title')}>Thông tin giao nhận</div>
-                        <div className={cx('entreField')}>
-                            <label className={cx('entreField-label')}>
-                                Họ và tên <span className={cx('entreField-required')}>*</span>
-                            </label>
+                    {
+                        payment &&
+                        <div className={cx('shipping-address')}>
+                            <div className={cx('title')}>Thông tin giao nhận</div>
+                            <div className={cx('entreField')}>
+                                <label className={cx('entreField-label')}>
+                                    Họ và tên <span className={cx('entreField-required')}>*</span>
+                                </label>
 
-                            <input
-                                type="text"
-                                className={cx('itext-field')}
-                                name="fullName"
-                                value={contribution.shippingInfo?.fullName}
-                                onChange={handleChangeInput}
-                            />
-                            <span className={cx('entreField-error')}>{textValidateFullname}</span>
-                        </div>
-
-                        <div className={cx('entreField')}>
-                            <label className={cx('entreField-label')}>
-                                Tỉnh / Thành phố <span className={cx('entreField-required')}>*</span>
-                            </label>
-
-                            <div className={cx('entreField-select')}>
-                                <a
-                                    className={cx('entreDropdown-select', 'itext-field', {
-                                        borderInput: showLocation,
-                                    })}
-                                    onClick={() => setShowLocation((prev) => !prev)}
-                                    ref={element}
-                                >
-                                    <span>{contribution.shippingInfo?.province || 'Chọn Tỉnh / Thành phố'}</span>
-
-                                    <FaAngleDown className={cx('icon', 'icon-down')} />
-                                    {showLocation && (
-                                        <div
-                                            className={cx('dropdown-outer')}
-                                            style={{ top: '-8px', transform: 'translateY(-100%)' }}
-                                        >
-                                            <DropDown
-                                                listItem={listLocationShip}
-                                                onClickItem={(item) => setLocation(item)}
-                                                listLocationShipChoosen={[contribution.shippingInfo?.province]}
-                                            />
-                                        </div>
-                                    )}
-                                </a>
+                                <input
+                                    type="text"
+                                    className={cx('itext-field')}
+                                    name="fullName"
+                                    value={contribution.shippingInfo?.fullName}
+                                    onChange={handleChangeInput}
+                                />
+                                <span className={cx('entreField-error')}>{textValidateFullname}</span>
                             </div>
-                            <span className={cx('entreField-error')}>{textValidateProvince}</span>
+
+                            <div className={cx('entreField')}>
+                                <label className={cx('entreField-label')}>
+                                    Tỉnh / Thành phố <span className={cx('entreField-required')}>*</span>
+                                </label>
+
+                                <div className={cx('entreField-select')}>
+                                    <a
+                                        className={cx('entreDropdown-select', 'itext-field', {
+                                            borderInput: showLocation,
+                                        })}
+                                        onClick={() => setShowLocation((prev) => !prev)}
+                                        ref={element}
+                                    >
+                                        <span>{contribution.shippingInfo?.province || 'Chọn Tỉnh / Thành phố'}</span>
+
+                                        <FaAngleDown className={cx('icon', 'icon-down')} />
+                                        {showLocation && (
+                                            <div
+                                                className={cx('dropdown-outer')}
+                                                style={{ top: '-8px', transform: 'translateY(-100%)' }}
+                                            >
+                                                <DropDown
+                                                    listItem={listLocationShip}
+                                                    onClickItem={(item) => setLocation(item)}
+                                                    listLocationShipChoosen={[contribution.shippingInfo?.province]}
+                                                />
+                                            </div>
+                                        )}
+                                    </a>
+                                </div>
+                                <span className={cx('entreField-error')}>{textValidateProvince}</span>
+                            </div>
+
+                            <div className={cx('entreField')}>
+                                <div style={{ display: 'flex', gap: '16px' }}>
+                                    <div style={{ flex: '1' }}>
+                                        <label className={cx('entreField-label')}>
+                                            Quận / Huyện<span className={cx('entreField-required')}> *</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            maxLength="50"
+                                            className={cx('itext-field')}
+                                            name="district"
+                                            value={contribution.shippingInfo?.district}
+                                            onChange={handleChangeInput}
+                                        />
+                                        <span className={cx('entreField-error')}>{textValidateDistrict}</span>
+                                    </div>
+                                    <div style={{ flex: '1' }}>
+                                        <label className={cx('entreField-label')}>
+                                            Xã / Phường<span className={cx('entreField-required')}> *</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            maxLength="50"
+                                            className={cx('itext-field')}
+                                            name="ward"
+                                            value={contribution.shippingInfo?.ward}
+                                            onChange={handleChangeInput}
+                                        />
+                                        <span className={cx('entreField-error')}>{textValidateCommune}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={cx('entreField')}>
+                                <div style={{ display: 'flex', gap: '16px' }}>
+                                    <div style={{ flex: '1' }}>
+                                        <label className={cx('entreField-label')}>
+                                            Chi tiết địa chỉ<span className={cx('entreField-required')}> *</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            maxLength="50"
+                                            className={cx('itext-field')}
+                                            name="detail"
+                                            value={contribution.shippingInfo?.detail}
+                                            onChange={handleChangeInput}
+                                        />
+                                        <span className={cx('entreField-error')}>{textValidateDetailAddress}</span>
+                                    </div>
+                                    <div style={{ flex: '1' }}>
+                                        <label className={cx('entreField-label')}>
+                                            Số điện thoại<span className={cx('entreField-required')}> *</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            maxLength="50"
+                                            className={cx('itext-field')}
+                                            name="phoneNumber"
+                                            value={contribution.shippingInfo?.phoneNumber}
+                                            onChange={handleChangeInput}
+                                        />
+                                        <span className={cx('entreField-error')}>{textValidateSDT}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
 
+                    }
+                    <div className={cx('shipping-address')}>
+                        <div className={cx('title')}>Thông tin tài khoản ngân hàng</div>
+                        <div className={cx('.entreField-subLabel')} style={{ marginBottom: '16px' }}>
+                            Cung cấp cho chúng tôi phương thức liên lạc cũng như cách hoàn trả nếu chiến dịch gây quỹ thất bại.
+                            Tất nhiên, bạn sẽ phải trả một khoản phí nhất định.
+                        </div>
                         <div className={cx('entreField')}>
                             <div style={{ display: 'flex', gap: '16px' }}>
                                 <div style={{ flex: '1' }}>
                                     <label className={cx('entreField-label')}>
-                                        Quận / Huyện<span className={cx('entreField-required')}> *</span>
+                                        Tên ngân hàng<span className={cx('entreField-required')}> *</span>
                                     </label>
                                     <input
                                         type="text"
                                         maxLength="50"
                                         className={cx('itext-field')}
-                                        name="district"
-                                        value={contribution.shippingInfo?.district}
-                                        onChange={handleChangeInput}
+                                        name="bank"
+                                        value={contribution.bankAccount?.bank}
+                                        onChange={handleChangeInputBank}
                                     />
                                     <span className={cx('entreField-error')}>{textValidateDistrict}</span>
                                 </div>
                                 <div style={{ flex: '1' }}>
                                     <label className={cx('entreField-label')}>
-                                        Xã / Phường<span className={cx('entreField-required')}> *</span>
+                                        Số tài khoản ngân hàng<span className={cx('entreField-required')}> *</span>
                                     </label>
                                     <input
                                         type="text"
                                         maxLength="50"
                                         className={cx('itext-field')}
-                                        name="ward"
-                                        value={contribution.shippingInfo?.ward}
-                                        onChange={handleChangeInput}
+                                        name="numberAccount"
+                                        value={contribution.bankAccount?.numberAccount}
+                                        onChange={handleChangeInputBank}
                                     />
                                     <span className={cx('entreField-error')}>{textValidateCommune}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('entreField')}>
-                            <div style={{ display: 'flex', gap: '16px' }}>
-                                <div style={{ flex: '1' }}>
-                                    <label className={cx('entreField-label')}>
-                                        Chi tiết địa chỉ<span className={cx('entreField-required')}> *</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        maxLength="50"
-                                        className={cx('itext-field')}
-                                        name="detail"
-                                        value={contribution.shippingInfo?.detail}
-                                        onChange={handleChangeInput}
-                                    />
-                                    <span className={cx('entreField-error')}>{textValidateDetailAddress}</span>
-                                </div>
-                                <div style={{ flex: '1' }}>
-                                    <label className={cx('entreField-label')}>
-                                        Số điện thoại<span className={cx('entreField-required')}> *</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        maxLength="50"
-                                        className={cx('itext-field')}
-                                        name="phoneNumber"
-                                        value={contribution.shippingInfo?.phoneNumber}
-                                        onChange={handleChangeInput}
-                                    />
-                                    <span className={cx('entreField-error')}>{textValidateSDT}</span>
                                 </div>
                             </div>
                         </div>
@@ -390,37 +470,54 @@ function Payment() {
                     <div className={cx('shipping-address')}>
                         <div className={cx('title')}>Tóm tắt đóng góp</div>
 
-                        <div style={{ marginTop: '32px' }}>
-                            {payment.listPerkPayment.map((item, index) => {
-                                return <ItemPayment item={item} key={index} />;
-                            })}
-                        </div>
+                        <input
+                            type="text"
+                            maxLength="50"
+                            className={cx('itext-field')}
+                            name="numberAccount"
+                            value={moneyState}
+                            onChange={(e) => setMoneyState(e.target.value)}
+                            style={{ marginTop: '32px' }}
 
-                        <div className={cx('separate')}></div>
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                fontSize: '16px',
-                            }}
-                        >
-                            <span>Tiền đặc quyền</span>
-                            <span>{formatMoney(payment.total)}VNĐ</span>
-                        </div>
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                fontSize: '16px',
-                                marginTop: '6px',
-                            }}
-                        >
-                            <span>Tiền ship</span>
-                            <span>{formatMoney(shipFee)}VNĐ</span>
-                        </div>
+                        />
 
+                        {
+                            payment &&
+                            <>
+                                <div style={{ marginTop: '32px' }}>
+                                    {payment?.listPerkPayment.map((item, index) => {
+                                        return <ItemPayment item={item} key={index} />;
+                                    })}
+                                </div>
+
+
+                                <div className={cx('separate')}></div>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        fontSize: '16px',
+                                    }}
+                                >
+                                    <span>Tiền đặc quyền</span>
+                                    <span>{formatMoney(payment.total)}VNĐ</span>
+                                </div>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        fontSize: '16px',
+                                        marginTop: '6px',
+                                    }}
+                                >
+                                    <span>Tiền ship</span>
+                                    <span>{formatMoney(shipFee)}VNĐ</span>
+                                </div>
+
+                            </>
+                        }
                         <div
                             style={{
                                 fontSize: '20px',
@@ -432,7 +529,14 @@ function Payment() {
                             }}
                         >
                             <span>Tổng tiền</span>
-                            <span>{formatMoney(payment.total + shipFee)}VNĐ</span>
+                            {
+                                payment &&
+                                <span>{formatMoney(payment.total + shipFee)}VNĐ</span>
+                            }
+                            {
+                                money &&
+                                <span>{formatMoney(Number(moneyState))}VNĐ</span>
+                            }
                         </div>
 
                         <div

@@ -29,6 +29,10 @@ export default mongoose.model('Contribution',
         isFinish: {
             type: Boolean,
             default: false
+        },
+        bankAccount: {
+            bank: String,
+            numberAccount: String,
         }
       
     })

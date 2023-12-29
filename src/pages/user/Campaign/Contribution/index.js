@@ -13,6 +13,7 @@ import TopContributionTable from "./TopContributionTable";
 import GiftTable from "./GiftTable";
 
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
+import { TiCancel } from "react-icons/ti";
 
 import styles from '~/pages/user/Campaign/CampaignStyle/CampaignStyle.module.scss'
 import { useEffect, useState } from "react";
@@ -21,7 +22,7 @@ import { useParams } from "react-router-dom";
 import Search from "~/pages/admin/components/Search";
 import baseURL from "~/utils/baseURL";
 import Filter from "~/pages/admin/components/Filter";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "~/redux/slides/GlobalApp";
 import ModalContribution from "./ModalContribution";
 import ModalGivePerk from "./ModalGivePerk";
@@ -80,6 +81,8 @@ function ContributionCampaign() {
                 goal: res.data.data.goal,
                 duration: res.data.data.duration,
                 isIndemand: res.data.data.isIndemand || false,
+                owner: res.data.data.owner || '',
+                team: res.data.data.team || []
             }
             setCampaign({ ...infoBasic })
 
@@ -115,8 +118,11 @@ function ContributionCampaign() {
             const currentDateTime = new Date().getTime()
             const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60 * 60));
             let daysLeft = ''
-            if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
-            else daysLeft = Math.ceil(remainingHours) + " giờ";
+            if (remainingHours > 24) daysLeft = "Còn " + Math.ceil(remainingHours / 24) + " ngày"
+            else if (remainingHours > 0) {
+                daysLeft = "Còn " + Math.ceil(remainingHours) + " giờ";
+            }
+            else daysLeft = 'Hết hạn'
             setTimeLeft(daysLeft)
         }
     }, [campagin])
@@ -271,6 +277,37 @@ function ContributionCampaign() {
     useEffect(() => {
         getListUserContribution()
     }, [])
+    const [isEditAll, setEditAll] = useState(null);
+    const [isEditComponent, setEditComponent] = useState(false);
+    const currentUser = useSelector(state => state.user.currentUser)
+    useEffect(() => {
+        if (JSON.stringify(campagin) !== '{}') {
+            let edit = false
+            if (currentUser.isAdmin) edit = true
+            else {
+                if (campagin.owner?._id === currentUser._id) edit = true
+                if (campagin.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true && x.canEdit === true})) {
+                    edit = true
+                }
+            }
+            if (edit === true) {
+                setShowErrorDelete(false)
+            }
+            else {
+                setContentError('Bạn không có quyền chỉnh sửa lúc này!')
+                setShowErrorDelete(true)
+            }
+            setEditAll(edit)
+            setEditComponent(edit)
+        }
+    }, [campagin])
+    useEffect(() => {
+        let edit = false;
+ 
+    },[campagin])
+    
+    const [showErrorDelete, setShowErrorDelete] = useState(false)
+    const [contentError, setContentError] = useState('')
     return (
         <>
             <div className={cx('wrapper')}>
@@ -292,6 +329,12 @@ function ContributionCampaign() {
                                 </div>
 
                             </div>
+                            {
+                                showErrorDelete &&
+                                <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#ff324b', paddingLeft: '40px', height: '80px' }}>
+                                    <span style={{ color: '#fff' }}><TiCancel style={{ color: '#fff', fontSize: '48px' }} />  {contentError}</span>
+                                </div>
+                            }
 
                         </div>
                         <div className={cx('body')}>
@@ -362,21 +405,39 @@ function ContributionCampaign() {
                                                         <span className={cx('percent')}>{(currentPercent % 100 === 0) ? currentPercent : currentPercent.toFixed(2)}%</span>
                                                         <span className={cx('left')}>
                                                             <AiFillClockCircle style={{ color: 'rgb(173 172 172)' }} />
-                                                            <span>Còn {timeLeft}</span>
+                                                            <span>{timeLeft}</span>
                                                         </span>
 
                                                     </div>
 
                                                 </div>
+                                                {
+                                                    timeLeft === 'Hết hạn' &&
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '24px' }}>
+                                                        <span style={{ display: 'block', paddingBottom: '2px', borderBottom: '1px dashed #949494' }}>Gây quỹ:</span>
+                                                        {
+                                                            campagin.isSSuccessFunding
+                                                            && <div style={{ padding: '4px 16px', background: '#34ca96', color: '#fff', borderRadius: '4px' }}>Thành công</div>
+                                                        }
+                                                        {
+                                                            !campagin.isSSuccessFunding
+                                                            && <div style={{ padding: '4px 16px', background: '#a8a8a8', color: '#fff', borderRadius: '8px' }}>Thất bại</div>
+                                                        }
+
+                                                    </div>
+                                                }
                                                 <ContributionTable contributions={contributions} onContributionTableChange={handleChangStateListContributions} getAllContributions={getAllContributions} openDetailContribution={openDetailContribution} />
                                             </div>
-                                            <div className={cx('pagination-wrapper')}>
-                                                <div className={cx('pagination')}>
-                                                    <span className={cx('icon')} onClick={handleClickPreviousPage}><FaAngleLeft style={{ color: '#7a69b3' }} /></span>
-                                                    <span className={cx('curent')}>{`${filter.page} của ${totalPages}`}</span>
-                                                    <span className={cx('icon')} onClick={handleClickNextPage}><FaAngleRight style={{ color: '#7a69b3' }} /></span>
+                                            {
+                                                totalPages > 0 &&
+                                                <div className={cx('pagination-wrapper')}>
+                                                    <div className={cx('pagination')}>
+                                                        <span className={cx('icon')} onClick={handleClickPreviousPage}><FaAngleLeft style={{ color: '#7a69b3' }} /></span>
+                                                        <span className={cx('curent')}>{`${filter.page} của ${totalPages}`}</span>
+                                                        <span className={cx('icon')} onClick={handleClickNextPage}><FaAngleRight style={{ color: '#7a69b3' }} /></span>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            }
 
                                         </div>
 
@@ -397,7 +458,7 @@ function ContributionCampaign() {
                                         <div style={{ marginTop: '40px' }}>
                                             <div className={cx('table-wrapper-2')}>
 
-                                                <TopContributionTable listUserContribution={listUserContribution} setShowModalGivePerk={setShowModalGivePerk} setUserContributionGivePerk={setUserContributionGivePerk} />
+                                                <TopContributionTable isEditComponent={isEditComponent} listUserContribution={listUserContribution} setShowModalGivePerk={setShowModalGivePerk} setUserContributionGivePerk={setUserContributionGivePerk} />
                                             </div>
 
 
@@ -443,13 +504,16 @@ function ContributionCampaign() {
 
                                                 <GiftTable gifts={gifts} openDetailGift={openDetailGift} />
                                             </div>
-                                            <div className={cx('pagination-wrapper')}>
-                                                <div className={cx('pagination')}>
-                                                    <span className={cx('icon')} onClick={handleClickPreviousPageGift}><FaAngleLeft style={{ color: '#7a69b3' }} /></span>
-                                                    <span className={cx('curent')}>{`${filterGift.page} của ${totalPagesGift}`}</span>
-                                                    <span className={cx('icon')} onClick={handleClickNextPageGift}><FaAngleRight style={{ color: '#7a69b3' }} /></span>
+                                            {
+                                                totalPagesGift > 0 &&
+                                                <div className={cx('pagination-wrapper')}>
+                                                    <div className={cx('pagination')}>
+                                                        <span className={cx('icon')} onClick={handleClickPreviousPageGift}><FaAngleLeft style={{ color: '#7a69b3' }} /></span>
+                                                        <span className={cx('curent')}>{`${filterGift.page} của ${totalPagesGift}`}</span>
+                                                        <span className={cx('icon')} onClick={handleClickNextPageGift}><FaAngleRight style={{ color: '#7a69b3' }} /></span>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            }
 
                                         </div>
 
@@ -491,7 +555,7 @@ function ContributionCampaign() {
 
                 {
                     showModal &&
-                    <ModalContribution setShowModal={setShowModal} contribution={contributions[indexContributionActive]} handleChangeStatus={handleChangeStatus} />
+                    <ModalContribution isEditComponent={isEditComponent} setShowModal={setShowModal} contribution={contributions[indexContributionActive]} handleChangeStatus={handleChangeStatus} />
                 }
                 {
                     showModalGivePerk &&
@@ -499,7 +563,7 @@ function ContributionCampaign() {
                 }
                 {
                     showModalGift &&
-                    <ModalGift setShowModalGift={setShowModalGift} gift={gifts[indexGiftActive]} handleChangeStatus={handleChangeStatusGift} />
+                    <ModalGift isEditComponent={isEditComponent} setShowModalGift={setShowModalGift} gift={gifts[indexGiftActive]} handleChangeStatus={handleChangeStatusGift} />
                 }
             </div>
 

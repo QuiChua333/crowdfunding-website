@@ -28,7 +28,14 @@
     .status {
         font-weight: 700;
         font-size: 1.4rem;
-        color: #088366;
+        
+        &.dangGayQuy {
+            color: #088366;
+        }
+
+        &.daKetThuc {
+             color: rgb(106, 106, 106);
+        }
     }
 
     .heart {

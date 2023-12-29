@@ -14,7 +14,7 @@ import axios from "axios";
 import baseURL from "~/utils/baseURL";
 import convertDate from "~/utils/convertDate3";
 const cx = classNames.bind(styles)
-function PerkRow({ index, perk, setChecked, getPerksByCampaignId }) {
+function PerkRow({ index, perk, setChecked, getPerksByCampaignId, isEditComponent, handleDeletePerK }) {
     const dispatch = useDispatch()
     const [openDropDown, setOpenDropDown] = useState(false);
     const docElement = useRef(null)
@@ -22,6 +22,9 @@ function PerkRow({ index, perk, setChecked, getPerksByCampaignId }) {
     const handleClickChecked = (e, index) => {
         e.stopPropagation()
         setChecked(index, !perk.isChecked)
+    }
+    const handleCRemovePerk = () => {
+        handleDeletePerK(perk)
     }
     const handleClickPerk = () => {
         navigate(`/campaigns/${perk.campaign}/edit/perks/${perk._id}`)
@@ -55,13 +58,7 @@ function PerkRow({ index, perk, setChecked, getPerksByCampaignId }) {
 
         <tr onClick={handleClickPerk}>
             {/* <Link to='/campaigns/:id/edit/perks/new' style={{position: 'relative', zIndex: '10'}}></Link> */}
-            <td className={cx('checkbox')}>
-                <span onClick={(e) => handleClickChecked(e, index)}>
-                    {
-                        !perk.isChecked ? <IoSquareOutline style={{ fontSize: '26px', color: '#ccc' }} /> : <IoCheckboxSharp style={{ fontSize: '26px', color: '#000' }} />
-                    }
-                </span>
-            </td>
+           
             <td className={cx('title')}>{perk.title}
                 {!perk.isVisible &&
                     <>
@@ -84,7 +81,7 @@ function PerkRow({ index, perk, setChecked, getPerksByCampaignId }) {
                 <div className={cx('action-doc')} onClick={(e) => { e.stopPropagation(); setOpenDropDown(prev => !prev) }} ref={docElement}>
                     <PiDotsThreeBold style={{ fontSize: '20px', color: '#7a69b3' }} />
                     <div className={cx('dropdown-wrapper')} style={{ display: openDropDown && 'block' }}>
-                        <DropDown perk={perk} changeFeatured={changeFeatured}/>
+                        <DropDown perk={perk} changeFeatured={changeFeatured} isEditComponent={isEditComponent} handleCRemovePerk={handleCRemovePerk}/>
                     </div>
                 </div>
             </td>

@@ -153,6 +153,13 @@ const getCampaignById = async (req, res) => {
                 },
 
             ])
+            .populate({
+                path: "comments",
+                populate: {
+                    path: "user likes",
+                    select: "-password -refreshToken -isAdmin -isVerifiedEmail -isVerifiedUser"
+                }
+            })
             .exec();
 
         res.status(200).json({
@@ -413,6 +420,27 @@ const deleteMember = async (req, res) => {
 const getCampaignsOfUserId = async (req, res) => {
     try {
         const { id } = req.params;
+        // const campaigns = await Campaign.find({ owner: id }).populate({
+        //     path: 'owner',
+        //     model: 'User'
+        // }).exec();
+        const campaigns = await Campaign.find({ 'team.user': id }).populate({
+            path: 'owner',
+            model: 'User'
+        }).exec();
+        res.status(200).json({
+            message: 'Lấy thông tin các chiến dịch của user thành công',
+            data: campaigns
+        })
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        })
+    }
+}
+const getCampaignsOfUserIdIsMember = async (req, res) => {
+    try {
+        const { id } = req.params;
         const campaigns = await Campaign.find({ owner: id }).populate({
             path: 'owner',
             model: 'User'
@@ -567,10 +595,10 @@ const getAllCampaignsExplore = async (req, res) => {
             ]);
         }
         for (let i = 0; i < filterCampaigns.length; i++) {
-            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id.toString() })
+            const backers = await Contribution.countDocuments({ campaign: filterCampaigns[i]._id })
             let result = await Contribution.aggregate([
                 {
-                    $match: { campaign: filterCampaigns[i]._id.toString() }
+                    $match: { campaign: filterCampaigns[i]._id }
                 },
                 {
                     $group: {
@@ -579,8 +607,7 @@ const getAllCampaignsExplore = async (req, res) => {
                     }
                 }
             ])
-            // const totalMoney = result.length > 0 ? result[0].totalMoney : 0;
-            const totalMoney = 4000000 + i
+            const totalMoney = result.length > 0 ? result[0].totalMoney : 0;
             filterCampaigns[i].backers = backers
             filterCampaigns[i].currentMoney = totalMoney
             filterCampaigns[i].percentProgress = totalMoney / filterCampaigns[i].goal * 100
@@ -590,7 +617,10 @@ const getAllCampaignsExplore = async (req, res) => {
             const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60 * 60));
             let daysLeft = ''
             if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
-            else daysLeft = Math.ceil(remainingHours) + " giờ";
+            else if (remainingHours > 0) {
+                daysLeft = Math.ceil(remainingHours) + " giờ";
+            }
+            else daysLeft = 'Hết hạn'
             filterCampaigns[i].daysLeft = daysLeft
 
         }
@@ -708,7 +738,10 @@ const getMoreCampaigns = async (req, res) => {
             const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60 * 60));
             let daysLeft = ''
             if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
-            else daysLeft = Math.ceil(remainingHours) + " giờ";
+            else if (remainingHours > 0) {
+                daysLeft = Math.ceil(remainingHours) + " giờ";
+            }
+            else daysLeft = 'Hết hạn'
             filterCampaigns[i].daysLeft = daysLeft
 
         }
@@ -838,7 +871,10 @@ const getPopulateCampaigns = async (req, res) => {
             const remainingHours = Math.ceil((endDateTime - currentDateTime) / (1000 * 60 * 60));
             let daysLeft = ''
             if (remainingHours > 24) daysLeft = Math.ceil(remainingHours / 24) + " ngày"
-            else daysLeft = Math.ceil(remainingHours) + " giờ";
+            else if (remainingHours > 0) {
+                daysLeft = Math.ceil(remainingHours) + " giờ";
+            }
+            else daysLeft = 'Hết hạn'
             filterCampaigns[i].daysLeft = daysLeft
 
         }

@@ -9,7 +9,7 @@ import convertDate from "~/utils/convertDate2";
 
 const cx = classNames.bind(styles)
 
-function TopContributionTable({listUserContribution, setShowModalGivePerk,setUserContributionGivePerk}) {
+function TopContributionTable({isEditComponent,listUserContribution, setShowModalGivePerk,setUserContributionGivePerk}) {
     
     return (
         <div className={cx('wrapper')}>
@@ -26,7 +26,7 @@ function TopContributionTable({listUserContribution, setShowModalGivePerk,setUse
                 <tbody>
                     {
                         listUserContribution?.map((item, index) => {
-                            return <TopContributionRow key={index} userContribution={item} index={index} setShowModalGivePerk={setShowModalGivePerk} setUserContributionGivePerk={setUserContributionGivePerk}/>
+                            return <TopContributionRow isEditComponent={isEditComponent} key={index} userContribution={item} index={index} setShowModalGivePerk={setShowModalGivePerk} setUserContributionGivePerk={setUserContributionGivePerk}/>
                         })
                     }
                 </tbody>

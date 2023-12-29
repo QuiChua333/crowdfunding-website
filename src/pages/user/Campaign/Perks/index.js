@@ -8,6 +8,7 @@ import PerkTable from "./PerkTable";
 
 import images from "~/assets/images";
 
+import { TiCancel } from "react-icons/ti";
 
 
 
@@ -18,14 +19,17 @@ import { useParams } from "react-router-dom";
 import customAxios from '~/utils/customAxios'
 
 import baseURL from "~/utils/baseURL";
-import { setLoading } from "~/redux/slides/GlobalApp";
-import { useDispatch } from "react-redux";
+import { setLoading, setMessageBox } from "~/redux/slides/GlobalApp";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 
 const cx = classNames.bind(styles);
 
 
 function PerksCampaign() {
+    const messageBox = useSelector(state => state.globalApp.messageBox)
+    const [perkDelete,setPerkDelete] = useState({})
     const { id } = useParams();
     const dispatch = useDispatch();
     const [campagin, setCampaign] = useState({})
@@ -46,6 +50,8 @@ function PerksCampaign() {
                 title: res.data.data.title || '',
                 cardImage: res.data.data.cardImage || { url: '', public_id: '' },
                 status: res.data.data.status,
+                owner: res.data.data.owner || '',
+                team: res.data.data.team || []
             }
             setCampaign({ ...infoBasic })
 
@@ -63,11 +69,77 @@ function PerksCampaign() {
             setListPerks([])
         }
     }
-    
+    const handleDeletePerK = async (perk) => {
+        setPerkDelete(perk)
+        dispatch(setMessageBox({
+            title: 'Xóa đặc quyền này?',
+            content: 'Thao tác này sẽ xóa hoàn toàn mục này khỏi chiến dịch của bạn và không thể hoàn tác được.',
+            contentOK: 'XÁC NHẬN',
+            contentCancel: 'HỦY',
+            isShow: true,
+            type: 'deletePerk'
+        }))
+        
+    }
+    useEffect(() => {
+        if (messageBox.result) {
+            if (messageBox.type === 'deletePerk') {
+                if (messageBox.result === true) {
+                    deletePerk(perkDelete)
+                }
+            }
+        }
+    }, [messageBox.result])
+    const deletePerk = async (perk) => {
+        dispatch(setLoading(true))
+        try {
+            const res = await customAxios.delete(`${baseURL}/perk/delete/${perk._id}`)
+            dispatch(setLoading(false))
+            setShowErrorDelete(true)
+            dispatch(setMessageBox({result: null, isShow: false}))
+            toast.success(res.data.message)
+        } catch (error) {
+            dispatch(setLoading(false))
+            setContentError(error.response.data.message)
+            dispatch(setMessageBox({result: null, isShow: false}))
+            setShowErrorDelete(true)
+        }
+    } 
     useEffect(() => {
         getCampaign()
         getPerksByCampaignId()
     }, [])
+    const [isEditAll, setEditAll] = useState(null);
+    const [isEditComponent, setEditComponent] = useState(false);
+    const currentUser = useSelector(state => state.user.currentUser)
+    useEffect(() => {
+        if (JSON.stringify(campagin) !== '{}') {
+            let edit = false
+            if (currentUser.isAdmin) edit = true
+            else {
+                if (campagin.owner?._id === currentUser._id) edit = true
+                if (campagin.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true && x.canEdit === true})) {
+                    edit = true
+                }
+            }
+            if (edit === true) {
+                setShowErrorDelete(false)
+            }
+            else {
+                setContentError('Bạn không có quyền chỉnh sửa lúc này!')
+                setShowErrorDelete(true)
+            }
+            setEditAll(edit)
+            setEditComponent(edit)
+        }
+    }, [campagin])
+    useEffect(() => {
+        let edit = false;
+
+    }, [campagin])
+    // style={{ pointerEvents: !isEditAll && 'none' }}
+    const [showErrorDelete, setShowErrorDelete] = useState(false)
+    const [contentError, setContentError] = useState('')
     return (
         <div>
             <div className={cx('wrapper')}>
@@ -87,9 +159,15 @@ function PerksCampaign() {
                                 <div className={cx('controlBar-content')}>
                                     Chiến dịch / Đặc quyền
                                 </div>
-                                
+
                             </div>
-             
+                            {
+                                showErrorDelete &&
+                                <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#ff324b', paddingLeft: '40px', height: '80px' }}>
+                                    <span style={{ color: '#fff' }}><TiCancel style={{ color: '#fff', fontSize: '48px' }} />  {contentError}</span>
+                                </div>
+                            }
+
                         </div>
                         <div className={cx('body')}>
 
@@ -102,32 +180,32 @@ function PerksCampaign() {
                                             Đặc quyền
                                         </div>
                                         <div className={cx('entreField-subHeader')}>
-                                        Đặc quyền là những ưu đãi được cung cấp cho những người ủng hộ để đổi lấy sự hỗ trợ của họ. Có nhiều loại đặc quyền khác nhau mà bạn có thể tạo.
+                                            Đặc quyền là những ưu đãi được cung cấp cho những người ủng hộ để đổi lấy sự hỗ trợ của họ. Có nhiều loại đặc quyền khác nhau mà bạn có thể tạo.
                                         </div>
 
                                     </div>
                                     <div className={cx('perkTable-action')}>
                                         {
-                                       
-                                            <div style={{opacity: numberSelected===0 && '0'}}>
-                                            <span ><strong style={{ display: 'inline-block', minWidth: '12px' }}>{numberSelected}</strong> đặc quyền được chọn</span>
-                                            <div style={{ display: 'inline-block', marginLeft: '24px', position: 'relative' }}>
-                                                <a className={cx('btn', 'btn-ok')}>Xóa
-                                                </a>
+
+                                            <div style={{ opacity: numberSelected === 0 && '0' }}>
+                                                <span ><strong style={{ display: 'inline-block', minWidth: '12px' }}>{numberSelected}</strong> đặc quyền được chọn</span>
+                                                <div style={{ display: 'inline-block', marginLeft: '24px', position: 'relative' }}>
+                                                    <a className={cx('btn', 'btn-ok')}>Xóa
+                                                    </a>
 
 
+                                                </div>
                                             </div>
-                                        </div>
                                         }
 
                                         <div>
-                                            <div style={{ display: 'inline-block', marginLeft: '24px' }}>
+                                            <div style={{ display: 'inline-block', marginLeft: '24px', pointerEvents: !isEditComponent && 'none' }}>
                                                 <Link to={`/campaigns/${id}/edit/perks/new`} className={cx('btn', 'btn-ok')} >TẠO ĐẶC QUYỀN</Link>
                                             </div>
                                         </div>
                                     </div>
                                     <div style={{ marginTop: '40px' }}>
-                                        <PerkTable onPerkTableChange={handlePerkChange} listPerks={listPerks} getPerksByCampaignId={getPerksByCampaignId} />
+                                        <PerkTable onPerkTableChange={handlePerkChange} listPerks={listPerks} getPerksByCampaignId={getPerksByCampaignId} isEditAll={isEditAll} isEditComponent={isEditComponent} handleDeletePerK={handleDeletePerK}/>
                                     </div>
 
                                 </div>
@@ -143,10 +221,10 @@ function PerksCampaign() {
                                         <img src={images.no_perk} style={{ width: '600', height: '270px', objectFit: 'cover', marginTop: '32px' }} />
 
                                         <div style={{ marginTop: '40px' }}>Bắt đầu nào!</div>
-                                        <div style={{ fontSize: '14px', color: '#a8a8a8' }}>Tạo đặc quyền của bạn ở đây.</div>
+                                        <div style={{ fontSize: '14px', color: '#a8a8a8' }} >Tạo đặc quyền của bạn ở đây.</div>
                                         <img src={images.arrow} style={{ width: '40px', height: '60px', objectFit: 'cover', marginTop: '32px' }} />
 
-                                        <div style={{ marginTop: '40px' }}>
+                                        <div style={{ marginTop: '40px', pointerEvents: !isEditComponent && 'none'  }}>
                                             <Link to={`/campaigns/${id}/edit/perks/new`} className={cx('btn', 'btn-ok')} style={{ fontSize: '16px' }} >TẠO ĐẶC QUYỀN </Link>
                                         </div>
 
@@ -178,7 +256,7 @@ function PerksCampaign() {
                     <Footer />
                 </div>
             </div>
- 
+
         </div>
     );
 }

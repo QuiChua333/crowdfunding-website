@@ -16,7 +16,7 @@ import baseURL from "~/utils/baseURL";
 import { toast } from "react-toastify";
 import convertDate from "~/utils/convertDate3";
 const cx = classNames.bind(styles)
-function ModalGift({ setShowModalGift, gift, handleChangeStatus }) {
+function ModalGift({ setShowModalGift, gift, handleChangeStatus, isEditComponent }) {
     const dispatch = useDispatch();
     const [showListStatus, setShowListStatus] = useState(false);
     const [listStatus, setListStatus] = useState(() => {
@@ -76,7 +76,7 @@ function ModalGift({ setShowModalGift, gift, handleChangeStatus }) {
                         <div className={cx('order-container')}>
                             <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#4bac4d' }}>
                                 <span style={{ color: '#000' }}>Trạng thái
-                                    <div ref={statusElement} className={cx('product-category-select', { active: showListStatus })} onClick={() => { if (!gift.isFinish) { setShowListStatus(prev => !prev) } }}>
+                                    <div ref={statusElement} className={cx('product-category-select', { active: showListStatus })} onClick={() => { if (!gift.isFinish) { setShowListStatus(prev => !prev) } }} style={{pointerEvents: !isEditComponent && 'none'}}>
                                         <span style={{ color: status === 'Chưa gửi' ? 'red' : '#4eb7f5' }}>{status}</span>
                                         <span> {!showListStatus ? <AiFillCaretDown /> : <AiFillCaretUp />}</span>
                                         {showListStatus && <DropDown items={listStatus} style={{ width: '100%', left: '0', top: '35px', fontWeight: '500' }} onClick={handleClickItemStatus} />}
