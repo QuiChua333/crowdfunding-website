@@ -27,9 +27,8 @@ function SettingCampaign() {
     const { id } = useParams();
     const dispatch = useDispatch();
     const [campaginState, setCampaignState] = useState({})
-
     const [campagin, setCampaign] = useState({})
-
+    const [campaignMain, setCampaignMain] = useState({})
     const getCampaign = async () => {
         try {
             const res = await customAxios.get(`${baseURL}/campaign/getCampaignById/${id}`)
@@ -44,6 +43,7 @@ function SettingCampaign() {
             }
             setCampaign({ ...infoBasic })
             setCampaignState({ ...infoBasic })
+            setCampaignMain(res.data.data)
 
 
         } catch (error) {
@@ -70,7 +70,47 @@ function SettingCampaign() {
     //         console.log(error.message)
     //     }
     // }
+    const currentUser = useSelector(state => state.user.currentUser)
+    const checkInfo = () => {
+        if (!campaignMain.cardImage?.url) {
+            setContentError('PHẦN CƠ BẢN: Chiến dịch của bạn chưa có ảnh thẻ chiến dịch.')
+            return false
+        }
+        if (!campaignMain.field) {
+            setContentError('PHẦN CƠ BẢN: Vui lòng chọn lĩnh vực cho chiến dịch của bạn.')
+            return false
+        }
+        if (!campaignMain.duration) {
+            setContentError('PHẦN CƠ BẢN: Vui lòng nhập thời hạn cho chiến dịch.')
+            return false
+        }
+        if (!campaignMain.videoUrl && !campagin.imageDetailPage?.url) {
+            setContentError('PHẦN NỘI DUNG: Vui lòng chọn video hoặc hình ảnh.')
+            return false
+        }
+        if (!campaignMain.goal) {
+            setContentError('PHẦN GÂY QUỸ: Vui lòng nhập số tiền mục tiêu của chiến dịch.')
+            return false
+        }
+        if (!campaignMain.momoNumber) {
+            setContentError('PHẦN GÂY QUỸ: Vui lòng nhập số tài khoản ở mục thông tin ngân hàng.')
+            return false
+        }
+        if (!(campaignMain.owner?.isVerifiedUser || (currentUser.isAdmin ))) {
+            setContentError('PHẦN GÂY QUỸ: Vui lòng xác minh tài khoản chủ sỡ hữu chiến dịch.')
+            return false
+        }
+        return true
+        
+    }
     const handleClickLaunchCampaign = async () => {
+
+        const check = checkInfo()
+        if (!check) {
+            setShowErrorDelete(true)
+            return;
+        }
+
         dispatch(setLoading(true))
         try {
             const res = await customAxios.patch(`${baseURL}/campaign/launchCampaign/${id}`)
@@ -82,14 +122,14 @@ function SettingCampaign() {
         }
     }
     const [isEditAll, setEditAll] = useState(null);
-    const currentUser = useSelector(state => state.user.currentUser)
+    
     useEffect(() => {
         if (JSON.stringify(campagin) !== '{}') {
             let edit = false
             if (currentUser.isAdmin) edit = true
             else {
                 if (campagin.owner?._id === currentUser._id) edit = true
-                if (campagin.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true && x.canEdit === true})) {
+                if (campagin.team?.some(x => { return x.user === currentUser._id && x.isAccepted === true && x.canEdit === true })) {
                     edit = true
                 }
             }
@@ -160,27 +200,27 @@ function SettingCampaign() {
 
 
                                 {
-                                    campagin.status === 'Bản nháp'&&
+                                    campagin.status === 'Bản nháp' &&
                                     <div style={{ marginTop: '60px', borderBottom: '1px solid #C8C8C8', paddingBottom: '30px', textAlign: 'left' }}>
                                         <a onClick={handleClickLaunchCampaign} className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >PHÁT HÀNH CHIẾN DỊCH</a>
                                     </div>
                                 }
                                 {
-                                    campagin.status === 'Đang tạm ngưng'&&
+                                    campagin.status === 'Đang tạm ngưng' &&
                                     <div style={{ marginTop: '60px', borderBottom: '1px solid #C8C8C8', paddingBottom: '30px', textAlign: 'left' }}>
-                                        <a onClick={handleClickLaunchCampaign} className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >CHIẾN DỊCH ĐANG BỊ TẠM NGƯNG</a>
+                                        <a className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >CHIẾN DỊCH ĐANG BỊ TẠM NGƯNG</a>
                                     </div>
                                 }
                                 {
-                                    campagin.status === 'Đang gây quỹ'&&
+                                    campagin.status === 'Đang gây quỹ' &&
                                     <div style={{ marginTop: '60px', borderBottom: '1px solid #C8C8C8', paddingBottom: '30px', textAlign: 'left' }}>
-                                        <a  className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >CHIẾN DỊCH ĐÃ PHÁT HÀNH</a>
+                                        <a className={cx('btn', 'btn-ok')} style={{ marginLeft: '0' }} >CHIẾN DỊCH ĐÃ PHÁT HÀNH</a>
                                     </div>
                                 }
                                 {
-                                    campagin.status === 'Đã kết thúc'&&
+                                    campagin.status === 'Đã kết thúc' &&
                                     <div style={{ marginTop: '60px', borderBottom: '1px solid #C8C8C8', paddingBottom: '30px', textAlign: 'left' }}>
-                                        <a  className={cx('btn')} style={{ marginLeft: '0', background: '#a8a8a8', color: '#fff' }} >CHIẾN DỊCH ĐÃ KẾT THÚC</a>
+                                        <a className={cx('btn')} style={{ marginLeft: '0', background: '#a8a8a8', color: '#fff' }} >CHIẾN DỊCH ĐÃ KẾT THÚC</a>
                                     </div>
                                 }
 

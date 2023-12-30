@@ -63,16 +63,18 @@ function TeamCampaign() {
 
         }
     }
+    const [invalidEmail,setInvalidEmail] = useState(false)
     const handleClickSendInvitation = async () => {
         // check validate email
         if (!email.match(
 
             /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         )) {
-            console.log('invalid email')
+            setInvalidEmail(true)
             setShowErrorDelete(false)
             return;
         }
+        setInvalidEmail(false)
         setShowErrorDelete(false)
         dispatch(setLoading(true))
         try {
@@ -240,7 +242,12 @@ function TeamCampaign() {
                                 <div className={cx('entreField')}>
                                     <label className={cx('entreField-label')}>Email Thành Viên Mới</label>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <input type="email" className={cx('itext-field')} style={{ flex: '1' }} onChange={(e) => setEmail(e.target.value)} />
+                                        <div style={{flex: '1'}}><input type="email" className={cx('itext-field')} style={{ flex: '1' }} onChange={(e) => setEmail(e.target.value)} />
+                                            {
+                                                invalidEmail &&
+                                                <p style={{color: 'red', fontSize: '12px', marginTop: '6px'}}>Định dạng email không hợp lệ</p>
+                                            }
+                                        </div>
                                         <a onClick={handleClickSendInvitation} className={cx('btn-add-video')} >GỬI LỜI MỜI</a>
                                     </div>
                                     <div>

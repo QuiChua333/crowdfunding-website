@@ -32,7 +32,8 @@ function CampaignTable({campaigns, onCampaignTableChange, getAllCampaigns}) {
                     startDate: dateString,
                     endDate: endDateString,
                     ownerName: item.owner.fullName,
-                    isChecked: false
+                    isChecked: false,
+                    currentMoney: (item.currentMoney/1000000).toFixed(2) + ' triệu',
                     
                 }
             })
@@ -77,8 +78,8 @@ function CampaignTable({campaigns, onCampaignTableChange, getAllCampaigns}) {
                         <th className={cx('title')}>TÊN CHIẾN DỊCH</th>
                         <th className={cx('goal')}>MỤC TIÊU</th>
                         <th className={cx('status')}>TRẠNG THÁI</th>
-                        <th className={cx('startDate')}>NGÀY BẮT ĐẦU</th>
                         <th className={cx('endDate')}>NGÀY KẾT THÚC</th>
+                        <th className={cx('startDate')}>QUỸ HIỆN TẠI</th>
                         <th className={cx('owner')}>CHỦ SỞ HỮU</th>
                         <th className={cx('action')}></th>
                     </tr>

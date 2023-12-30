@@ -197,7 +197,13 @@ function BasicCampaign() {
                 if (value <= 0) {
                     setTextValidateDuration('* Thời hạn phải là một số nguyên lớn hơn 0');
                     return false;
-                } else {
+                } else if (Number(value) > 60) {
+                    setTextValidateDuration('* Thời hạn gây quỹ của một chiến dịch không vượt quá 60 ngày');
+                    return false;
+                }
+                else
+                
+                {
                     setTextValidateDuration('');
                     return true;
                 }

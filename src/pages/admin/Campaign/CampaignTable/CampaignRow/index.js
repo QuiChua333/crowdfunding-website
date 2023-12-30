@@ -6,6 +6,7 @@ import { IoSquareOutline, IoCheckboxSharp } from "react-icons/io5";
 import { PiDotsThreeBold } from "react-icons/pi";
 import DropDown from "../Dropdown";
 import { useRef, useState, useEffect } from "react";
+import formatMoney from "~/utils/formatMoney";
 
 
 const cx = classNames.bind(styles)
@@ -50,8 +51,9 @@ function CampaignRow({ index, campaign, setChecked, getAllCampaigns }) {
                     {campaign.status}
                 </span>
             </td>
-            <td className={cx('startDate')}>{campaign.startDate}</td>
+
             <td className={cx('endDate')}>{campaign.endDate}</td>
+            <td className={cx('startDate')}>{campaign.currentMoney}</td>
             <td className={cx('owner')}>{campaign.ownerName}</td>
             <td className={cx('action')}>
                 <div className={cx('action-doc')} onClick={(e) => { e.stopPropagation(); setOpenDropDown(prev => !prev) }} ref={docElement}>

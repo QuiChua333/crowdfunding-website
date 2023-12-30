@@ -461,11 +461,11 @@ const getAllCampaigns = async (req, res) => {
         const isAdmin = req.isAdmin
         if (isAdmin) {
 
-            let { page = 1, size = 15, status = 'Tất cả', searchString = '' } = req.query;
+            let { page = 1, size = 15, status = 'Tất cả', searchString = '', result = 'Tất cả'} = req.query;
             page = parseInt(page);
             size = parseInt(size)
             size = size >= 15 ? 15 : size
-            const filterCampaigns = await Campaign.aggregate([
+            let filterCampaigns = await Campaign.aggregate([
                 {
                     $lookup: {
                         from: 'users', // Tên của collection chứa thông tin người sở hữu (assumed là 'users')
@@ -512,34 +512,30 @@ const getAllCampaigns = async (req, res) => {
                     $limit: size
                 }
             ]);
-            const totalRecords = await Campaign.aggregate([
-                {
-                    $match: {
-                        $and: [
-                            {
-                                status: status === 'Tất cả' ? { $nin: ['Tất cả', 'Bản nháp'] } : status
-                            },
-                            {
-                                $or: [
-                                    {
-                                        title: { $regex: `.*${searchString}.*`, $options: 'i' }
-                                    },
-                                    {
-                                        'owner.fullName': { $regex: `.*${searchString}.*`, $options: 'i' }
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    $group: {
-                        _id: null,
-                        count: { $sum: 1 },
-                    },
-                },
-            ])
-            const totalPages = Math.ceil(totalRecords[0] ? (totalRecords[0].count / size) : 0);
+           
+            const campaignIds = filterCampaigns.map(campaign => campaign._id);
+            const [ contributeCounts] = await Promise.all([
+                Contribution.aggregate([
+                    { $match: { campaign: { $in: campaignIds } } },
+                    { $group: { _id: '$campaign', totalMoney: { $sum: "$money"} } }
+                ])
+            ]);
+
+            const campaignCountMap = contributeCounts.reduce((map, item) => {
+                map[item._id] = item.totalMoney;
+                return map;
+            }, {});
+            filterCampaigns.forEach(campaign => {
+                campaign.currentMoney = campaignCountMap[campaign._id] || 0;
+            });
+            if (result === 'Thành công') {
+                filterCampaigns = filterCampaigns.filter(i => i.currentMoney >= 0.7 * i.goal);
+            }
+            else if (result === 'Thất bại') {
+                filterCampaigns = filterCampaigns.filter(i => i.currentMoney < 0.7 * i.goal);
+            }
+     
+            const totalPages = Math.ceil(filterCampaigns.length ? (filterCampaigns.length / size) : 0);
 
             // const campaigns = await Campaign.find({ status: { $ne: 'Bản nháp' } }).populate({
             //     path: 'owner',

@@ -21,11 +21,16 @@ function CampaignManagement() {
     const [filter, setFilter] = useState({
         textSearch: '',
         status: 'Tất cả',
+        result: 'Tất cả',
         page: 1
     })
     const handleClickItemFilter = (item) => {
         setFilter(prev => ({ ...prev, status: item }))
     }
+    const handleClickItemFilterResult = (item) => {
+        setFilter(prev => ({ ...prev, result: item }))
+    }
+    
     const handleChangeSearchInput = (value) => {
         setFilter(prev => ({ ...prev, textSearch: value }))
     }
@@ -39,7 +44,7 @@ function CampaignManagement() {
         setFilter(prev => ({ ...prev, page: prev.page + 1 }))
     }
     useEffect(() => {
-        const queryParams = { page: filter.page, searchString: filter.textSearch, status: filter.status };
+        const queryParams = { page: filter.page, searchString: filter.textSearch, status: filter.status, result: filter.result };
         const queryString = new URLSearchParams(queryParams).toString();
         const pathWithQuery = `${baseURL}/campaign/getAllCampaigns?${queryString}`;
         setPathWithQuery(pathWithQuery)
@@ -86,7 +91,17 @@ function CampaignManagement() {
                         </a>
                     </div>
                 </div>
-                <Filter listConditions={['Tất cả', 'Chờ xác nhận', 'Đang gây quỹ', 'Đang tạm ngưng', 'Đã kết thúc']} handleClickItem={handleClickItemFilter} />
+                <div style={{display: 'flex', alignItems: 'center', gap: '32px'}}>
+                    <div>
+                        <label style={{ marginBottom: '4px' }}>Trạng thái</label>
+                        <Filter listConditions={['Tất cả', 'Chờ xác nhận', 'Đang gây quỹ', 'Đang tạm ngưng', 'Đã kết thúc']} handleClickItem={handleClickItemFilter} />
+                    </div>
+                    <div>
+                        <label style={{ marginBottom: '4px' }}>Kết quả gây quỹ hiện tại</label>
+                        <Filter listConditions={['Tất cả', 'Thành công', 'Thất bại']} handleClickItem={handleClickItemFilterResult} />
+                    </div>
+                </div>
+
             </div>
             <div style={{ marginTop: '40px' }}>
                 {/* {
