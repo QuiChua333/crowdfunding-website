@@ -47,11 +47,11 @@ function ContributeRow({index, contribute, handleViewContribution}) {
 
             {contribute.isFinish ? (
                 <td>
-                    <div className={cx('un-response')}>Đã nhận</div>
+                    <div className={cx('responsed')}>Đã nhận</div>
                 </td>
             ) : (
                 <td>
-                    <div className={cx('responsed')}>Chưa nhận</div>
+                    <div className={cx('un-response')}>Chưa nhận</div>
                 </td>
             )}
 

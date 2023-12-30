@@ -392,6 +392,7 @@ function Explore() {
 
                     <div>
                         <InfiniteScroll
+                        style={{overflow: 'hidden'}}
                             className={cx('exploreSearchResults')}
                             loader={<p>loading...</p>}
                             dataLength={campaigns.length}
