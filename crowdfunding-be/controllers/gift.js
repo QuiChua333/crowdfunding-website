@@ -131,15 +131,15 @@ const editStatus = async (req, res) => {
 const sendMail = async ({ email, title, content, templateHTML }) => {
     try {
         var transporter = nodemailer.createTransport({
-            service: 'gmail',
+            service:  process.env.SERVICE,
             auth: {
-                user: '21520417@gm.uit.edu.vn',
-                pass: '08682087444mailuit',
+                user: process.env.USER,
+                pass: process.env.PASS,
             },
         });
 
         var mailOptions = {
-            from: '21520417@gm.uit.edu.vn',
+            from: process.env.USER,
             to: email,
             subject: title,
             html: templateHTML

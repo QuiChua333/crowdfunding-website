@@ -229,15 +229,15 @@ const responseReport = async (req, res) => {
 
 const sendMail = (email, title, content, images) => {
     var transporter = nodemailer.createTransport({
-        service: 'gmail',
+        service:  process.env.SERVICE,
         auth: {
-            user: '21520417@gm.uit.edu.vn',
-            pass: '08682087444mailuit',
+            user: process.env.USER,
+            pass: process.env.PASS,
         },
     });
 
     var mailOptions = {
-        from: '21520417@gm.uit.edu.vn',
+        from: process.env.USER,
         to: email,
         subject: title,
         html: images ? htmlHasImage(title, content, images) : htmlNoImage(title, content),
