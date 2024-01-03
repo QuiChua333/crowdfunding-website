@@ -26,6 +26,7 @@ import AboutUs from '~/pages/user/AboutUs'
 const loginRoutes = [
     { path: '/sign-up', component: SignUp, layout: null },
     { path: '/login', component: Login, layout: null },
+    
 ]
 // Public routes
 const publicRoutes = [
