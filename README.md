@@ -1,70 +1,53 @@
-# Getting Started with Create React App
+# WEBSITE HỖ TRỢ GÂY QUỸ CỘNG ĐỒNG 
+<img src="./image_readme/img.png" width="800"/>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Mô tả 
 
-## Available Scripts
+Trong thời đại hiện nay, việc hỗ trợ và kêu gọi quỹ từ cộng đồng ngày càng trở nên quan trọng và phổ biến. Tuy nhiên, nhiều tổ chức và cá nhân đang gặp khó khăn trong việc xây dựng và quản lý chiến dịch quyên góp cộng đồng một cách hiệu quả. Các dự án từ thiện và các hoạt động gây quỹ đòi hỏi sự tổ chức, kết nối và tương tác mạnh mẽ từ cộng đồng.
 
-In the project directory, you can run:
+Với sự phổ biến của internet và công nghệ, việc xây dựng một website hỗ trợ gây quỹ cộng đồng trở thành một ý tưởng hấp dẫn và có tiềm năng lớn. Qua quá trình tìm hiểu, chúng tôi nhận thấy rằng nhiều tổ chức và cá nhân muốn tham gia vào các chiến dịch quyên góp cộng đồng, nhưng họ thường gặp khó khăn trong việc tiếp cận đối tượng hỗ trợ và quản lý thông tin chi tiết về các dự án.
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+#### Mục đích ứng dụng
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+*	Xây dựng một nền tảng trực tuyến, giúp kết nối giữa những người muốn đóng góp và những dự án hoặc tổ chức cần sự hỗ trợ tài chính.
+*	Tạo ra được ứng dụng có giao diện đẹp, thân thiện với người sử dụng.
+*	Ứng dụng chạy ổn định trong thời gian dài, các chức năng thực hiện nhanh chóng.
+*	Cơ hội nghiên cứu sâu hơn về các công nghệ áp dụng trong đề t ài.
 
-### `npm test`
+#### Yêu cầu
+* Đáp ứng những tính năng tiêu chuẩn cần có của việc kêu gọi và quản lý một chiến dịch, đảm bảo các ràng buộc cần thiết. Mở rộng và phát triển những tính năng mới hỗ trợ tối đa cho người dùng.
+* Báo cáo, thống kê, thêm, cập nhật dữ liệu, phải diễn ra nhanh chóng, chính xác.
+* Dễ dàng tra cứu, tìm kiếm các thông tin.
+* Hỗ trợ thanh toán online (Với phạm vi đồ án: Momo Test)
+* Giao diện thân thiện, dễ sử dụng, bố cục hợp lý, hài hoà về màu sắc và mang tính đồng bộ cao, phân quyền cho người dùng thông qua tài khoản.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+#### Người dùng 
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+* Người dùng (Người đóng góp hoặc chủ dự án)
+* Quản trị viên
+### Công nghệ 
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* Công cụ thiết kế: Figma
+* Front-end: ReactJs, SASS, Tailwind
+* Back-end: NodeJs, ExpressJs
+* Database: MongoDB, Cloudinary
+* Công cụ quản lý: Git, GitHub
+* Quản lý tiến độ dự án: Notion
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Tác giả 
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+* [Huỳnh Ngọc Quí](https://www.facebook.com/quichua333) - 21520417
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+* [Phan Trọng Tính](https://www.facebook.com/profile.php?id=100073316952962) - 21522683
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+ * Sinh viên khoa Công nghệ Phần mềm, trường Đại học Công nghệ Thông tin, Đại học Quốc gia thành phố Hồ Chí Minh 
 
-## Learn More
+## Giảng viên hướng dẫn 
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+* Thầy Nguyễn Tấn Toàn, giảng viên Khoa Công Nghệ Phần Mềm, trường Đại học Công nghệ Thông tin, Đại học Quốc gia Thành phố Hồ Chí Minh 
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
